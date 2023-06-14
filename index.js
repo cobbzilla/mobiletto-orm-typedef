@@ -250,7 +250,7 @@ class MobilettoOrmTypeDef {
                 }
             }
         }
-        return foundId != null ? normalizeId(foundId) : null
+        return foundId != null ? fsSafeName(foundId) : null
     }
 
     typePath () { return (this.basePath.length > 0 ? this.basePath + '/' : '') + this.typeName }

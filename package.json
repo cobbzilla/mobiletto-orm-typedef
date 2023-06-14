@@ -1,6 +1,6 @@
 {
   "name": "mobiletto-orm-typedef",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "type definition system for mobiletto object-relational-mapper (ORM)",
   "main": "index.js",
   "keywords": [
