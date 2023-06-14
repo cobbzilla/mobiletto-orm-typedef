@@ -320,19 +320,6 @@ class MobilettoOrmTypeDef {
     }
 }
 
-function includeRemovedThing(includeRemoved, thing) {
-    return includeRemoved ||
-        (typeof (thing.removed) === 'undefined' ||
-            (typeof (thing.removed) === 'boolean' && thing.removed !== true));
-}
-
-const resolveStorages = async stores => {
-    if (Array.isArray(stores)) return stores
-    if (typeof(stores) === 'function') {
-        return await stores()
-    }
-}
-
 module.exports = {
     versionStamp,
     MobilettoOrmTypeDef,
