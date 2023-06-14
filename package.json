@@ -1,0 +1,36 @@
+{
+  "name": "mobiletto-orm-typedef",
+  "version": "1.0.0",
+  "description": "type definition system for mobiletto object-relational-mapper (ORM)",
+  "main": "index.js",
+  "keywords": [
+    "storage",
+    "s3",
+    "b2",
+    "simple",
+    "filesystem",
+    "orm",
+    "tool",
+    "mobiletto",
+    "mobiletto-orm"
+  ],
+  "homepage": "https://github.com/cobbzilla/mobiletto-orm-typedef",
+  "author": "Jonathan Cobb <udo9jqld@duck.com> (https://github.com/cobbzilla)",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/cobbzilla"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cobbzilla/mobiletto-orm-typedef"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/node": "^7.18.10",
+    "@babel/preset-env": "^7.18.10"
+  },
+  "dependencies": {
+    "randomstring": "^1.2.2"
+  }
+}
