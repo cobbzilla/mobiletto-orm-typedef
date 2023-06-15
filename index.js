@@ -242,7 +242,7 @@ class MobilettoOrmTypeDef {
         for (const fieldName of Object.keys(this.fields)) {
             const field = this.fields[fieldName]
             const thingValueType = typeof(thing[fieldName])
-            const currentValueType = typeof(current[fieldName])
+            const currentValueType = isCreate ? 'undefined' : typeof(current[fieldName])
             const updatable = typeof (field.updatable) === 'undefined' || !!field.updatable;
             const useThingValue = isCreate || (updatable && thingValueType !== 'undefined' && thing[fieldName] != null)
             const fieldValue = useThingValue
