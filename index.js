@@ -241,11 +241,17 @@ class MobilettoOrmTypeDef {
         }
         for (const fieldName of Object.keys(this.fields)) {
             const field = this.fields[fieldName]
-            const fieldValueType = typeof(thing[fieldName])
-            const fieldValue = fieldValueType === 'undefined' ? null : thing[fieldName]
+            const thingValueType = typeof(thing[fieldName])
+            const currentValueType = typeof(current[fieldName])
             const updatable = typeof (field.updatable) === 'undefined' || !!field.updatable;
-            if (isCreate || updatable) {
-                if (field.type && fieldValue != null && field.type !== fieldValueType) {
+            const useThingValue = isCreate || (updatable && thingValueType !== 'undefined' && thing[fieldName] != null)
+            const fieldValue = useThingValue
+                ? thing[fieldName]
+                : currentValueType !== 'undefined'
+                    ? current[fieldName]
+                    : null
+            if (useThingValue) {
+                if (field.type && fieldValue != null && field.type !== thingValueType) {
                     errors[fieldName] = ['type']
                     continue
                 }
@@ -273,12 +279,16 @@ class MobilettoOrmTypeDef {
                     } else {
                         val = fieldValue
                     }
-                    if (field.normalize) {
+                    // only normalize we used the caller-provided value
+                    // do not re-normalize if we used the current value
+                    if (useThingValue && field.normalize) {
                         validated[fieldName] = field.normalize(val)
                     } else {
                         validated[fieldName] = val
                     }
                 }
+            } else if (!isCreate && currentValueType !== 'undefined') {
+                validated[fieldName] = current[fieldName]
             }
         }
         if (Object.keys(errors).length > 0) {
