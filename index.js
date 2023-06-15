@@ -155,6 +155,15 @@ class MobilettoOrmTypeDef {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
+            if (field.values && Array.isArray(field.values) && field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length) {
+                field.items = []
+                for (let i = 0; i < field.values.length; i++) {
+                    field.items.push({ values: field.values[i], label: field.labels[i] })
+                }
+            } else if (field.items && Array.isArray(field.items)) {
+                field.values = field.items.map(i => i.value)
+                field.labels = field.items.map(i => i.label)
+            }
         })
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES
