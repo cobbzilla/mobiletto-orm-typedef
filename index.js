@@ -329,7 +329,7 @@ class MobilettoOrmTypeDef {
 
     tabIndexedFields () {
         const fields = this.fields
-        Object.keys(fields)
+        return Object.keys(fields)
             .map((f) => {
                 return {
                     name: f,
