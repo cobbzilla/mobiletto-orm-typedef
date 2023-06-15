@@ -93,7 +93,8 @@ function determineFieldControl(fieldName, field, fieldType) {
     if (field.control) return field.control
     if (fieldType === 'boolean') return 'flag'
     if (field.multi && Array.isArray(field.multi) && field.multi.length > 0) return 'multi'
-    if (field.values && Array.isArray(field.values) && field.values.length > 0) return 'select'
+    if ((field.values && Array.isArray(field.values) && field.values.length > 0) ||
+        (field.items && Array.isArray(field.items) && field.items.length > 0)) return 'select'
     if (fieldName === 'password') return 'password'
     return 'text'
 }
