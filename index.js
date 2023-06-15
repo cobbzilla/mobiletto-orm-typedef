@@ -171,13 +171,13 @@ function determineFieldType(fieldName, field) {
 
 const OBJ_ID_SEP = '_MORM_'
 
-function compareTabIndexes(fields, f1, f2, equalValue = 0) {
+function compareTabIndexes(fields, f1, f2) {
     return typeof (fields[f1].tabIndex) === 'number' && typeof (fields[f2].tabIndex) === 'number'
         ? fields[f1].tabIndex - fields[f2].tabIndex
         : typeof (fields[f1].tabIndex) === 'number'
             ? -1
             : typeof (fields[f2].tabIndex) === 'number'
-                ? 1 : equalValue;
+                ? 1 : 0
 }
 
 class MobilettoOrmTypeDef {
@@ -336,7 +336,7 @@ class MobilettoOrmTypeDef {
                     ...fields[f]
                 }
             })
-            .sort((f1, f2) => compareTabIndexes(fields, f1.name, f2.name, null))
+            .sort((f1, f2) => compareTabIndexes(fields, f1.name, f2.name))
             .filter(f => f != null)
     }
 
