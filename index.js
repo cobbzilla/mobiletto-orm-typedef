@@ -277,11 +277,11 @@ class MobilettoOrmTypeDef {
                     if (isCreate && typeof(field.default) !== 'undefined' && (typeof(fieldValue) !== 'string' || fieldValue && fieldValue.length === 0)) {
                         val = field.default
                     } else {
-                        val = fieldValue
+                        val = typeof(fieldValue) === 'undefined' ? null : fieldValue
                     }
                     // only normalize we used the caller-provided value
                     // do not re-normalize if we used the current value
-                    if (useThingValue && field.normalize) {
+                    if (useThingValue && fieldValue && field.normalize) {
                         validated[fieldName] = field.normalize(val)
                     } else {
                         validated[fieldName] = val
