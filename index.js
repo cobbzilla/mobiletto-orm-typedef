@@ -159,6 +159,7 @@ class MobilettoOrmTypeDef {
         if (config.typeName.includes('%') || config.typeName.includes('~')) {
             throw new MobilettoOrmError('invalid TypeDefConfig: typeName cannot contain % or ~ characters')
         }
+        this.config = config
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS
         this.typeName = fsSafeName(config.typeName)
         this.basePath = config.basePath || ''
@@ -345,6 +346,10 @@ class MobilettoOrmTypeDef {
             ctime: thing.ctime,
             mtime: Date.now()
         }
+    }
+
+    extend (otherConfig) {
+        return new MobilettoOrmTypeDef(Object.assign({}, this.config, otherConfig))
     }
 }
 
