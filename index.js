@@ -127,8 +127,8 @@ function determineFieldType(fieldName, field) {
         if (hasValues && hasItems && field.values.length !== field.items.length) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had different lengths for values (${field.values.length}) vs items (${field.items.length})`)
         }
-        const vType = hasItems && field.items.length > 0
-            ? typeof(field.items[0])
+        const vType = hasItems && field.items.length > 0 && typeof(field.items[0].value) !== 'undefined' && field.items[0].value != null
+            ? typeof(field.items[0].value)
             : hasValues && field.values.length > 0
                 ? typeof(field.values[0])
                 : null
