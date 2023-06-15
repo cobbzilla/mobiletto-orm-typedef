@@ -312,6 +312,18 @@ class MobilettoOrmTypeDef {
         return foundId != null ? fsSafeName(foundId) : null
     }
 
+    tabIndexes () {
+        const fields = this.fields
+        return Object.keys(fields).sort((f1, f2) => {
+            return typeof (fields[f1].tabIndex) === 'number' && typeof (fields[f2].tabIndex) === 'number'
+                ? fields[f1].tabIndex - fields[f2].tabIndex
+                : typeof (fields[f1].tabIndex) === 'number'
+                    ? -1
+                    : typeof (fields[f2].tabIndex) === 'number'
+                        ? 1 : 0
+        })
+    }
+
     typePath () { return (this.basePath.length > 0 ? this.basePath + '/' : '') + this.typeName }
 
     generalPath (id) {
