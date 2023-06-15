@@ -121,12 +121,23 @@ function determineFieldType(fieldName, field) {
         }
         foundType = defaultType
     }
-    if (field.values && Array.isArray(field.values) && field.values.length >= 1) {
-        const vType = typeof(field.values[0])
-        if (foundType != null && foundType !== vType) {
-            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${vType}`)
+    const hasValues = (field.values && Array.isArray(field.values))
+    const hasItems = (field.items && Array.isArray(field.items))
+    if (hasValues || hasItems) {
+        if (hasValues && hasItems && field.values.length !== field.items.length) {
+            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had different lengths for values (${field.values.length}) vs items (${field.items.length})`)
         }
-        foundType = vType
+        const vType = hasItems && field.items.length > 0
+            ? typeof(field.items[0])
+            : hasValues && field.values.length > 0
+                ? typeof(field.values[0])
+                : null
+        if (vType) {
+            if (foundType != null && foundType !== vType) {
+                throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${vType}`)
+            }
+            foundType = vType
+        }
     }
     if (foundType) {
         if (!VALID_FIELD_TYPES.includes(foundType)) {
