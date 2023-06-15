@@ -336,7 +336,7 @@ class MobilettoOrmTypeDef {
                     ...fields[f]
                 }
             })
-            .sort((f1, f2) => compareTabIndexes(fields, f1, f2, null))
+            .sort((f1, f2) => compareTabIndexes(fields, f1.name, f2.name, null))
             .filter(f => f != null)
     }
 
