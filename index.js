@@ -115,15 +115,23 @@ function determineFieldType(fieldName, field) {
         }
         foundType = 'number'
     }
+    const hasValues = (field.values && Array.isArray(field.values))
+    const hasItems = (field.items && Array.isArray(field.items))
     const defaultType = typeof(field.default)
     if (defaultType !== 'undefined') {
+        if (Array.isArray(field.default) && !hasValues && !hasItems && (!field.type || (field.type !== 'select' && field.type !== 'multi'))) {
+            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had an array as default value, but is not a select or multi field`)
+        }
+        if (field.type && field.type === 'multi') {
+            if (!Array.isArray(field.default)) {
+                throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had type 'multi' but default value type is ${defaultType} (expected array)`)
+            }
+        }
         if (foundType != null && foundType !== defaultType) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`)
         }
         foundType = defaultType
     }
-    const hasValues = (field.values && Array.isArray(field.values))
-    const hasItems = (field.items && Array.isArray(field.items))
     if (hasValues || hasItems) {
         if (hasValues && hasItems && field.values.length !== field.items.length) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had different lengths for values (${field.values.length}) vs items (${field.items.length})`)
