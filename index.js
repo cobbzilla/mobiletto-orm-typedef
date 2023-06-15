@@ -171,6 +171,15 @@ function determineFieldType(fieldName, field) {
 
 const OBJ_ID_SEP = '_MORM_'
 
+function compareTabIndexes(fields, f1, f2, equalValue = 0) {
+    return typeof (fields[f1].tabIndex) === 'number' && typeof (fields[f2].tabIndex) === 'number'
+        ? fields[f1].tabIndex - fields[f2].tabIndex
+        : typeof (fields[f1].tabIndex) === 'number'
+            ? -1
+            : typeof (fields[f2].tabIndex) === 'number'
+                ? 1 : equalValue;
+}
+
 class MobilettoOrmTypeDef {
     constructor(config) {
         if (typeof(config.typeName) !== 'string' || config.typeName.length <= 0) {
@@ -314,14 +323,21 @@ class MobilettoOrmTypeDef {
 
     tabIndexes () {
         const fields = this.fields
-        return Object.keys(fields).sort((f1, f2) => {
-            return typeof (fields[f1].tabIndex) === 'number' && typeof (fields[f2].tabIndex) === 'number'
-                ? fields[f1].tabIndex - fields[f2].tabIndex
-                : typeof (fields[f1].tabIndex) === 'number'
-                    ? -1
-                    : typeof (fields[f2].tabIndex) === 'number'
-                        ? 1 : 0
-        })
+        return Object.keys(fields)
+            .sort((f1, f2) => compareTabIndexes(fields, f1, f2))
+    }
+
+    tabIndexedFields () {
+        const fields = this.fields
+        Object.keys(fields)
+            .map((f) => {
+                return {
+                    name: f,
+                    ...fields[f]
+                }
+            })
+            .sort((f1, f2) => compareTabIndexes(fields, f1, f2, null))
+            .filter(f => f != null)
     }
 
     typePath () { return (this.basePath.length > 0 ? this.basePath + '/' : '') + this.typeName }
