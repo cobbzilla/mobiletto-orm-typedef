@@ -379,7 +379,13 @@ class MobilettoOrmTypeDef {
     }
 
     extend (otherConfig) {
-        return new MobilettoOrmTypeDef(Object.assign({}, this.config, otherConfig))
+        const extConfig = Object.assign({}, this.config, otherConfig)
+        if (this.config.fields) {
+            for (const fieldName of Object.keys(this.config.fields)) {
+                extConfig.fields[fieldName] = Object.assign({}, this.config.fields[fieldName], extConfig.fields[fieldName])
+            }
+        }
+        return new MobilettoOrmTypeDef(extConfig)
     }
 }
 
