@@ -117,7 +117,7 @@ function determineFieldType(fieldName, field) {
     }
     const hasValues = (field.values && Array.isArray(field.values))
     const hasItems = (field.items && Array.isArray(field.items))
-    const defaultType = typeof(field.default)
+    let defaultType = typeof(field.default)
     if (defaultType !== 'undefined') {
         if (Array.isArray(field.default) && !hasValues && !hasItems && (!field.type || (field.type !== 'select' && field.type !== 'multi'))) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had an array as default value, but is not a select or multi field`)
@@ -126,11 +126,14 @@ function determineFieldType(fieldName, field) {
             if (!Array.isArray(field.default)) {
                 throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had type 'multi' but default value type is ${defaultType} (expected array)`)
             }
+            defaultType = field.default.length > 0 ? typeof(field.default[0]) : null
         }
         if (foundType != null && foundType !== defaultType) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`)
         }
-        foundType = defaultType
+        if (defaultType) {
+            foundType = defaultType
+        }
     }
     if (hasValues || hasItems) {
         if (hasValues && hasItems && field.values.length !== field.items.length) {
