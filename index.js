@@ -155,10 +155,17 @@ class MobilettoOrmTypeDef {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
-            if (field.values && Array.isArray(field.values) && field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length) {
+            if (field.values && Array.isArray(field.values)) {
+                const hasLabels = field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length
                 field.items = []
+                if (!hasLabels) field.labels = []
                 for (let i = 0; i < field.values.length; i++) {
-                    field.items.push({ values: field.values[i], label: field.labels[i] })
+                    let value = field.values[i];
+                    field.items.push({
+                        value,
+                        label: hasLabels ? field.labels[i] :value
+                    })
+                    if (!hasLabels) field.labels.push(value)
                 }
             } else if (field.items && Array.isArray(field.items)) {
                 field.values = field.items.map(i => i.value)
