@@ -264,7 +264,9 @@ class MobilettoOrmTypeDef {
                     errors[fieldName] = ['type']
                     continue
                 }
-                if (field.values && fieldValue && !field.values.includes(fieldValue)) {
+                if (field.values && fieldValue && (
+                    (field.type === 'array' && Array.isArray(fieldValue) && !fieldValue.every(v => field.values.includes(v))) ||
+                    (field.type !== 'array' && !field.values.includes(fieldValue))) ) {
                     errors[fieldName] = ['values']
                     continue
                 }
