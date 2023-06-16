@@ -370,7 +370,7 @@ class MobilettoOrmTypeDef {
     typePath () { return (this.basePath.length > 0 ? this.basePath + '/' : '') + this.typeName }
 
     generalPath (id) {
-        const idVal = (typeof(id) === 'object' && id.id && typeof(id.id) === 'string')
+        const idVal = (typeof(id) === 'object' && id && id.id && typeof(id.id) === 'string')
             ? id.id
             : typeof(id) === 'string' && id.length > 0 ? id : null
         if (idVal == null) {
