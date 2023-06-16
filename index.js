@@ -195,12 +195,16 @@ class MobilettoOrmTypeDef {
         this.typeName = fsSafeName(config.typeName)
         this.basePath = config.basePath || ''
         this.fields = Object.assign({}, config.fields, DEFAULT_FIELDS)
+        this.redaction = []
         Object.keys(this.fields).forEach(fieldName => {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
             if (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) {
                 field.redact = true
+                this.redaction.push(fieldName)
+            } else if (typeof(field.redact) === 'boolean' && field.redact === true) {
+                this.redaction.push(fieldName)
             }
             if (field.values && Array.isArray(field.values)) {
                 const hasLabels = field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length
@@ -314,11 +318,15 @@ class MobilettoOrmTypeDef {
         return validated
     }
 
+    hasRedactions () { return this.redaction.length > 0 }
+
     redact (thing) {
-        for (const fieldName of this.fields) {
-            const field = this.fields[fieldName]
-            if (field.redact && typeof(field.redact) === 'boolean' && field.redact === true && thing[fieldName]) {
-                thing[fieldName] = null
+        if (this.redaction.length > 0) {
+            for (const fieldName of this.redaction) {
+                const field = this.fields[fieldName]
+                if (field.redact && typeof (field.redact) === 'boolean' && field.redact === true && thing[fieldName]) {
+                    thing[fieldName] = null
+                }
             }
         }
         return thing
