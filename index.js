@@ -421,7 +421,7 @@ class MobilettoOrmTypeDef {
     }
 
     indexPath (field, value) {
-        if (this.fields[field] && !!(this.fields[field].index)) {
+        if (this.indexes.includes(field)) {
             return `${this.typePath()}_idx_${shasum(field)}/${shasum(value)}`
         } else {
             throw new MobilettoOrmError(`typeDef.indexPath: field not indexed: ${field}`)
