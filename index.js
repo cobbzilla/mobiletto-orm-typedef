@@ -196,10 +196,14 @@ class MobilettoOrmTypeDef {
         this.basePath = config.basePath || ''
         this.fields = Object.assign({}, config.fields, DEFAULT_FIELDS)
         this.redaction = []
+        this.indexes = []
         Object.keys(this.fields).forEach(fieldName => {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
+            if (!!(field.index)) {
+                this.indexes.push(fieldName)
+            }
             if (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) {
                 if (fieldName !== 'id') {
                     field.redact = true
