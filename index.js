@@ -171,6 +171,8 @@ function determineFieldType(fieldName, field) {
 
 const OBJ_ID_SEP = '_MORM_'
 
+const AUTO_REDACT_CONTROLS = ['password', 'hidden', 'system']
+
 function compareTabIndexes(fields, f1, f2) {
     return typeof (fields[f1].tabIndex) === 'number' && typeof (fields[f2].tabIndex) === 'number'
         ? fields[f1].tabIndex - fields[f2].tabIndex
@@ -197,6 +199,9 @@ class MobilettoOrmTypeDef {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
+            if (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) {
+                field.redact = true
+            }
             if (field.values && Array.isArray(field.values)) {
                 const hasLabels = field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length
                 field.items = []
