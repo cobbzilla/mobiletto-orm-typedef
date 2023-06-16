@@ -260,7 +260,7 @@ class MobilettoOrmTypeDef {
                     ? current[fieldName]
                     : null
             if (useThingValue) {
-                if (field.type && fieldValue != null && field.type !== thingValueType) {
+                if (field.type && fieldValue != null && field.type !== thingValueType && !(field.type === 'array' && Array.isArray(fieldValue))) {
                     errors[fieldName] = ['type']
                     continue
                 }
