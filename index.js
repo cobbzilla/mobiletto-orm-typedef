@@ -202,10 +202,9 @@ class MobilettoOrmTypeDef {
             field.control = determineFieldControl(fieldName, field, field.type)
             if (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) {
                 if (fieldName !== 'id') {
-                    throw new MobilettoOrmError('cannot redact id field')
+                    field.redact = true
+                    this.redaction.push(fieldName)
                 }
-                field.redact = true
-                this.redaction.push(fieldName)
             } else if (typeof(field.redact) === 'boolean' && field.redact === true) {
                 if (fieldName === 'id') {
                     throw new MobilettoOrmError('cannot redact id field')
