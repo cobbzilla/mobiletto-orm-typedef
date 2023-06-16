@@ -295,7 +295,8 @@ class MobilettoOrmTypeDef {
                 }
                 if (typeof(errors[fieldName]) === 'undefined') {
                     let val = null
-                    if (isCreate && typeof(field.default) !== 'undefined' && (typeof(fieldValue) !== 'string' || fieldValue && fieldValue.length === 0)) {
+                    if (isCreate && typeof(field.default) !== 'undefined' &&
+                        (!fieldValue || (typeof(fieldValue.length) === 'number' && fieldValue.length === 0))) {
                         val = field.default
                     } else {
                         val = typeof(fieldValue) === 'undefined' ? null : fieldValue
