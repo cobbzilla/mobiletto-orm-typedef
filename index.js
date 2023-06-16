@@ -219,6 +219,7 @@ class MobilettoOrmTypeDef {
         this.specificPathRegex  = new RegExp(`^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`, 'gi')
         this.validators = Object.assign({}, FIELD_VALIDATIONS, config.validators || {})
     }
+
     validate (thing, current) {
         const isCreate = typeof(current) === 'undefined'
         if (typeof(thing.version) !== 'string' || thing.version.length < MIN_VERSION_STAMP_LENGTH) {
@@ -306,6 +307,16 @@ class MobilettoOrmTypeDef {
             throw new MobilettoOrmValidationError(errors)
         }
         return validated
+    }
+
+    redact (thing) {
+        for (const fieldName of this.fields) {
+            const field = this.fields[fieldName]
+            if (field.redact && typeof(field.redact) === 'boolean' && field.redact === true && thing[fieldName]) {
+                thing[fieldName] = null
+            }
+        }
+        return thing
     }
 
     id (thing) {
