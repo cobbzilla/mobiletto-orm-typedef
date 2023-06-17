@@ -272,7 +272,7 @@ class MobilettoOrmTypeDef {
             } else if (this.alternateIdFields) {
                 for (const alt of this.alternateIdFields) {
                     if (alt in thing) {
-                        thing.id = normalized(this.fields, alt, thing[alt])
+                        thing.id = normalized(this.fields, alt, thing)
                         break
                     }
                 }
