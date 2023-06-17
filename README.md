@@ -33,3 +33,8 @@ To access the mobiletto-orm-typedef source:
     git clone https://github.com/cobbzilla/mobiletto-orm-typedef.git
     cd mobiletto-orm-typedef
     yarn install
+
+### Using Mobiletto ORM Type Definitions
+See the mobiletto-orm documentation on [Type Definitions](https://github.com/cobbzilla/mobiletto-orm#Type-Definitions)
+
+You can also check out the [test suite](./test) for examples.

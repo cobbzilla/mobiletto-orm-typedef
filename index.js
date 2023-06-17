@@ -86,13 +86,17 @@ const DEFAULT_MAX_VERSIONS = 5
 const DEFAULT_MIN_WRITES = 0
 
 const DEFAULT_ALTERNATE_ID_FIELDS = ['name', 'username', 'email']
+const RESERVED_FIELD_NAMES = ['redaction', 'removed']
 
 const VALID_FIELD_TYPES = ['string', 'number', 'boolean', 'object', 'array']
+const VALID_PRIMARY_TYPES = ['string', 'number']
+const PRIMITIVE_FIELD_TYPES = ['string', 'number', 'boolean']
 
 function determineFieldControl(fieldName, field, fieldType) {
     if (field.control) return field.control
     if (fieldType === 'boolean') return 'flag'
     if (fieldType === 'array') return 'multi'
+    if (fieldType === 'object' && typeof(field.fields) === 'undefined') return 'textarea'
     if ((field.values && Array.isArray(field.values) && field.values.length > 0) ||
         (field.items && Array.isArray(field.items) && field.items.length > 0)) return 'select'
     if (fieldName === 'password') return 'password'
@@ -146,6 +150,9 @@ function determineFieldType(fieldName, field) {
                 throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had different lengths for items (${field.values.length}) vs labels (${field.labels.length})`)
             }
         }
+        if (foundType != null && foundType !== 'array') {
+            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / array`)
+        }
         if ((!field.control || field.control !== 'multi') && (!field.type || field.type !== 'array')) {
             const vType = hasItems && field.items.length > 0 && typeof (field.items[0].value) !== 'undefined' && field.items[0].value != null
                 ? typeof (field.items[0].value)
@@ -160,6 +167,13 @@ function determineFieldType(fieldName, field) {
             }
         }
     }
+    const hasFields = (field.fields && typeof(field.fields) === 'object')
+    if (hasFields) {
+        if (foundType != null && foundType !== 'object') {
+            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / object`)
+        }
+        foundType = 'object'
+    }
     if (foundType) {
         if (!VALID_FIELD_TYPES.includes(foundType)) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had invalid type: ${foundType}`)
@@ -167,6 +181,155 @@ function determineFieldType(fieldName, field) {
         return foundType
     }
     return 'string'
+}
+
+function processFields (fields, objPath, typeDef) {
+    Object.keys(fields).forEach(
+        fieldName => {
+            const field = fields[fieldName]
+            if (RESERVED_FIELD_NAMES.includes(fieldName)) {
+                throw new MobilettoOrmError(`invalid TypeDefConfig: reserved field name: ${fieldName}`)
+            }
+            field.name = fieldName
+            field.type = determineFieldType(fieldName, field)
+            field.control = determineFieldControl(fieldName, field, field.type)
+            const fieldPath = objPath === '' ? fieldName : objPath + '.' + fieldName
+            if (field.type === 'object' && field.fields && typeof(field.fields) === 'object') {
+                processFields(field.fields, fieldPath, typeDef)
+            }
+            if (typeof(field.primary) === 'boolean' && field.primary === true) {
+                if (objPath !== '') {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: non-root field ${fieldName} had {primary: true} (not allowed)`)
+                }
+                if (typeDef.primary) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: multiple fields had {primary: true}: ${typeDef.primary} and ${fieldName}`)
+                }
+                if (!VALID_PRIMARY_TYPES.includes(field.type)) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary ${typeDef.primary} had bad type: ${field.type}`)
+                }
+                typeDef.primary = fieldName
+                if (typeof(field.required) === 'boolean' && field.required === false) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${typeDef.primary} had {required: false} (not allowed)`)
+                }
+                field.required = true
+                if (typeof(field.updatable) === 'boolean' && field.updatable === true) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${typeDef.primary} had {updatable: true} (not allowed)`)
+                }
+                field.updatable = false
+            }
+            if (!!(field.index)) {
+                if (!typeDef) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: non-root field ${fieldName} had {index: true} (not allowed)`)
+                }
+                typeDef.indexes.push(fieldName)
+            }
+            const redact = (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) || (typeof(field.redact) === 'boolean' && field.redact === true)
+            if (redact) {
+                if (fieldName === 'id') {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: {redact: true} not allowed on id field`)
+                }
+                field.redact = true
+                typeDef.redaction.push(fieldPath)
+            }
+
+            if (field.values && Array.isArray(field.values)) {
+                const hasLabels = field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length
+                field.items = []
+                if (!hasLabels) field.labels = []
+                for (let i = 0; i < field.values.length; i++) {
+                    let value = field.values[i];
+                    field.items.push({
+                        value,
+                        label: hasLabels ? field.labels[i] :value
+                    })
+                    if (!hasLabels) field.labels.push(value)
+                }
+            } else if (field.items && Array.isArray(field.items)) {
+                if (field.type !== 'array') {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had items but type is not array`)
+                }
+                field.values = field.items.map(i => i.value)
+                field.labels = field.items.map(i => i.label)
+            }
+        })
+}
+
+function addError (errors, fieldPath, err) {
+    if (typeof(errors[fieldPath]) === 'undefined') {
+        errors[fieldPath] = []
+    }
+    if (!errors[fieldPath].includes(err)) {
+        errors[fieldPath].push(err)
+    }
+}
+
+function validateFields (thing, fields, current, validated, validators, errors, objPath) {
+    const isCreate = typeof(current) === 'undefined' || current == null
+    for (const fieldName of Object.keys(fields)) {
+        const fieldPath = objPath === '' ? fieldName : `${objPath}.${fieldName}`
+        const field = fields[fieldName]
+        const thingValueType = typeof(thing[fieldName])
+
+        if (field.type === 'object') {
+            if (field.required && thingValueType !== 'object') {
+                addError(errors, fieldPath, 'required')
+            } else if (field.fields && thingValueType === 'object') {
+                validated[fieldName] = {}
+                const currentValue = current && typeof(current) === 'object' && current[fieldName] ? current[fieldName] : null
+                validateFields(thing[fieldName], field.fields, currentValue, validated[fieldName], validators, errors, fieldPath)
+            }
+            continue
+        }
+
+        const currentValueType = isCreate || !current ? 'undefined' : typeof(current[fieldName])
+        const updatable = typeof (field.updatable) === 'undefined' || !!field.updatable;
+        const useThingValue = isCreate || (updatable && thingValueType !== 'undefined' && thing[fieldName] != null)
+        const fieldValue = useThingValue
+            ? thing[fieldName]
+            : currentValueType !== 'undefined'
+                ? current[fieldName]
+                : null
+        if (useThingValue) {
+            if (field.type && fieldValue != null && field.type !== thingValueType && !(field.type === 'array' && Array.isArray(fieldValue))) {
+                addError(errors, fieldPath, 'type')
+                continue
+            }
+            if (field.values && fieldValue && (
+                (field.type === 'array' && Array.isArray(fieldValue) && !fieldValue.every(v => field.values.includes(v))) ||
+                (field.type !== 'array' && !field.values.includes(fieldValue))) ) {
+                addError(errors, fieldPath, 'values')
+                continue
+            }
+            for (const validator of Object.keys(validators)) {
+                if (typeof(field[validator]) !== 'undefined') {
+                    if (!validators[validator](fieldValue, field[validator])) {
+                        if (validator === 'required' && typeof(field.default) !== 'undefined') {
+                            continue
+                        }
+                        addError(errors, fieldPath, validator)
+                    }
+                }
+            }
+            if (typeof(errors[fieldName]) === 'undefined') {
+                let val = null
+                if (isCreate && typeof(field.default) !== 'undefined' &&
+                    (!fieldValue || (typeof(fieldValue.length) === 'number' && fieldValue.length === 0))) {
+                    val = field.default
+                } else {
+                    val = typeof(fieldValue) === 'undefined' ? null : fieldValue
+                }
+                // only normalize we used the caller-provided value
+                // do not re-normalize if we used the current value
+                if (useThingValue && fieldValue && field.normalize) {
+                    validated[fieldName] = field.normalize(val)
+                } else {
+                    validated[fieldName] = val
+                }
+            }
+        } else if (!isCreate && currentValueType !== 'undefined') {
+            validated[fieldName] = current[fieldName]
+        }
+    }
 }
 
 const OBJ_ID_SEP = '_MORM_'
@@ -201,62 +364,10 @@ class MobilettoOrmTypeDef {
         this.typeName = fsSafeName(config.typeName)
         this.basePath = config.basePath || ''
         this.fields = Object.assign({}, config.fields, DEFAULT_FIELDS)
-        this.redaction = []
         this.indexes = []
-        this.normalization = []
         this.primary = null
-        Object.keys(this.fields).forEach(fieldName => {
-            const field = this.fields[fieldName]
-            field.type = determineFieldType(fieldName, field)
-            field.control = determineFieldControl(fieldName, field, field.type)
-            if (typeof(field.primary) === 'boolean' && field.primary === true) {
-                if (this.primary) {
-                    throw new MobilettoOrmError(`invalid TypeDefConfig: multiple fields had primary: true: ${this.primary} and ${fieldName}`)
-                }
-                this.primary = fieldName
-                if (typeof(field.required) === 'boolean' && field.required === false) {
-                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${this.primary} had required: false (not allowed)`)
-                }
-                field.required = true
-                if (typeof(field.updatable) === 'boolean' && field.updatable === true) {
-                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${this.primary} had updatable: true (not allowed)`)
-                }
-                field.updatable = false
-            }
-            if (!!(field.index)) {
-                this.indexes.push(fieldName)
-            }
-            if (!!(field.normalize)) {
-                this.normalization.push(fieldName)
-            }
-            if (typeof(field.redact) === 'undefined' && AUTO_REDACT_CONTROLS.includes(field.control)) {
-                if (fieldName !== 'id') {
-                    field.redact = true
-                    this.redaction.push(fieldName)
-                }
-            } else if (typeof(field.redact) === 'boolean' && field.redact === true) {
-                if (fieldName === 'id') {
-                    throw new MobilettoOrmError('cannot redact id field')
-                }
-                this.redaction.push(fieldName)
-            }
-            if (field.values && Array.isArray(field.values)) {
-                const hasLabels = field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length
-                field.items = []
-                if (!hasLabels) field.labels = []
-                for (let i = 0; i < field.values.length; i++) {
-                    let value = field.values[i];
-                    field.items.push({
-                        value,
-                        label: hasLabels ? field.labels[i] :value
-                    })
-                    if (!hasLabels) field.labels.push(value)
-                }
-            } else if (field.items && Array.isArray(field.items)) {
-                field.values = field.items.map(i => i.value)
-                field.labels = field.items.map(i => i.label)
-            }
-        })
+        this.redaction = []
+        processFields(this.fields, '', this)
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES
         this.specificPathRegex  = new RegExp(`^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`, 'gi')
@@ -264,12 +375,11 @@ class MobilettoOrmTypeDef {
     }
 
     validate (thing, current) {
-        const isCreate = typeof(current) === 'undefined'
         const errors = {}
         if (typeof(thing.id) !== 'string' || thing.id.length === 0) {
             if (this.primary) {
                 if (!thing[thing.primary] || thing[thing.primary].length === 0) {
-                    errors[thing.primary] = ['required']
+                    addError(errors, this.primary, 'required')
                 } else {
                     thing.id = normalized(this.fields, this.primary, thing[thing.primary])
                 }
@@ -298,75 +408,31 @@ class MobilettoOrmTypeDef {
             ctime: thing.ctime,
             mtime: thing.mtime
         }
-        for (const fieldName of Object.keys(this.fields)) {
-            const field = this.fields[fieldName]
-            const thingValueType = typeof(thing[fieldName])
-            const currentValueType = isCreate ? 'undefined' : typeof(current[fieldName])
-            const updatable = typeof (field.updatable) === 'undefined' || !!field.updatable;
-            const useThingValue = isCreate || (updatable && thingValueType !== 'undefined' && thing[fieldName] != null)
-            const fieldValue = useThingValue
-                ? thing[fieldName]
-                : currentValueType !== 'undefined'
-                    ? current[fieldName]
-                    : null
-            if (useThingValue) {
-                if (field.type && fieldValue != null && field.type !== thingValueType && !(field.type === 'array' && Array.isArray(fieldValue))) {
-                    errors[fieldName] = ['type']
-                    continue
-                }
-                if (field.values && fieldValue && (
-                    (field.type === 'array' && Array.isArray(fieldValue) && !fieldValue.every(v => field.values.includes(v))) ||
-                    (field.type !== 'array' && !field.values.includes(fieldValue))) ) {
-                    errors[fieldName] = ['values']
-                    continue
-                }
-                for (const validator of Object.keys(this.validators)) {
-                    if (typeof(field[validator]) !== 'undefined') {
-                        if (!this.validators[validator](fieldValue, field[validator])) {
-                            if (validator === 'required' && typeof(field.default) !== 'undefined') {
-                                continue
-                            }
-                            if (typeof(errors[fieldName]) === 'undefined') {
-                                errors[fieldName] = []
-                            }
-                            errors[fieldName].push(validator)
-                        }
-                    }
-                }
-                if (typeof(errors[fieldName]) === 'undefined') {
-                    let val = null
-                    if (isCreate && typeof(field.default) !== 'undefined' &&
-                        (!fieldValue || (typeof(fieldValue.length) === 'number' && fieldValue.length === 0))) {
-                        val = field.default
-                    } else {
-                        val = typeof(fieldValue) === 'undefined' ? null : fieldValue
-                    }
-                    // only normalize we used the caller-provided value
-                    // do not re-normalize if we used the current value
-                    if (useThingValue && fieldValue && field.normalize) {
-                        validated[fieldName] = field.normalize(val)
-                    } else {
-                        validated[fieldName] = val
-                    }
-                }
-            } else if (!isCreate && currentValueType !== 'undefined') {
-                validated[fieldName] = current[fieldName]
-            }
-        }
+        validateFields(thing, this.fields, current, validated, this.validators, errors, '')
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors)
         }
         return validated
     }
 
-    hasRedactions () { return this.redaction.length > 0 }
+    hasRedactions () { return this.redaction && this.redaction.length > 0 }
 
     redact (thing) {
-        if (this.redaction.length > 0) {
-            for (const fieldName of this.redaction) {
-                const field = this.fields[fieldName]
-                if (field.redact && typeof (field.redact) === 'boolean' && field.redact === true && thing[fieldName]) {
-                    thing[fieldName] = null
+        if (this.redaction && this.redaction.length > 0) {
+            for (const objPath of this.redaction) {
+                let objPointer = thing
+                const pathParts = objPath.split('.')
+                for (let i = 0; i < pathParts.length; i++) {
+                    const part = pathParts[i]
+                    if (i === pathParts.length - 1) {
+                        objPointer[part] = null
+                    } else {
+                        if (objPointer && objPointer[part]) {
+                            objPointer = objPointer[part]
+                        } else {
+                            break
+                        }
+                    }
                 }
             }
         }
