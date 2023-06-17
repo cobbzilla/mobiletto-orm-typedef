@@ -218,6 +218,10 @@ class MobilettoOrmTypeDef {
                     throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${this.primary} had required: false (not allowed)`)
                 }
                 field.required = true
+                if (typeof(field.updatable) === 'boolean' && field.updatable === true) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${this.primary} had updatable: true (not allowed)`)
+                }
+                field.updatable = false
             }
             if (!!(field.index)) {
                 this.indexes.push(fieldName)
