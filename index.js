@@ -488,6 +488,7 @@ class MobilettoOrmTypeDef {
 
 module.exports = {
     versionStamp,
+    normalized,
     MobilettoOrmTypeDef,
     MobilettoOrmError,
     MobilettoOrmNotFoundError,
