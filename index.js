@@ -182,6 +182,12 @@ function compareTabIndexes(fields, f1, f2) {
                 ? 1 : 0
 }
 
+function normalized (fields, fieldName, thing) {
+    return fields[fieldName] && typeof(this.fields[fieldName].normalize) === 'function'
+        ? fields[fieldName].normalize(thing[fieldName])
+        : thing[fieldName]
+}
+
 class MobilettoOrmTypeDef {
     constructor(config) {
         if (typeof(config.typeName) !== 'string' || config.typeName.length <= 0) {
@@ -198,10 +204,21 @@ class MobilettoOrmTypeDef {
         this.redaction = []
         this.indexes = []
         this.normalization = []
+        this.primary = null
         Object.keys(this.fields).forEach(fieldName => {
             const field = this.fields[fieldName]
             field.type = determineFieldType(fieldName, field)
             field.control = determineFieldControl(fieldName, field, field.type)
+            if (typeof(field.primary) === 'boolean' && field.primary === true) {
+                if (this.primary) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: multiple fields had primary: true: ${this.primary} and ${fieldName}`)
+                }
+                this.primary = fieldName
+                if (typeof(field.required) === 'boolean' && field.required === false) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${this.primary} had required: false (not allowed)`)
+                }
+                field.required = true
+            }
             if (!!(field.index)) {
                 this.indexes.push(fieldName)
             }
@@ -244,14 +261,18 @@ class MobilettoOrmTypeDef {
 
     validate (thing, current) {
         const isCreate = typeof(current) === 'undefined'
-        if (typeof(thing.version) !== 'string' || thing.version.length < MIN_VERSION_STAMP_LENGTH) {
-            thing.version = versionStamp()
-        }
+        const errors = {}
         if (typeof(thing.id) !== 'string' || thing.id.length === 0) {
-            if (this.alternateIdFields) {
+            if (this.primary) {
+                if (!thing[thing.primary] || thing[thing.primary].length === 0) {
+                    errors[thing.primary] = ['required']
+                } else {
+                    thing.id = normalized(this.fields, this.primary, thing[thing.primary])
+                }
+            } else if (this.alternateIdFields) {
                 for (const alt of this.alternateIdFields) {
                     if (alt in thing) {
-                        thing.id = thing[alt]
+                        thing.id = normalized(this.fields, alt, thing[alt])
                         break
                     }
                 }
@@ -264,7 +285,9 @@ class MobilettoOrmTypeDef {
         if (typeof(thing.mtime) !== 'number' || thing.mtime < thing.ctime) {
             thing.mtime = now
         }
-        const errors = {}
+        if (typeof(thing.version) !== 'string' || thing.version.length < MIN_VERSION_STAMP_LENGTH) {
+            thing.version = versionStamp()
+        }
         const validated = {
             id: thing.id,
             version: thing.version,
@@ -349,13 +372,17 @@ class MobilettoOrmTypeDef {
     id (thing) {
         let foundId = null
         if (typeof(thing.id) === 'string' && thing.id.length > 0) {
-            foundId = thing.id
+            foundId = normalized(this.fields, 'id', thing)
+
+        } else if (this.primary) {
+            foundId = thing[this.primary] && thing[this.primary].length > 0
+                ? normalized(this.fields, this.primary, thing)
+                : null
+
         } else if (this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {
                 if (typeof(thing[alt]) === 'string') {
-                    foundId = this.fields && this.fields[alt] && typeof(this.fields[alt].normalize) === 'function'
-                        ? this.fields[alt].normalize(thing[alt])
-                        : thing[alt]
+                    foundId = normalized(this.fields, alt, thing)
                     break
                 }
             }
