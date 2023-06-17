@@ -353,7 +353,9 @@ class MobilettoOrmTypeDef {
         } else if (this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {
                 if (typeof(thing[alt]) === 'string') {
-                    foundId = thing[alt]
+                    foundId = this.fields && this.fields[alt] && typeof(this.fields[alt].normalize) === 'function'
+                        ? this.fields[alt].normalize(thing[alt])
+                        : thing[alt]
                     break
                 }
             }
