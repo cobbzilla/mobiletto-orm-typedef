@@ -183,7 +183,7 @@ function compareTabIndexes(fields, f1, f2) {
 }
 
 function normalized (fields, fieldName, thing) {
-    return fields[fieldName] && typeof(this.fields[fieldName].normalize) === 'function'
+    return fields[fieldName] && typeof(fields[fieldName].normalize) === 'function'
         ? fields[fieldName].normalize(thing[fieldName])
         : thing[fieldName]
 }
