@@ -381,7 +381,17 @@ class MobilettoOrmTypeDef {
         this.specificPathRegex  = new RegExp(`^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`, 'gi')
         this.validators = Object.assign({}, FIELD_VALIDATIONS, config.validators || {})
         this.validations = config.validations && typeof(config.validations) === 'object' && Object.keys(config.validations).length > 0 ? config.validations : {}
+        this.logger = config.logger || null
     }
+
+    _log (msg, level) {
+        if (this.logger && typeof(this.logger[level]) === 'function') {
+            this.logger[level](msg)
+        }
+    }
+    log_info (msg) { this._log(msg, 'info') }
+    log_warn (msg) { this._log(msg, 'warn') }
+    log_error (msg) { this._log(msg, 'error') }
 
     async validate (thing, current) {
         const errors = {}
@@ -418,6 +428,14 @@ class MobilettoOrmTypeDef {
             mtime: thing.mtime
         }
         validateFields(thing, thing, this.fields, current, validated, this.validators, errors, '')
+        await this.typeDefValidations(validated, errors)
+        if (Object.keys(errors).length > 0) {
+            throw new MobilettoOrmValidationError(errors)
+        }
+        return validated
+    }
+
+    async typeDefValidations (validated, errors) {
         const validationPromises = []
         Object.keys(this.validations).forEach(vName => {
             validationPromises.push(new Promise(async (resolve, reject) => {
@@ -425,28 +443,24 @@ class MobilettoOrmTypeDef {
                 if (typeof(v.valid) !== 'function' || typeof(v.field) !== 'string') {
                     reject(new MobilettoOrmError(`validate: custom validation ${vName} lacked 'valid' function: ${JSON.stringify(v)}`))
                 }
-                let exc = null
+                let ok = null
                 try {
-                    if (!await v.valid(validated)) {
+                    ok = await v.valid(validated);
+                    if (!ok) {
                         const err = typeof (v.error) === 'string' ? v.error : vName
                         addError(errors, v.field, err)
                     }
                 } catch (e) {
-                    exc = new MobilettoOrmError(`validate: custom validation ${vName} error: ${JSON.stringify(e)}`)
+                    this.log_warn(`validate: custom validation ${vName} error: ${JSON.stringify(e)}`)
+                    const err = typeof (v.error) === 'string' ? v.error : vName
+                    addError(errors, v.field, err)
+                    ok = false
                 } finally {
-                    if (exc) {
-                        reject(exc)
-                    } else {
-                        resolve()
-                    }
+                    resolve(ok)
                 }
             }))
         })
-        await Promise.all(validationPromises)
-        if (Object.keys(errors).length > 0) {
-            throw new MobilettoOrmValidationError(errors)
-        }
-        return validated
+        return await Promise.all(validationPromises)
     }
 
     hasRedactions () { return this.redaction && this.redaction.length > 0 }

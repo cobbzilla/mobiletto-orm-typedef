@@ -25,6 +25,24 @@ const typeDefConfig = {
     }
 }
 
+const asyncErrorConfig = {
+    typeName: `TestType_${rand(10)}`,
+    validations: {
+        async_validation_that_throws_error: {
+            field: 'value',
+            valid: async v => {
+                if (v.value === 0) throw TypeError
+                return v.value === 1
+            },
+            error: 'invalid'
+        }
+    },
+    fields: {
+        name: { primary: true },
+        value: { type: 'number' }
+    }
+}
+
 describe('typedef validation test', async () => {
     it("successfully validates with multiple typedef validation errors", async () => {
         const typeDef = new MobilettoOrmTypeDef(typeDefConfig)
@@ -43,5 +61,42 @@ describe('typedef validation test', async () => {
             expect(e.errors['global'].length).equals(1, 'expected 1 global error')
             expect(e.errors['global'][0]).equals('must_sum_to_100', 'expected global.must_sum_to_100 error')
         }
+    })
+    it("successfully validates even when async validator throws an error", async () => {
+        const typeDef = new MobilettoOrmTypeDef(asyncErrorConfig)
+        try {
+            const validated = await typeDef.validate({
+                name: 'foo',
+                value: 0
+            })
+            assert.fail(`expected validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError)
+            expect(Object.keys(e.errors).length).equals(1, 'expected one error')
+            expect(e.errors['value'].length).equals(1, 'expected 1 value error')
+            expect(e.errors['value'][0]).equals('invalid', 'expected value.invalid error')
+        }
+    })
+    it("successfully validates when async validator return false", async () => {
+        const typeDef = new MobilettoOrmTypeDef(asyncErrorConfig)
+        try {
+            const validated = await typeDef.validate({
+                name: 'foo',
+                value: 3
+            })
+            assert.fail(`expected validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError)
+            expect(Object.keys(e.errors).length).equals(1, 'expected one error')
+            expect(e.errors['value'].length).equals(1, 'expected 1 value error')
+            expect(e.errors['value'][0]).equals('invalid', 'expected value.invalid error')
+        }
+    })
+    it("successfully validates when async validator return true", async () => {
+        const typeDef = new MobilettoOrmTypeDef(asyncErrorConfig)
+        await typeDef.validate({
+            name: 'foo',
+            value: 1
+        })
     })
 })
