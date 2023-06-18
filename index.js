@@ -92,10 +92,13 @@ const VALID_FIELD_TYPES = ['string', 'number', 'boolean', 'object', 'array']
 const VALID_PRIMARY_TYPES = ['string', 'number']
 const PRIMITIVE_FIELD_TYPES = ['string', 'number', 'boolean']
 
+const NUMERIC_CONTROL_TYPES = ['duration', 'timestamp', 'range']
+
 function determineFieldControl(fieldName, field, fieldType) {
     if (field.control) return field.control
     if (fieldType === 'boolean') return 'flag'
     if (fieldType === 'array') return 'multi'
+    if (fieldType === 'number' && typeof(field.minValue) === 'number' && typeof(field.maxValue) === 'number') return 'range'
     if (fieldType === 'object' && typeof(field.fields) === 'undefined') return 'textarea'
     if ((field.values && Array.isArray(field.values) && field.values.length > 0) ||
         (field.items && Array.isArray(field.items) && field.items.length > 0)) return 'select'
@@ -113,7 +116,7 @@ function determineFieldType(fieldName, field) {
         }
         foundType = 'string'
     }
-    if (typeof(field.minValue) === 'number' || typeof(field.maxValue) === 'number') {
+    if (typeof(field.minValue) === 'number' || typeof(field.maxValue) === 'number' || (field.control && NUMERIC_CONTROL_TYPES.includes(field.control)) ) {
         if (foundType != null && foundType !== 'number') {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / number`)
         }
