@@ -218,6 +218,9 @@ function processFields (fields, objPath, typeDef) {
                 if (typeof(field.updatable) === 'boolean' && field.updatable === true) {
                     throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${typeDef.primary} had {updatable: true} (not allowed)`)
                 }
+                if (field.when) {
+                    throw new MobilettoOrmError(`invalid TypeDefConfig: primary field ${typeDef.primary} had {when} (not allowed)`)
+                }
                 field.updatable = false
             }
             if (!!(field.index)) {
@@ -266,12 +269,20 @@ function addError (errors, fieldPath, err) {
     }
 }
 
-function validateFields (thing, fields, current, validated, validators, errors, objPath) {
+function validateFields (rootThing, thing, fields, current, validated, validators, errors, objPath) {
     const isCreate = typeof(current) === 'undefined' || current == null
     for (const fieldName of Object.keys(fields)) {
         const fieldPath = objPath === '' ? fieldName : `${objPath}.${fieldName}`
-        const field = fields[fieldName]
+        let field = fields[fieldName]
         const thingValueType = typeof(thing[fieldName])
+
+        if (typeof(field.when) === 'function') {
+            if (field.when(thing)) {
+                field = Object.assign({}, field, {required: true})
+            } else {
+                continue
+            }
+        }
 
         if (field.type === 'object') {
             if (field.required && thingValueType !== 'object') {
@@ -279,7 +290,7 @@ function validateFields (thing, fields, current, validated, validators, errors, 
             } else if (field.fields && thingValueType === 'object') {
                 validated[fieldName] = {}
                 const currentValue = current && typeof(current) === 'object' && current[fieldName] ? current[fieldName] : null
-                validateFields(thing[fieldName], field.fields, currentValue, validated[fieldName], validators, errors, fieldPath)
+                validateFields(rootThing, thing[fieldName], field.fields, currentValue, validated[fieldName], validators, errors, fieldPath)
             }
             continue
         }
@@ -381,10 +392,10 @@ class MobilettoOrmTypeDef {
         const errors = {}
         if (typeof(thing.id) !== 'string' || thing.id.length === 0) {
             if (this.primary) {
-                if (!thing[thing.primary] || thing[thing.primary].length === 0) {
+                if (!thing[this.primary] || thing[this.primary].length === 0) {
                     addError(errors, this.primary, 'required')
                 } else {
-                    thing.id = normalized(this.fields, this.primary, thing[thing.primary])
+                    thing.id = normalized(this.fields, this.primary, thing)
                 }
             } else if (this.alternateIdFields) {
                 for (const alt of this.alternateIdFields) {
@@ -411,7 +422,7 @@ class MobilettoOrmTypeDef {
             ctime: thing.ctime,
             mtime: thing.mtime
         }
-        validateFields(thing, this.fields, current, validated, this.validators, errors, '')
+        validateFields(thing, thing, this.fields, current, validated, this.validators, errors, '')
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors)
         }

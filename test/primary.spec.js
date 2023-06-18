@@ -1,6 +1,6 @@
 const { expect, assert } = require("chai")
 const randomstring = require("randomstring")
-const { MobilettoOrmError, MobilettoOrmTypeDef} = require("../index")
+const { MobilettoOrmError, MobilettoOrmTypeDef } = require("../index")
 
 const rand = count => randomstring.generate(count)
 
