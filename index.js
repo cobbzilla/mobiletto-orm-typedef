@@ -380,6 +380,7 @@ class MobilettoOrmTypeDef {
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES
         this.specificPathRegex  = new RegExp(`^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`, 'gi')
         this.validators = Object.assign({}, FIELD_VALIDATIONS, config.validators || {})
+        this.validations = config.validations && typeof(config.validations) === 'object' && Object.keys(config.validations).length > 0 ? config.validations : {}
     }
 
     validate (thing, current) {
@@ -417,6 +418,15 @@ class MobilettoOrmTypeDef {
             mtime: thing.mtime
         }
         validateFields(thing, thing, this.fields, current, validated, this.validators, errors, '')
+        Object.keys(this.validations).forEach(vName => {
+            const v = this.validations[vName]
+            if (typeof(v.valid) !== 'function' || typeof(v.field) !== 'string') {
+                throw new MobilettoOrmError(`validate: custom validation object lacked 'valid' function: ${JSON.stringify(v)}`)
+            }
+            if (!v.valid(validated)) {
+                addError(errors, v.field, vName)
+            }
+        })
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors)
         }
