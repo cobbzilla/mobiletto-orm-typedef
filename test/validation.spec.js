@@ -86,7 +86,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object without any required fields", async () => {
         try {
-            typeDef.validate({})
+            await typeDef.validate({})
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(2, 'expected two errors')
@@ -98,7 +98,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with an illegal id and without one required field", async () => {
         try {
-            typeDef.validate({ id: '%'+rand(10) })
+            await typeDef.validate({ id: '%'+rand(10) })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(2, 'expected 1 error')
@@ -110,7 +110,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with another illegal id and without one required field", async () => {
         try {
-            typeDef.validate({ id: '~'+rand(10) })
+            await typeDef.validate({ id: '~'+rand(10) })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(2, 'expected 1 error')
@@ -122,7 +122,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object without one required field", async () => {
         try {
-            typeDef.validate({ id: rand(10) })
+            await typeDef.validate({ id: rand(10) })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -132,7 +132,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with a too-short field", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(10) })
+            await typeDef.validate({ id: rand(10), value: rand(10) })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -142,7 +142,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with a too-long field", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(1000) })
+            await typeDef.validate({ id: rand(10), value: rand(1000) })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -152,7 +152,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with a too-small field", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(20), int: -1000 })
+            await typeDef.validate({ id: rand(10), value: rand(20), int: -1000 })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -162,7 +162,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with a too-large field", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(20), int: 100000 })
+            await typeDef.validate({ id: rand(10), value: rand(20), int: 100000 })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -172,7 +172,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with a regex-failing field", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(20), alphaOnly: '111' })
+            await typeDef.validate({ id: rand(10), value: rand(20), alphaOnly: '111' })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -182,7 +182,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object where a value is not one of a specific set", async () => {
         try {
-            typeDef.validate({ id: rand(10), value: rand(20), restricted: 42 })
+            await typeDef.validate({ id: rand(10), value: rand(20), restricted: 42 })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
@@ -192,7 +192,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with multiple validation errors", async () => {
         try {
-            typeDef.validate({ value: rand(10), int: 100000, alphaOnly: '222' })
+            await typeDef.validate({ value: rand(10), int: 100000, alphaOnly: '222' })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(4, 'expected 3 errors')
@@ -208,7 +208,7 @@ describe('validation test', async () => {
     })
     it("fails to create an object with multiple type errors", async () => {
         try {
-            typeDef.validate({ id: 1, value: 42, int: 'foo', alphaOnly: false, comments: [], impliedBoolean: 'true', restricted: 'no' })
+            await typeDef.validate({ id: 1, value: 42, int: 'foo', alphaOnly: false, comments: [], impliedBoolean: 'true', restricted: 'no' })
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
             expect(Object.keys(e.errors).length).equals(7, 'expected 7 errors')
@@ -230,7 +230,7 @@ describe('validation test', async () => {
     })
     it("successfully validates and redacts an object, verifying default fields are properly set and redacted fields are null", async () => {
         const comments = rand(1000)
-        const validated = typeDef.redact(typeDef.validate({
+        const validated = typeDef.redact(await typeDef.validate({
             id: rand(10),
             value: rand(20),
             int: 100,
@@ -249,7 +249,7 @@ describe('validation test', async () => {
         expect(validated.multiselect[1]).eq('option-3')
     })
     it("successfully validates an object with an items array" , async () => {
-        new MobilettoOrmTypeDef({
+        await new MobilettoOrmTypeDef({
             typeName: 'localeType',
             fields: {
                 locale: {

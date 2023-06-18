@@ -51,7 +51,7 @@ const nestedType2 = new MobilettoOrmTypeDef({
 describe('nested validation test with optional nested object with required fields', async () => {
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
         try {
-            const validated = nestedType1.validate({})
+            const validated = await nestedType1.validate({})
             assert.fail(`expected nestedType1.validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
@@ -67,7 +67,7 @@ describe('nested validation test with optional nested object with required field
 describe('nested validation test with required nested object with required fields', async () => {
     it("successfully validates an empty object against this complex typedef with a required nested object with required fields", async () => {
         try {
-            const validated = nestedType2.validate({})
+            const validated = await nestedType2.validate({})
             assert.fail(`expected nestedType2.validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
@@ -82,7 +82,7 @@ describe('nested validation test with required nested object with required field
     })
     it("successfully validates an object with an empty nested value against this complex typedef", async () => {
         try {
-            const validated = nestedType2.validate({ nestedObject: {} })
+            const validated = await nestedType2.validate({ nestedObject: {} })
             assert.fail(`expected nestedType2.validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
@@ -99,7 +99,7 @@ describe('nested validation test with required nested object with required field
     })
     it("successfully validates an object with many invalid values against this complex typedef", async () => {
         try {
-            const validated = nestedType2.validate({
+            const validated = await nestedType2.validate({
                 nestedObject: {
                     nested2: 'r3g3xFail',
                     triplyNestedObject: {

@@ -29,7 +29,7 @@ describe('typedef validation test', async () => {
     it("successfully validates with multiple typedef validation errors", async () => {
         const typeDef = new MobilettoOrmTypeDef(typeDefConfig)
         try {
-            const validated = typeDef.validate({
+            const validated = await typeDef.validate({
                 name: 'foo',
                 slice1: 13,
                 slice2: 11

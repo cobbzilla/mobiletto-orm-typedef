@@ -29,7 +29,7 @@ const conditionalType = new MobilettoOrmTypeDef({
 describe('validation test with conditionally required nested objects', async () => {
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
         try {
-            const validated = conditionalType.validate({})
+            const validated = await conditionalType.validate({})
             assert.fail(`expected conditionalType.validate to throw MobilettoOrmValidationError, but it returned ${validated}`)
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
@@ -42,7 +42,7 @@ describe('validation test with conditionally required nested objects', async () 
     })
     it("successfully validates a thing that selects from selector but does not supply any values", async () => {
         try {
-            const validated = conditionalType.validate({
+            const validated = await conditionalType.validate({
                 id: 'foo',
                 primaryField: 'primaryField',
                 selector: 1
@@ -57,7 +57,7 @@ describe('validation test with conditionally required nested objects', async () 
     })
     it("successfully validates a thing that selects 1 from selector but does not supply appropriate values", async () => {
         try {
-            const validated = conditionalType.validate({
+            const validated = await conditionalType.validate({
                 id: 'foo',
                 primaryField: 'primaryField',
                 selector: 1,
@@ -75,7 +75,7 @@ describe('validation test with conditionally required nested objects', async () 
     })
     it("successfully validates a thing that selects 2 from selector but does not supply appropriate values", async () => {
         try {
-            const validated = conditionalType.validate({
+            const validated = await conditionalType.validate({
                 id: 'foo',
                 primaryField: 'primaryField',
                 selector: 2,
@@ -93,7 +93,7 @@ describe('validation test with conditionally required nested objects', async () 
         }
     })
     it("successfully validates a thing that selects 2 from selector and supplies appropriate values", async () => {
-        const validated = conditionalType.validate({
+        const validated = await conditionalType.validate({
             primaryField: 'primaryField',
             selector: 2,
             nested1: {

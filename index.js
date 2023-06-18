@@ -383,7 +383,7 @@ class MobilettoOrmTypeDef {
         this.validations = config.validations && typeof(config.validations) === 'object' && Object.keys(config.validations).length > 0 ? config.validations : {}
     }
 
-    validate (thing, current) {
+    async validate (thing, current) {
         const errors = {}
         if (typeof(thing.id) !== 'string' || thing.id.length === 0) {
             if (this.primary) {
@@ -418,16 +418,31 @@ class MobilettoOrmTypeDef {
             mtime: thing.mtime
         }
         validateFields(thing, thing, this.fields, current, validated, this.validators, errors, '')
+        const validationPromises = []
         Object.keys(this.validations).forEach(vName => {
-            const v = this.validations[vName]
-            if (typeof(v.valid) !== 'function' || typeof(v.field) !== 'string') {
-                throw new MobilettoOrmError(`validate: custom validation object lacked 'valid' function: ${JSON.stringify(v)}`)
-            }
-            if (!v.valid(validated)) {
-                const err = typeof(v.error) === 'string' ? v.error : vName
-                addError(errors, v.field, err)
-            }
+            validationPromises.push(new Promise(async (resolve, reject) => {
+                const v = this.validations[vName]
+                if (typeof(v.valid) !== 'function' || typeof(v.field) !== 'string') {
+                    reject(new MobilettoOrmError(`validate: custom validation ${vName} lacked 'valid' function: ${JSON.stringify(v)}`))
+                }
+                let exc = null
+                try {
+                    if (!await v.valid(validated)) {
+                        const err = typeof (v.error) === 'string' ? v.error : vName
+                        addError(errors, v.field, err)
+                    }
+                } catch (e) {
+                    exc = new MobilettoOrmError(`validate: custom validation ${vName} error: ${JSON.stringify(e)}`)
+                } finally {
+                    if (exc) {
+                        reject(exc)
+                    } else {
+                        resolve()
+                    }
+                }
+            }))
         })
+        await Promise.all(validationPromises)
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors)
         }
