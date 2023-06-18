@@ -153,9 +153,6 @@ function determineFieldType(fieldName, field) {
                 throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had different lengths for items (${field.values.length}) vs labels (${field.labels.length})`)
             }
         }
-        if (foundType != null && foundType !== 'array') {
-            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / array`)
-        }
         if ((!field.control || field.control !== 'multi') && (!field.type || field.type !== 'array')) {
             const vType = hasItems && field.items.length > 0 && typeof (field.items[0].value) !== 'undefined' && field.items[0].value != null
                 ? typeof (field.items[0].value)
@@ -251,9 +248,6 @@ function processFields (fields, objPath, typeDef) {
                     if (!hasLabels) field.labels.push(value)
                 }
             } else if (field.items && Array.isArray(field.items)) {
-                if (field.type !== 'array') {
-                    throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had items but type is not array`)
-                }
                 field.values = field.items.map(i => i.value)
                 field.labels = field.items.map(i => i.label)
             }

@@ -248,4 +248,20 @@ describe('validation test', async () => {
         expect(validated.multiselect[0]).eq('option-2')
         expect(validated.multiselect[1]).eq('option-3')
     })
+    it("successfully validates an object with an items array" , async () => {
+        new MobilettoOrmTypeDef({
+            typeName: 'localeType',
+            fields: {
+                locale: {
+                    type: 'string',
+                    items: ['foo', 'bar'].map((loc) => {
+                        return { value: loc, label: `locale_${loc}` }
+                    }),
+                    primary: true
+                }
+            }
+        }).validate({
+            locale: 'foo'
+        })
+    })
 })
