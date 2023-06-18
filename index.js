@@ -424,7 +424,8 @@ class MobilettoOrmTypeDef {
                 throw new MobilettoOrmError(`validate: custom validation object lacked 'valid' function: ${JSON.stringify(v)}`)
             }
             if (!v.valid(validated)) {
-                addError(errors, v.field, vName)
+                const err = typeof(v.error) === 'string' ? v.error : vName
+                addError(errors, v.field, err)
             }
         })
         if (Object.keys(errors).length > 0) {

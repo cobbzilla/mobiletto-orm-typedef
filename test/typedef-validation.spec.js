@@ -14,7 +14,8 @@ const typeDefConfig = {
         },
         slice1_last_digit_3: {
             field: 'slice1',
-            valid: v => (v.slice1 ?? 0) % 10 !== 3
+            valid: v => (v.slice1 ?? 0) % 10 !== 3,
+            error: 'invalid'
         }
     },
     fields: {
@@ -38,7 +39,7 @@ describe('typedef validation test', async () => {
             expect(e).instanceof(MobilettoOrmValidationError)
             expect(Object.keys(e.errors).length).equals(2, 'expected two errors')
             expect(e.errors['slice1'].length).equals(1, 'expected 1 slice1 error')
-            expect(e.errors['slice1'][0]).equals('slice1_last_digit_3', 'expected slice1.slice1_last_digit_3 error')
+            expect(e.errors['slice1'][0]).equals('invalid', 'expected slice1.invalid error')
             expect(e.errors['global'].length).equals(1, 'expected 1 global error')
             expect(e.errors['global'][0]).equals('must_sum_to_100', 'expected global.must_sum_to_100 error')
         }
