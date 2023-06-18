@@ -447,6 +447,23 @@ class MobilettoOrmTypeDef {
         return thing
     }
 
+    idField (thing) {
+        if (typeof(thing.id) === 'string' && thing.id.length > 0) {
+            return 'id'
+
+        } else if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
+            return this.primary
+
+        } else if (this.alternateIdFields) {
+            for (const alt of this.alternateIdFields) {
+                if (typeof(thing[alt]) === 'string') {
+                    return alt
+                }
+            }
+        }
+        return null
+    }
+
     id (thing) {
         let foundId = null
         if (typeof(thing.id) === 'string' && thing.id.length > 0) {
