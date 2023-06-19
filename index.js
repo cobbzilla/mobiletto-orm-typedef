@@ -395,6 +395,44 @@ class MobilettoOrmTypeDef {
     log_warn (msg) { this._log(msg, 'warn') }
     log_error (msg) { this._log(msg, 'error') }
 
+    defaultFieldValue (field) {
+        if (field.default) return field.default
+        if (field.type === 'array') return []
+        if (field.values) return field.values[0]
+        if (field.type === 'string') return ''
+        if (field.type === 'number') return 0
+        if (field.type === 'boolean') return false
+        if (field.type === 'object') return {}
+        this.log_warn(`defaultFieldValue: unknown field.type=${field.type ? field.type : 'undefined'} for field ${field.name ? field.name : 'undefined'}, assuming string and returning ''`)
+        return ''
+    }
+
+    newInstanceFields(fields, rootThing, thing, opts = {}) {
+        for (const fieldName of Object.keys(fields)) {
+            const field = fields[fieldName]
+            if (field.when && typeof(field.when) === 'function') {
+                if (!field.when(rootThing)) {
+                    continue
+                }
+            }
+            if (field.type === 'object' && field.fields && Object.keys(field.fields).length > 0 && (field.required || opts.full)) {
+                thing[fieldName] = {}
+                this.newInstanceFields(field.fields, rootThing, thing[fieldName], opts)
+            } else if (opts.full || (typeof(field.default) !== 'undefined' && field.default != null)) {
+                thing[fieldName] = this.defaultFieldValue(field)
+            }
+        }
+    }
+
+    newInstance (opts = {}) {
+        const newThing = {}
+        this.newInstanceFields(this.fields, newThing, newThing, opts)
+        return newThing
+    }
+    newFullInstance () {
+        return this.newInstance({ full: true })
+    }
+
     async validate (thing, current) {
         const errors = {}
         if (typeof(thing.id) !== 'string' || thing.id.length === 0) {

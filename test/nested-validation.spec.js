@@ -64,6 +64,21 @@ describe('nested validation test with optional nested object with required field
         expect(nestedType1.fields.nestedObject.fields.triplyNestedObject.tabIndexes[0]).eq('nested3Required')
         expect(nestedType1.fields.nestedObject.fields.triplyNestedObject.tabIndexes[1]).eq('nested3Plain')
     })
+    it("typeDef.newInstance returns a correct default object with proper nested default objects", async () => {
+        const instance = nestedType1.newInstance()
+        expect(instance.primaryField).is.undefined
+        expect(instance.otherField).is.undefined
+        expect(instance.nestedObject).is.undefined
+    })
+    it("typeDef.newFullInstance returns a correct default full object with proper nested default full objects", async () => {
+        const instance = nestedType1.newFullInstance()
+        expect(instance.primaryField).eq('')
+        expect(instance.otherField).eq('')
+        expect(instance.nestedObject.nested1).eq('')
+        expect(instance.nestedObject.nested2).eq('')
+        expect(instance.nestedObject.triplyNestedObject.nested3Plain).eq(1)
+        expect(instance.nestedObject.triplyNestedObject.nested3Required).eq('')
+    })
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
         try {
             const validated = await nestedType1.validate({})

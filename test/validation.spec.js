@@ -84,6 +84,28 @@ describe('validation test', async () => {
         expect(ti[7]).eq('multiselect')
         expect(ti[8]).eq('id')
     })
+    it("typeDef.newInstance returns a correct default object", async () => {
+        const instance = typeDef.newInstance()
+        expect(instance.value).is.undefined
+        expect(instance.int).is.undefined
+        expect(instance.comments).is.undefined
+        expect(instance.alphaOnly).is.undefined
+        expect(instance.defaultableField).eq(SOME_DEFAULT_VALUE)
+        expect(instance.impliedBoolean).eq(false)
+        expect(instance.restricted).is.undefined
+        expect(instance.multiselect).is.undefined
+    })
+    it("typeDef.newFullInstance returns a correct default full object", async () => {
+        const instance = typeDef.newFullInstance()
+        expect(instance.value).eq('')
+        expect(instance.int).eq(0)
+        expect(instance.comments).eq('')
+        expect(instance.alphaOnly).eq('')
+        expect(instance.defaultableField).eq(SOME_DEFAULT_VALUE)
+        expect(instance.impliedBoolean).eq(false)
+        expect(instance.restricted).eq(1)
+        expect(instance.multiselect.length).eq(0)
+    })
     it("fails to create an object without any required fields", async () => {
         try {
             await typeDef.validate({})
