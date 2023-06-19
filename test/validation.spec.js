@@ -72,17 +72,17 @@ describe('validation test', async () => {
         expect(fieldDefs['multiselect'].control).eq('multi')
     })
     it("typeDef.tabIndexes returns the field names in the correct order", async () => {
-        const tindexes = typeDef.tabIndexes()
-        expect(tindexes.length).eq(Object.keys(typeDef.fields).length)
-        expect(tindexes[0]).eq('impliedBoolean')
-        expect(tindexes[1]).eq('int')
-        expect(tindexes[2]).eq('alphaOnly')
-        expect(tindexes[3]).eq('value')
-        expect(tindexes[4]).eq('comments')
-        expect(tindexes[5]).eq('defaultableField')
-        expect(tindexes[6]).eq('restricted')
-        expect(tindexes[7]).eq('multiselect')
-        expect(tindexes[8]).eq('id')
+        const ti = typeDef.tabIndexes
+        expect(ti.length).eq(Object.keys(typeDef.fields).length)
+        expect(ti[0]).eq('impliedBoolean')
+        expect(ti[1]).eq('int')
+        expect(ti[2]).eq('alphaOnly')
+        expect(ti[3]).eq('value')
+        expect(ti[4]).eq('comments')
+        expect(ti[5]).eq('defaultableField')
+        expect(ti[6]).eq('restricted')
+        expect(ti[7]).eq('multiselect')
+        expect(ti[8]).eq('id')
     })
     it("fails to create an object without any required fields", async () => {
         try {

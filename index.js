@@ -195,6 +195,7 @@ function processFields (fields, objPath, typeDef) {
             field.control = determineFieldControl(fieldName, field, field.type)
             const fieldPath = objPath === '' ? fieldName : objPath + '.' + fieldName
             if (field.type === 'object' && field.fields && typeof(field.fields) === 'object') {
+                field.tabIndexes = typeDef._tabIndexes(field.fields)
                 processFields(field.fields, fieldPath, typeDef)
             }
             if (typeof(field.primary) === 'boolean' && field.primary === true) {
@@ -375,6 +376,7 @@ class MobilettoOrmTypeDef {
         this.indexes = []
         this.primary = null
         this.redaction = []
+        this.tabIndexes = this._tabIndexes(this.fields)
         processFields(this.fields, '', this)
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES
@@ -525,14 +527,12 @@ class MobilettoOrmTypeDef {
         return foundId != null ? fsSafeName(foundId) : null
     }
 
-    tabIndexes () {
-        const fields = this.fields
+    _tabIndexes (fields = this.fields) {
         return Object.keys(fields)
             .sort((f1, f2) => compareTabIndexes(fields, f1, f2))
     }
 
-    tabIndexedFields () {
-        const fields = this.fields
+    tabIndexedFields (fields = this.fields) {
         return Object.keys(fields)
             .map((f) => {
                 return {

@@ -7,9 +7,10 @@ const rand = count => randomstring.generate(count)
 const nestedType1 = new MobilettoOrmTypeDef({
     typeName: `TestType_${rand(10)}`,
     fields: {
-        primaryField: { primary: true },
-        otherField: {},
+        primaryField: { primary: true, tabIndex: 100 },
+        otherField: { tabIndex: 0 },
         nestedObject: {
+            tabIndex: 50,
             fields: {
                 // these fields can be omitted if the entire object is omitted
                 // because there is no 'required: true' at the nestedObject-level
@@ -17,8 +18,8 @@ const nestedType1 = new MobilettoOrmTypeDef({
                 nested2: { regex: /[A-Z]+/i },
                 triplyNestedObject: {
                     fields: {
-                        nested3Plain: { values: [1, 2, 3] },
-                        nested3Required: { required: true },
+                        nested3Plain: { values: [1, 2, 3], tabIndex: 42 },
+                        nested3Required: { required: true, tabIndex: 9 },
                     }
                 }
             }
@@ -49,6 +50,20 @@ const nestedType2 = new MobilettoOrmTypeDef({
 })
 
 describe('nested validation test with optional nested object with required fields', async () => {
+    it("successfully sets tabIndexes for typeDef and all nested objects", async () => {
+        expect(nestedType1.tabIndexes.length).eq(4)
+        expect(nestedType1.tabIndexes[0]).eq('otherField')
+        expect(nestedType1.tabIndexes[1]).eq('nestedObject')
+        expect(nestedType1.tabIndexes[2]).eq('primaryField')
+        expect(nestedType1.tabIndexes[3]).eq('id')
+        expect(nestedType1.fields.nestedObject.tabIndexes.length).eq(3)
+        expect(nestedType1.fields.nestedObject.tabIndexes[0]).eq('nested1')
+        expect(nestedType1.fields.nestedObject.tabIndexes[1]).eq('nested2')
+        expect(nestedType1.fields.nestedObject.tabIndexes[2]).eq('triplyNestedObject')
+        expect(nestedType1.fields.nestedObject.fields.triplyNestedObject.tabIndexes.length).eq(2)
+        expect(nestedType1.fields.nestedObject.fields.triplyNestedObject.tabIndexes[0]).eq('nested3Required')
+        expect(nestedType1.fields.nestedObject.fields.triplyNestedObject.tabIndexes[1]).eq('nested3Plain')
+    })
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
         try {
             const validated = await nestedType1.validate({})
