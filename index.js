@@ -81,7 +81,6 @@ const DEFAULT_FIELDS = {
         regex: /^[^%~]+$/gi
     },
     ctime: {
-        required: true,
         control: 'label',
         type: 'number',
         updatable: false,
@@ -89,7 +88,6 @@ const DEFAULT_FIELDS = {
         render: 'datetime'
     },
     mtime: {
-        required: true,
         control: 'label',
         type: 'number',
         normalize: () => Date.now(),
