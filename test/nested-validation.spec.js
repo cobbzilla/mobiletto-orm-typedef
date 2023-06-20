@@ -51,11 +51,13 @@ const nestedType2 = new MobilettoOrmTypeDef({
 
 describe('nested validation test with optional nested object with required fields', async () => {
     it("successfully sets tabIndexes for typeDef and all nested objects", async () => {
-        expect(nestedType1.tabIndexes.length).eq(4)
+        expect(nestedType1.tabIndexes.length).eq(6)
         expect(nestedType1.tabIndexes[0]).eq('otherField')
         expect(nestedType1.tabIndexes[1]).eq('nestedObject')
         expect(nestedType1.tabIndexes[2]).eq('primaryField')
         expect(nestedType1.tabIndexes[3]).eq('id')
+        expect(nestedType1.tabIndexes[4]).eq('ctime')
+        expect(nestedType1.tabIndexes[5]).eq('mtime')
         expect(nestedType1.fields.nestedObject.tabIndexes.length).eq(3)
         expect(nestedType1.fields.nestedObject.tabIndexes[0]).eq('nested1')
         expect(nestedType1.fields.nestedObject.tabIndexes[1]).eq('nested2')

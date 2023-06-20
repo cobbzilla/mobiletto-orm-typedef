@@ -79,6 +79,21 @@ const DEFAULT_FIELDS = {
         updatable: false,
         normalize: fsSafeName,
         regex: /^[^%~]+$/gi
+    },
+    ctime: {
+        required: true,
+        control: 'label',
+        type: 'number',
+        updatable: false,
+        normalize: () => Date.now(),
+        render: 'datetime'
+    },
+    mtime: {
+        required: true,
+        control: 'label',
+        type: 'number',
+        normalize: () => Date.now(),
+        render: 'datetime'
     }
 }
 
