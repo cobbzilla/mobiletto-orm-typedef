@@ -391,6 +391,7 @@ class MobilettoOrmTypeDef {
         this.redaction = []
         this.tabIndexes = this._tabIndexes(this.fields)
         processFields(this.fields, '', this)
+        this.tableFields = config.tableFields || (this.primary ? [this.primary, 'ctime', 'mtime'] : [this.idField(this.newDummyInstance()), 'ctime', 'mtime'])
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES
         this.specificPathRegex  = new RegExp(`^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`, 'gi')
@@ -408,19 +409,21 @@ class MobilettoOrmTypeDef {
     log_warn (msg) { this._log(msg, 'warn') }
     log_error (msg) { this._log(msg, 'error') }
 
-    defaultFieldValue (field) {
+    defaultFieldValue (field, opts) {
+        const dummy = opts && opts.dummy === true
         if (field.default) return field.default
         if (field.type === 'array') return []
         if (field.values) return field.values[0]
-        if (field.type === 'string') return ''
-        if (field.type === 'number') return 0
-        if (field.type === 'boolean') return false
-        if (field.type === 'object') return {}
+        if (field.type === 'string') return dummy ? randomstring.generate(Math.ceil(Math.random()*(field.max ? field.max : 10))) : ''
+        if (field.type === 'number') return dummy ? Math.random() * (field.max ? field.max : 100) : 0
+        if (field.type === 'boolean') return dummy ? Math.floor(1000*Math.random()) % 2 === 0 : false
+        if (field.type === 'object') return dummy ? { dummy } : {}
         this.log_warn(`defaultFieldValue: unknown field.type=${field.type ? field.type : 'undefined'} for field ${field.name ? field.name : 'undefined'}, assuming string and returning ''`)
-        return ''
+        return dummy ? randomstring.generate(Math.ceil(Math.random()*(field.max ? field.max : 10))) : ''
     }
 
     newInstanceFields(fields, rootThing, thing, opts = {}) {
+        const dummy = opts && opts.dummy === true
         for (const fieldName of Object.keys(fields)) {
             const field = fields[fieldName]
             if (field.when && typeof(field.when) === 'function') {
@@ -431,8 +434,8 @@ class MobilettoOrmTypeDef {
             if (field.type === 'object' && field.fields && Object.keys(field.fields).length > 0 && (field.required || opts.full)) {
                 thing[fieldName] = {}
                 this.newInstanceFields(field.fields, rootThing, thing[fieldName], opts)
-            } else if (opts.full || (typeof(field.default) !== 'undefined' && field.default != null)) {
-                thing[fieldName] = this.defaultFieldValue(field)
+            } else if (opts.full || dummy || (typeof(field.default) !== 'undefined' && field.default != null)) {
+                thing[fieldName] = this.defaultFieldValue(field, { dummy })
             }
         }
     }
@@ -444,6 +447,9 @@ class MobilettoOrmTypeDef {
     }
     newFullInstance () {
         return this.newInstance({ full: true })
+    }
+    newDummyInstance () {
+        return this.newInstance({ dummy: true })
     }
 
     async validate (thing, current) {
@@ -549,7 +555,7 @@ class MobilettoOrmTypeDef {
 
         } else if (this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {
-                if (typeof(thing[alt]) === 'string') {
+                if (typeof(thing[alt]) === 'string' && thing[alt].length > 0) {
                     return alt
                 }
             }

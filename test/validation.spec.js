@@ -106,6 +106,17 @@ describe('validation test', async () => {
         expect(instance.restricted).eq(1)
         expect(instance.multiselect.length).eq(0)
     })
+    it("typeDef.newDummyInstance returns a correct dummy object", async () => {
+        const instance = typeDef.newDummyInstance()
+        expect(instance.value.length).greaterThan(0)
+        expect(instance.int).greaterThan(0)
+        expect(instance.comments.length).greaterThan(0)
+        expect(instance.alphaOnly.length).greaterThan(0)
+        expect(instance.defaultableField).eq(SOME_DEFAULT_VALUE)
+        // expect(instance.impliedBoolean).eq(false) // could be true or false, nothing to test
+        expect(instance.restricted).eq(1)
+        expect(instance.multiselect.length).eq(0)
+    })
     it("fails to create an object without any required fields", async () => {
         try {
             await typeDef.validate({})
