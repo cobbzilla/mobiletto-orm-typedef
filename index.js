@@ -306,11 +306,16 @@ function validateFields (rootThing, thing, fields, current, validated, validator
         const currentValueType = isCreate || !current ? 'undefined' : typeof(current[fieldName])
         const updatable = typeof (field.updatable) === 'undefined' || !!field.updatable;
         const useThingValue = isCreate || (updatable && thingValueType !== 'undefined' && thing[fieldName] != null)
-        const fieldValue = useThingValue
+        let fieldValue = useThingValue
             ? thing[fieldName]
             : currentValueType !== 'undefined'
                 ? current[fieldName]
                 : null
+        if (typeof (fieldValue) === 'string' && (!field.required || field.required === false) && fieldValue === '') {
+            // empty strings are treated as no-value; for not-required fields the value '' becomes null
+            // this ensures that "min length" checks pass
+            fieldValue = null
+        }
         if (useThingValue) {
             if (field.type && fieldValue != null && field.type !== thingValueType && !(field.type === 'array' && Array.isArray(fieldValue))) {
                 addError(errors, fieldPath, 'type')

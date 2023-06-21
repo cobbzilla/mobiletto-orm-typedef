@@ -8,6 +8,8 @@ const SOME_DEFAULT_VALUE = rand(10)
 
 const ALPHA_STRING = 'AbCdEfGh'
 
+const NOT_REQUIRED_MIN_LEN = 10
+
 const typeDef = new MobilettoOrmTypeDef({
     typeName: `TestType_${rand(10)}`,
     fields: {
@@ -45,6 +47,11 @@ const typeDef = new MobilettoOrmTypeDef({
             type: 'array',
             control: 'multi',
             values: ['option-1', 'option-2', 'option-3', 'option-4']
+        },
+        notRequiredButHasMin: {
+            type: 'string',
+            required: false,
+            min: NOT_REQUIRED_MIN_LEN
         }
     }
 })
@@ -82,7 +89,8 @@ describe('validation test', async () => {
         expect(ti[5]).eq('defaultableField')
         expect(ti[6]).eq('restricted')
         expect(ti[7]).eq('multiselect')
-        expect(ti[8]).eq('id')
+        expect(ti[8]).eq('notRequiredButHasMin')
+        expect(ti[9]).eq('id')
     })
     it("typeDef.newInstance returns a correct default object", async () => {
         const instance = typeDef.newInstance()
@@ -222,6 +230,20 @@ describe('validation test', async () => {
             expect(e.errors['restricted'].length).equals(1, 'expected 1 restricted error')
             expect(e.errors['restricted'][0]).equals('values', 'expected restricted.values error')
         }
+    })
+    it("fails to create an object where a field is not required but has a minimum length, and the value too short", async () => {
+        try {
+            await typeDef.validate({ id: rand(10), value: rand(20), notRequiredButHasMin: rand(Math.min(2, NOT_REQUIRED_MIN_LEN/2)) })
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, 'incorrect exception type')
+            expect(Object.keys(e.errors).length).equals(1, 'expected 1 error')
+            expect(e.errors['notRequiredButHasMin'].length).equals(1, 'expected 1 notRequiredButHasMin error')
+            expect(e.errors['notRequiredButHasMin'][0]).equals('min', 'expected notRequiredButHasMin.min error')
+        }
+    })
+    it("successfully creates an object where a field is not required but has a minimum length, and the value the empty string", async () => {
+        const validated = await typeDef.validate({ id: rand(10), value: rand(20), notRequiredButHasMin: '' })
+        expect(validated.notRequiredButHasMin).is.null
     })
     it("fails to create an object with multiple validation errors", async () => {
         try {
