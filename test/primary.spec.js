@@ -48,4 +48,16 @@ describe('primary field test', async () => {
             expect(e).instanceof(MobilettoOrmError)
         }
     })
+    it("typeDef.id(obj) returns primary value", async () => {
+        const pkey = rand(10);
+        const typeDef = new MobilettoOrmTypeDef({
+            typeName: `TestType_${rand(10)}`,
+            fields: {
+                id: rand(10),
+                value: { primary: true },
+                email: rand(10)
+            }
+        });
+        expect(typeDef.id({ value: pkey })).eq(pkey)
+    })
 })

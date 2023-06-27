@@ -573,7 +573,7 @@ class MobilettoOrmTypeDef {
         if (typeof(thing.id) === 'string' && thing.id.length > 0) {
             foundId = normalized(this.fields, 'id', thing)
 
-        } else if (this.primary) {
+        } else if (this.primary && typeof(thing[this.primary]) === 'string' && thing[this.primary].length > 0) {
             foundId = thing[this.primary] && thing[this.primary].length > 0
                 ? normalized(this.fields, this.primary, thing)
                 : null
