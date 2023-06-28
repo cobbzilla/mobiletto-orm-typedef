@@ -673,7 +673,8 @@ class MobilettoOrmTypeDef {
     }
 
     isTombstone(thing) {
-        return typeof(thing.id) === 'string'
+        return thing
+            && typeof(thing.id) === 'string'
             && typeof(thing.version) === 'string' && thing.version.length > 0
             && typeof(thing.ctime) === 'number' && thing.ctime > 0
             && typeof(thing.mtime) === 'number' && thing.mtime >= thing.ctime
