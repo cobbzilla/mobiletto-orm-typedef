@@ -1,8 +1,16 @@
-export {
+import {
   MobilettoOrmError,
   MobilettoOrmNotFoundError,
   MobilettoOrmSyncError,
   MobilettoOrmValidationError,
 } from "./errors.js";
 
-export { MobilettoOrmTypeDefConfig, MobilettoOrmTypeDef } from "./type.js";
+import { MobilettoOrmTypeDef } from "./type.js";
+
+export default {
+  MobilettoOrmError,
+  MobilettoOrmNotFoundError,
+  MobilettoOrmSyncError,
+  MobilettoOrmValidationError,
+  MobilettoOrmTypeDef,
+};
