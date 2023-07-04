@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import randomstring from "randomstring";
+import * as randomstring from "randomstring";
 import * as path from "path";
 import {
   addError,

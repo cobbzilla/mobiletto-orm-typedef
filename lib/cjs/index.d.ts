@@ -6,5 +6,6 @@ declare const _default: {
     MobilettoOrmSyncError: typeof MobilettoOrmSyncError;
     MobilettoOrmValidationError: typeof MobilettoOrmValidationError;
     MobilettoOrmTypeDef: typeof MobilettoOrmTypeDef;
+    versionStamp: () => string;
 };
 export default _default;

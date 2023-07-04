@@ -1,5 +1,5 @@
 import { expect, assert } from "chai";
-import randomstring from "randomstring";
+import * as randomstring from "randomstring";
 import {
   MobilettoOrmValidationError,
   MobilettoOrmTypeDef,

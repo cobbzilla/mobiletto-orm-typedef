@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import randomstring from "randomstring";
+import * as randomstring from "randomstring";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
