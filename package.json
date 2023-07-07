@@ -28,7 +28,7 @@
   "scripts": {
     "test": "mocha ./test/*.spec.js",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
-    "lint": "npx eslint src ",
+    "lint": "npx eslint src test",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "npx prettier src test --check",
     "prettier:fix": "npm run prettier -- --write"
