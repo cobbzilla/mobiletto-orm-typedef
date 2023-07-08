@@ -45,6 +45,7 @@ export type MobilettoOrmTypeDefConfig = {
 export type MobilettoOrmPersistable = {
     id: string;
     version: string;
+    removed?: boolean;
     ctime: number;
     mtime: number;
     /* eslint-disable @typescript-eslint/no-explicit-any */
