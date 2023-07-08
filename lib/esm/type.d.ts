@@ -16,6 +16,12 @@ export type MobilettoOrmTypeDefConfig = {
     validations?: TypeValidations;
     logger?: MobilettoOrmLogger;
 };
+export type MobilettoOrmPersistable = {
+    id: string;
+    ctime: number;
+    mtime: number;
+    [prop: string]: any;
+};
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -23,7 +29,7 @@ export declare class MobilettoOrmTypeDef {
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
-    readonly indexes: any[];
+    readonly indexes: string[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
     readonly tableFields: string[];
@@ -39,7 +45,8 @@ export declare class MobilettoOrmTypeDef {
     log_warn(msg: string): void;
     log_error(msg: string): void;
     defaultFieldValue(field: MobilettoOrmFieldDefConfig, opts: MobilettoOrmDefaultFieldOpts): MobilettoOrmFieldValue;
-    newInstanceFields(fields: MobilettoOrmFieldDefConfigs, rootThing: any, thing: any, opts?: MobilettoOrmNewInstanceOpts): void;
+    newInstanceFields(fields: MobilettoOrmFieldDefConfigs, rootThing: MobilettoOrmPersistable, thing: MobilettoOrmPersistable, opts?: MobilettoOrmNewInstanceOpts): void;
+    newBlankInstance(): MobilettoOrmPersistable;
     newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmInstance;
     newFullInstance(): MobilettoOrmInstance;
     newDummyInstance(): MobilettoOrmInstance;
@@ -49,7 +56,7 @@ export declare class MobilettoOrmTypeDef {
         ctime: any;
         mtime: any;
     }>;
-    typeDefValidations(validated: any, errors: ValidationErrors): Promise<void>;
+    typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors): Promise<void>;
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmInstance): MobilettoOrmInstance;
     idField(thing: MobilettoOrmInstance): string | null;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import * as randomstring from "randomstring";
@@ -43,6 +42,15 @@ export type MobilettoOrmTypeDefConfig = {
     logger?: MobilettoOrmLogger;
 };
 
+export type MobilettoOrmPersistable = {
+    id: string;
+    ctime: number;
+    mtime: number;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    [prop: string]: any;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+};
+
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -50,7 +58,7 @@ export class MobilettoOrmTypeDef {
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
-    readonly indexes: any[];
+    readonly indexes: string[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
     readonly tableFields: string[];
@@ -98,9 +106,11 @@ export class MobilettoOrmTypeDef {
     }
 
     _log(msg: string, level: string) {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         if (this.logger && typeof (this.logger as any)[level] === "function") {
             (this.logger as any)[level](msg);
         }
+        /* eslint-enable @typescript-eslint/no-explicit-any */
     }
     log_info(msg: string) {
         this._log(msg, "info");
@@ -132,8 +142,8 @@ export class MobilettoOrmTypeDef {
 
     newInstanceFields(
         fields: MobilettoOrmFieldDefConfigs,
-        rootThing: any,
-        thing: any,
+        rootThing: MobilettoOrmPersistable,
+        thing: MobilettoOrmPersistable,
         opts: MobilettoOrmNewInstanceOpts = {}
     ) {
         const dummy = opts && opts.dummy === true;
@@ -158,8 +168,11 @@ export class MobilettoOrmTypeDef {
         }
     }
 
+    newBlankInstance(): MobilettoOrmPersistable {
+        return { id: "", ctime: 0, mtime: 0 };
+    }
     newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmInstance {
-        const newThing = {};
+        const newThing: MobilettoOrmPersistable = this.newBlankInstance();
         this.newInstanceFields(this.fields, newThing, newThing, opts);
         return newThing;
     }
@@ -212,7 +225,7 @@ export class MobilettoOrmTypeDef {
         return validated;
     }
 
-    async typeDefValidations(validated: any, errors: ValidationErrors) {
+    async typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors) {
         const validationPromises: Promise<void>[] = [];
         Object.keys(this.validations).forEach((vName) => {
             const v = this.validations[vName];
