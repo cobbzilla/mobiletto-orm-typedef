@@ -61,7 +61,9 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
     const hasItems = field.items && Array.isArray(field.items);
     const hasValues = field.values && Array.isArray(field.values);
     const hasLabels = field.labels && Array.isArray(field.labels);
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     let defaultType: any = typeof field.default;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     if (defaultType !== "undefined") {
         // @ts-ignore
         if (
@@ -91,15 +93,19 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
         foundType = defaultType;
     }
     if (hasValues || hasItems) {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
         const items = field.items!;
         const values = field.values!;
+        /* eslint-enable @typescript-eslint/no-non-null-assertion */
         if (hasValues && hasItems && values.length !== items.length) {
             throw new MobilettoOrmError(
                 `invalid TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs items (${items.length})`
             );
         }
         if (hasLabels) {
+            /* eslint-disable @typescript-eslint/no-non-null-assertion */
             const labels = field.labels!;
+            /* eslint-enable @typescript-eslint/no-non-null-assertion */
             if (hasValues && values.length !== labels.length) {
                 throw new MobilettoOrmError(
                     `invalid TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs labels (${labels.length})`
@@ -223,9 +229,15 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                 const value = field.values[i];
                 field.items.push({
                     value,
+                    /* eslint-disable @typescript-eslint/no-non-null-assertion */
                     label: `${hasLabels ? field.labels![i] : value}`,
+                    /* eslint-enable @typescript-eslint/no-non-null-assertion */
                 });
-                if (!hasLabels) field.labels!.push(`${value}`);
+                if (!hasLabels) {
+                    /* eslint-disable @typescript-eslint/no-non-null-assertion */
+                    field.labels!.push(`${value}`);
+                    /* eslint-enable @typescript-eslint/no-non-null-assertion */
+                }
             }
         } else if (field.items && Array.isArray(field.items)) {
             field.values = field.items.map((i) => i.value);

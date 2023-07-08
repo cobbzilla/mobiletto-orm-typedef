@@ -89,8 +89,10 @@ export const normalized = (
     thing: MobilettoOrmInstance
 ): MobilettoOrmFieldValue => {
     return fields[fieldName] && typeof fields[fieldName].normalize === "function"
-        ? fields[fieldName].normalize!(thing[fieldName])
-        : thing[fieldName];
+        ? /* eslint-disable @typescript-eslint/no-non-null-assertion */
+          fields[fieldName].normalize!(thing[fieldName])
+        : /* eslint-enable @typescript-eslint/no-non-null-assertion */
+          thing[fieldName];
 };
 
 export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => {

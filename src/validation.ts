@@ -106,7 +106,7 @@ export const validateFields = (
                 fieldValue &&
                 ((field.type === "array" &&
                     Array.isArray(fieldValue) &&
-                    !fieldValue.every((v) => field.values!.includes(v))) ||
+                    !fieldValue.every((v) => typeof field.values !== "undefined" && field.values.includes(v))) ||
                     (field.type !== "array" && !field.values.includes(fieldValue)))
             ) {
                 addError(errors, fieldPath, "values");
