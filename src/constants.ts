@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as randomstring from "randomstring";
 
 export const DEFAULT_MAX_VERSIONS = 5;
@@ -17,7 +15,9 @@ export const RESERVED_FIELD_NAMES = ["redaction", "removed"];
 export const NUMERIC_CONTROL_TYPES = ["duration", "timestamp", "range"];
 export const AUTO_REDACT_CONTROLS = ["password", "hidden", "system"];
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmInstance = Record<string, any>;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type MobilettoOrmNewInstanceOpts = {
     dummy?: boolean;
