@@ -24,6 +24,10 @@ export type MobilettoOrmPersistable = {
     mtime: number;
     [prop: string]: any;
 };
+export type MobilettoOrmWithId = {
+    id: string;
+};
+export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -90,7 +94,7 @@ export declare class MobilettoOrmTypeDef {
         tabIndexes?: string[] | undefined;
     }[];
     typePath(): string;
-    generalPath(id: MobilettoOrmPersistable | string): string;
+    generalPath(id: MobilettoOrmIdArg): string;
     isSpecificPath(p: string): RegExpMatchArray | null;
     specificBasename(obj: MobilettoOrmPersistable): string;
     idFromPath(p: string): string;

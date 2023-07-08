@@ -52,6 +52,11 @@ export type MobilettoOrmPersistable = {
     /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
+export type MobilettoOrmWithId = { id: string };
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -340,7 +345,7 @@ export class MobilettoOrmTypeDef {
         return (this.basePath.length > 0 ? this.basePath + "/" : "") + this.typeName;
     }
 
-    generalPath(id: MobilettoOrmPersistable | string) {
+    generalPath(id: MobilettoOrmIdArg) {
         const idVal =
             typeof id === "object" && id && id.id && typeof id.id === "string"
                 ? id.id
