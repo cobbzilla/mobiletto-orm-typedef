@@ -18,6 +18,7 @@ export type MobilettoOrmTypeDefConfig = {
 };
 export type MobilettoOrmPersistable = {
     id: string;
+    version: string;
     ctime: number;
     mtime: number;
     [prop: string]: any;

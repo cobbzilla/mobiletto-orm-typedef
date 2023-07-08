@@ -44,6 +44,7 @@ export type MobilettoOrmTypeDefConfig = {
 
 export type MobilettoOrmPersistable = {
     id: string;
+    version: string;
     ctime: number;
     mtime: number;
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -169,7 +170,7 @@ export class MobilettoOrmTypeDef {
     }
 
     newBlankInstance(): MobilettoOrmPersistable {
-        return { id: "", ctime: 0, mtime: 0 };
+        return { id: "", version: "", ctime: 0, mtime: 0 };
     }
     newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmInstance {
         const newThing: MobilettoOrmPersistable = this.newBlankInstance();
