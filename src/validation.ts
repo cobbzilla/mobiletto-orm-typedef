@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { MobilettoOrmInstance } from "./constants.js";
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
 import { ValidationErrors, addError } from "./errors.js";
+import { MobilettoOrmPersistable } from "./type";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
 
@@ -33,11 +33,11 @@ export type TypeValidation = {
 export type TypeValidations = Record<string, TypeValidation>;
 
 export const validateFields = (
-    rootThing: MobilettoOrmInstance,
-    thing: MobilettoOrmInstance,
+    rootThing: MobilettoOrmPersistable,
+    thing: MobilettoOrmPersistable,
     fields: MobilettoOrmFieldDefConfigs,
-    current: MobilettoOrmInstance,
-    validated: MobilettoOrmInstance,
+    current: MobilettoOrmPersistable,
+    validated: MobilettoOrmPersistable,
     validators: FieldValidators,
     errors: ValidationErrors,
     objPath: string

@@ -8,7 +8,6 @@ export declare const MIN_VERSION_STAMP_LENGTH: number;
 export declare const RESERVED_FIELD_NAMES: string[];
 export declare const NUMERIC_CONTROL_TYPES: string[];
 export declare const AUTO_REDACT_CONTROLS: string[];
-export type MobilettoOrmInstance = Record<string, any>;
 export type MobilettoOrmNewInstanceOpts = {
     dummy?: boolean;
     full?: boolean;

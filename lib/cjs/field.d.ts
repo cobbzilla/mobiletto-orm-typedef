@@ -1,4 +1,4 @@
-import { MobilettoOrmInstance } from "./constants.js";
+import { MobilettoOrmPersistable } from "./type";
 export declare const VALID_FIELD_TYPES: string[];
 export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "array";
 export type MobilettoOrmFieldControl = "label" | "text" | "password" | "textarea" | "duration" | "timestamp" | "range" | "flag" | "select" | "multi";
@@ -19,7 +19,7 @@ export type MobilettoOrmFieldDefConfig = {
     control?: MobilettoOrmFieldControl;
     default?: MobilettoOrmFieldValue;
     required?: boolean;
-    when?: (val: MobilettoOrmInstance) => boolean;
+    when?: (val: MobilettoOrmPersistable) => boolean;
     primary?: boolean;
     updatable?: boolean;
     normalize?: (val: any) => any;
@@ -40,5 +40,5 @@ export type MobilettoOrmFieldDefConfig = {
 };
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
 export declare const DEFAULT_FIELDS: MobilettoOrmFieldDefConfigs;
-export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmInstance) => MobilettoOrmFieldValue;
+export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmPersistable) => MobilettoOrmFieldValue;
 export declare const compareTabIndexes: (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => number;

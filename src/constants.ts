@@ -15,10 +15,6 @@ export const RESERVED_FIELD_NAMES = ["redaction", "removed"];
 export const NUMERIC_CONTROL_TYPES = ["duration", "timestamp", "range"];
 export const AUTO_REDACT_CONTROLS = ["password", "hidden", "system"];
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type MobilettoOrmInstance = Record<string, any>;
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 export type MobilettoOrmNewInstanceOpts = {
     dummy?: boolean;
     full?: boolean;

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { fsSafeName } from "./util.js";
-import { MobilettoOrmInstance } from "./constants.js";
+import { MobilettoOrmPersistable } from "./type";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
 
@@ -23,7 +22,9 @@ export type MobilettoOrmFieldRender = "date" | "time" | "datetime";
 export const VALID_PRIMARY_TYPES = ["string", "number"];
 
 export type MobilettoOrmFieldIndexableValue = string | number | boolean;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmFieldValue = string | number | boolean | Record<string, any> | string[] | number[] | boolean[];
+/* eslint-enable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmDefaultFieldOpts = {
     dummy?: boolean;
 };
@@ -39,10 +40,12 @@ export type MobilettoOrmFieldDefConfig = {
     control?: MobilettoOrmFieldControl;
     default?: MobilettoOrmFieldValue;
     required?: boolean;
-    when?: (val: MobilettoOrmInstance) => boolean;
+    when?: (val: MobilettoOrmPersistable) => boolean;
     primary?: boolean;
     updatable?: boolean;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     normalize?: (val: any) => any;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     regex?: RegExp;
     min?: number;
     max?: number;
@@ -86,7 +89,7 @@ export const DEFAULT_FIELDS: MobilettoOrmFieldDefConfigs = {
 export const normalized = (
     fields: MobilettoOrmFieldDefConfigs,
     fieldName: string,
-    thing: MobilettoOrmInstance
+    thing: MobilettoOrmPersistable
 ): MobilettoOrmFieldValue => {
     return fields[fieldName] && typeof fields[fieldName].normalize === "function"
         ? /* eslint-disable @typescript-eslint/no-non-null-assertion */

@@ -19,7 +19,6 @@ import {
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
     MIN_VERSION_STAMP_LENGTH,
-    MobilettoOrmInstance,
     MobilettoOrmNewInstanceOpts,
     OBJ_ID_SEP,
     VERSION_SUFFIX_RAND_LEN,
@@ -173,7 +172,7 @@ export class MobilettoOrmTypeDef {
     newBlankInstance(): MobilettoOrmPersistable {
         return { id: "", version: "", ctime: 0, mtime: 0 };
     }
-    newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmInstance {
+    newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmPersistable {
         const newThing: MobilettoOrmPersistable = this.newBlankInstance();
         this.newInstanceFields(this.fields, newThing, newThing, opts);
         return newThing;
@@ -185,19 +184,19 @@ export class MobilettoOrmTypeDef {
         return this.newInstance({ dummy: true });
     }
 
-    async validate(thing: MobilettoOrmInstance, current: MobilettoOrmInstance) {
+    async validate(thing: MobilettoOrmPersistable, current: MobilettoOrmPersistable) {
         const errors = {};
         if (typeof thing.id !== "string" || thing.id.length === 0) {
             if (this.primary) {
                 if (!thing[this.primary] || thing[this.primary].length === 0) {
                     addError(errors, this.primary, "required");
                 } else {
-                    thing.id = normalized(this.fields, this.primary, thing);
+                    thing.id = normalized(this.fields, this.primary, thing) as string;
                 }
             } else if (this.alternateIdFields) {
                 for (const alt of this.alternateIdFields) {
                     if (alt in thing) {
-                        thing.id = normalized(this.fields, alt, thing);
+                        thing.id = normalized(this.fields, alt, thing) as string;
                         break;
                     }
                 }
@@ -264,7 +263,7 @@ export class MobilettoOrmTypeDef {
         return this.redaction && this.redaction.length > 0;
     }
 
-    redact(thing: MobilettoOrmInstance) {
+    redact(thing: MobilettoOrmPersistable) {
         if (this.redaction && this.redaction.length > 0) {
             for (const objPath of this.redaction) {
                 let objPointer = thing;
@@ -286,7 +285,7 @@ export class MobilettoOrmTypeDef {
         return thing;
     }
 
-    idField(thing: MobilettoOrmInstance) {
+    idField(thing: MobilettoOrmPersistable) {
         if (typeof thing.id === "string" && thing.id.length > 0) {
             return "id";
         } else if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
@@ -301,7 +300,7 @@ export class MobilettoOrmTypeDef {
         return null;
     }
 
-    id(thing: MobilettoOrmInstance) {
+    id(thing: MobilettoOrmPersistable) {
         let foundId = null;
         if (typeof thing.id === "string" && thing.id.length > 0) {
             foundId = normalized(this.fields, "id", thing);
@@ -341,7 +340,7 @@ export class MobilettoOrmTypeDef {
         return (this.basePath.length > 0 ? this.basePath + "/" : "") + this.typeName;
     }
 
-    generalPath(id: MobilettoOrmInstance | string) {
+    generalPath(id: MobilettoOrmPersistable | string) {
         const idVal =
             typeof id === "object" && id && id.id && typeof id.id === "string"
                 ? id.id
@@ -358,7 +357,7 @@ export class MobilettoOrmTypeDef {
         return path.basename(p).match(this.specificPathRegex);
     }
 
-    specificBasename(obj: MobilettoOrmInstance) {
+    specificBasename(obj: MobilettoOrmPersistable) {
         return this.typeName + "_" + obj.id + OBJ_ID_SEP + obj.version + ".json";
     }
 
@@ -382,7 +381,7 @@ export class MobilettoOrmTypeDef {
         return base.substring(0, idSep);
     }
 
-    specificPath(obj: MobilettoOrmInstance) {
+    specificPath(obj: MobilettoOrmPersistable) {
         return this.generalPath(obj.id) + "/" + this.specificBasename(obj);
     }
 
@@ -394,11 +393,11 @@ export class MobilettoOrmTypeDef {
         }
     }
 
-    indexSpecificPath(field: string, obj: MobilettoOrmInstance) {
+    indexSpecificPath(field: string, obj: MobilettoOrmPersistable) {
         return `${this.indexPath(field, obj[field])}/${this.specificBasename(obj)}`;
     }
 
-    tombstone(thing: MobilettoOrmInstance) {
+    tombstone(thing: MobilettoOrmPersistable) {
         return {
             id: thing.id,
             version: versionStamp(),
@@ -408,7 +407,7 @@ export class MobilettoOrmTypeDef {
         };
     }
 
-    isTombstone(thing: MobilettoOrmInstance) {
+    isTombstone(thing: MobilettoOrmPersistable) {
         return (
             thing &&
             typeof thing.id === "string" &&
