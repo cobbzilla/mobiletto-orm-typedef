@@ -72,7 +72,7 @@ export declare class MobilettoOrmTypeDef {
         when?: ((val: MobilettoOrmPersistable) => boolean) | undefined;
         primary?: boolean | undefined;
         updatable?: boolean | undefined;
-        normalize?: ((val: any) => any) | undefined;
+        normalize?: import("./field.js").MobilettoNormalizeFunc | undefined;
         regex?: RegExp | undefined;
         min?: number | undefined;
         max?: number | undefined;

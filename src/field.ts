@@ -34,6 +34,8 @@ export type MobilettoOrmFieldItem = {
     label: string;
 };
 
+export type MobilettoNormalizeFunc = (val: any) => any;
+
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
     type?: MobilettoOrmFieldType;
@@ -44,7 +46,7 @@ export type MobilettoOrmFieldDefConfig = {
     primary?: boolean;
     updatable?: boolean;
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    normalize?: (val: any) => any;
+    normalize?: MobilettoNormalizeFunc;
     /* eslint-enable @typescript-eslint/no-explicit-any */
     regex?: RegExp;
     min?: number;
