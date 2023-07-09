@@ -398,10 +398,18 @@ export class MobilettoOrmTypeDef {
     }
 
     indexPath(field: string, value: MobilettoOrmFieldIndexableValue) {
+        if (typeof value === "undefined" || value == null) {
+            throw new MobilettoOrmError(`typeDef.indexPath(${field}): undefined value`);
+        }
+        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            const coerced = `${value}`;
+            this.log_warn(`typeDef.indexPath(${field}): coerced value (type ${typeof value}) to string: ${coerced}`);
+            value = coerced;
+        }
         if (this.indexes.includes(field)) {
             return `${this.typePath()}_idx_${sha(field)}/${sha(value)}`;
         } else {
-            throw new MobilettoOrmError(`typeDef.indexPath: field not indexed: ${field}`);
+            throw new MobilettoOrmError(`typeDef.indexPath(${field}): field not indexed`);
         }
     }
 
