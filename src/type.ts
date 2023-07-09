@@ -194,6 +194,10 @@ export class MobilettoOrmTypeDef {
         current?: MobilettoOrmPersistable
     ): Promise<MobilettoOrmPersistable> {
         const errors = {};
+        if (!thing) {
+            addError(errors, ".", "required");
+            throw new MobilettoOrmValidationError(errors);
+        }
         if (typeof thing.id !== "string" || thing.id.length === 0) {
             if (this.primary) {
                 if (!thing[this.primary] || thing[this.primary].length === 0) {
