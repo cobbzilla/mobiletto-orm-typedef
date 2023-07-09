@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { fsSafeName } from "./util.js";
 import { MobilettoOrmPersistable } from "./type";
 
@@ -34,7 +32,9 @@ export type MobilettoOrmFieldItem = {
     label: string;
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoNormalizeFunc = (val: any) => any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
@@ -101,7 +101,7 @@ export const normalized = (
 };
 
 export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => {
-    // @ts-ignore
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
     return typeof fields[f1].tabIndex === "number" && typeof fields[f2].tabIndex === "number"
         ? // @ts-ignore
           fields[f1].tabIndex - fields[f2].tabIndex
@@ -110,4 +110,5 @@ export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: strin
         : typeof fields[f2].tabIndex === "number"
         ? 1
         : 0;
+    /* eslint-enable @typescript-eslint/ban-ts-comment */
 };
