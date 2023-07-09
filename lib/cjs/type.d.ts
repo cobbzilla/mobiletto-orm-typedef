@@ -56,12 +56,7 @@ export declare class MobilettoOrmTypeDef {
     newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmPersistable;
     newFullInstance(): MobilettoOrmPersistable;
     newDummyInstance(): MobilettoOrmPersistable;
-    validate(thing: MobilettoOrmPersistable, current: MobilettoOrmPersistable): Promise<{
-        id: string;
-        version: string;
-        ctime: number;
-        mtime: number;
-    }>;
+    validate(thing: MobilettoOrmPersistable, current?: MobilettoOrmPersistable): Promise<MobilettoOrmPersistable>;
     typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors): Promise<void>;
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmPersistable): MobilettoOrmPersistable;

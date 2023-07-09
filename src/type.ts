@@ -189,7 +189,10 @@ export class MobilettoOrmTypeDef {
         return this.newInstance({ dummy: true });
     }
 
-    async validate(thing: MobilettoOrmPersistable, current: MobilettoOrmPersistable) {
+    async validate(
+        thing: MobilettoOrmPersistable,
+        current?: MobilettoOrmPersistable
+    ): Promise<MobilettoOrmPersistable> {
         const errors = {};
         if (typeof thing.id !== "string" || thing.id.length === 0) {
             if (this.primary) {

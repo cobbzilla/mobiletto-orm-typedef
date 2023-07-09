@@ -36,7 +36,7 @@ export const validateFields = (
     rootThing: MobilettoOrmPersistable,
     thing: MobilettoOrmPersistable,
     fields: MobilettoOrmFieldDefConfigs,
-    current: MobilettoOrmPersistable,
+    current: MobilettoOrmPersistable | undefined,
     validated: MobilettoOrmPersistable,
     validators: FieldValidators,
     errors: ValidationErrors,

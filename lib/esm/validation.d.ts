@@ -10,4 +10,4 @@ export type TypeValidation = {
     error: string | undefined;
 };
 export type TypeValidations = Record<string, TypeValidation>;
-export declare const validateFields: (rootThing: MobilettoOrmPersistable, thing: MobilettoOrmPersistable, fields: MobilettoOrmFieldDefConfigs, current: MobilettoOrmPersistable, validated: MobilettoOrmPersistable, validators: FieldValidators, errors: ValidationErrors, objPath: string) => void;
+export declare const validateFields: (rootThing: MobilettoOrmPersistable, thing: MobilettoOrmPersistable, fields: MobilettoOrmFieldDefConfigs, current: MobilettoOrmPersistable | undefined, validated: MobilettoOrmPersistable, validators: FieldValidators, errors: ValidationErrors, objPath: string) => void;
