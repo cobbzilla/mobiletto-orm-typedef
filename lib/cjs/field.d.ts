@@ -13,7 +13,7 @@ export type MobilettoOrmFieldItem = {
     value: MobilettoOrmFieldIndexableValue;
     label: string;
 };
-export type MobilettoNormalizeFunc = (val: any) => any;
+export type MobilettoOrmNormalizeFunc = (val: any) => any;
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
     type?: MobilettoOrmFieldType;
@@ -23,7 +23,7 @@ export type MobilettoOrmFieldDefConfig = {
     when?: (val: MobilettoOrmPersistable) => boolean;
     primary?: boolean;
     updatable?: boolean;
-    normalize?: MobilettoNormalizeFunc;
+    normalize?: MobilettoOrmNormalizeFunc;
     regex?: RegExp;
     min?: number;
     max?: number;
