@@ -1,7 +1,7 @@
 import { MobilettoOrmPersistable } from "./type";
 export declare const VALID_FIELD_TYPES: string[];
 export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "array";
-export type MobilettoOrmFieldControl = "label" | "text" | "password" | "textarea" | "duration" | "timestamp" | "range" | "flag" | "select" | "multi";
+export type MobilettoOrmFieldControl = "label" | "text" | "password" | "hidden" | "textarea" | "duration" | "timestamp" | "range" | "flag" | "select" | "multi";
 export type MobilettoOrmFieldRender = "date" | "time" | "datetime";
 export declare const VALID_PRIMARY_TYPES: string[];
 export type MobilettoOrmFieldIndexableValue = string | number | boolean;

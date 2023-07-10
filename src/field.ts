@@ -8,6 +8,7 @@ export type MobilettoOrmFieldControl =
     | "label"
     | "text"
     | "password"
+    | "hidden"
     | "textarea"
     | "duration"
     | "timestamp"
