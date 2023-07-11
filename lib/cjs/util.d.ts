@@ -5,3 +5,4 @@ export type MobilettoOrmLogger = {
     error: (msg: string) => void;
 };
 export declare const sha: (val: string | number | boolean) => string;
+export declare const randomstring: (len: number) => string;

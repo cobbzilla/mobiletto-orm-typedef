@@ -1,9 +1,8 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import * as randomstring from "randomstring";
-import { MobilettoOrmTypeDef } from "../lib/esm/index.js";
+import { MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
 
-const rand = (count) => randomstring.generate(count);
+const rand = (count) => randomstring(count);
 
 describe("type builder test", async () => {
     it("builds a simple type", async () => {

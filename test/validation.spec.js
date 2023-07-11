@@ -1,9 +1,8 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import * as randomstring from "randomstring";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef } from "../lib/esm/index.js";
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
 
-const rand = (count) => randomstring.generate(count);
+const rand = (count) => randomstring(count);
 
 const SOME_DEFAULT_VALUE = rand(10);
 
@@ -267,7 +266,7 @@ describe("validation test", async () => {
             });
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(4, "expected 3 errors");
+            expect(Object.keys(e.errors).length).equals(4, `expected 4 errors (errors=${JSON.stringify(e.errors)})`);
             expect(e.errors["id"].length).equals(1, "expected 1 id error");
             expect(e.errors["id"][0]).equals("required", "expected id.required error");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");

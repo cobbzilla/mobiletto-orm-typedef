@@ -1,6 +1,6 @@
 {
   "name": "mobiletto-orm-typedef",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "type": "module",
   "description": "type definition system for mobiletto object-relational-mapper (ORM)",
   "keywords": [
@@ -42,7 +42,6 @@
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.3.3",
-    "@types/randomstring": "^1.1.8",
     "@types/shasum": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
@@ -55,7 +54,6 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "randomstring": "^1.2.2",
     "shasum": "^1.0.2"
   }
 }

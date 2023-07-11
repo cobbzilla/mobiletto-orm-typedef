@@ -1,9 +1,8 @@
 import { describe, it } from "mocha";
 import { expect, assert } from "chai";
-import * as randomstring from "randomstring";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef } from "../lib/esm/index.js";
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
 
-const rand = (count) => randomstring.generate(count);
+const rand = (count) => randomstring(count);
 
 const conditionalType = new MobilettoOrmTypeDef({
     typeName: `TestType_${rand(10)}`,

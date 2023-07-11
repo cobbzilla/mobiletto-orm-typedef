@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import * as randomstring from "randomstring";
 import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
-import { fsSafeName, MobilettoOrmLogger, sha } from "./util.js";
+import { fsSafeName, MobilettoOrmLogger, randomstring, sha } from "./util.js";
 import {
     DEFAULT_FIELDS,
     MobilettoOrmDefaultFieldOpts,
@@ -112,7 +111,7 @@ export class MobilettoOrmTypeDef {
         if (field.type === "array") return [];
         if (field.values) return field.values[0];
         if (field.type === "string")
-            return dummy ? randomstring.generate(Math.ceil(Math.random() * (field.max ? field.max : 10))) : "";
+            return dummy ? randomstring(Math.ceil(Math.random() * (field.max ? field.max : 10))) : "";
         if (field.type === "number") return dummy ? Math.random() * (field.max ? field.max : 100) : 0;
         if (field.type === "boolean") return dummy ? Math.floor(1000 * Math.random()) % 2 === 0 : false;
         if (field.type === "object") return dummy ? { dummy } : {};
@@ -121,7 +120,7 @@ export class MobilettoOrmTypeDef {
                 field.name ? field.name : "undefined"
             }, assuming string and returning ''`
         );
-        return dummy ? randomstring.generate(Math.ceil(Math.random() * (field.max ? field.max : 10))) : "";
+        return dummy ? randomstring(Math.ceil(Math.random() * (field.max ? field.max : 10))) : "";
     }
 
     newInstanceFields(
