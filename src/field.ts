@@ -1,5 +1,5 @@
 import { fsSafeName } from "./util.js";
-import { MobilettoOrmPersistable } from "./type";
+import { MobilettoOrmPersistable } from "./constants.js";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
 

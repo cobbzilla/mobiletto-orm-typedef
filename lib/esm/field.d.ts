@@ -1,4 +1,4 @@
-import { MobilettoOrmPersistable } from "./type";
+import { MobilettoOrmPersistable } from "./constants.js";
 export declare const VALID_FIELD_TYPES: string[];
 export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "array";
 export type MobilettoOrmFieldControl = "label" | "text" | "password" | "hidden" | "textarea" | "duration" | "timestamp" | "range" | "flag" | "select" | "multi";

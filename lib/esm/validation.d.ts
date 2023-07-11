@@ -1,6 +1,6 @@
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
 import { ValidationErrors } from "./errors.js";
-import { MobilettoOrmPersistable } from "./type";
+import { MobilettoOrmPersistable } from "./constants.js";
 export type FieldValidator = (val: any, arg: any) => boolean;
 export type FieldValidators = Record<string, FieldValidator>;
 export declare const FIELD_VALIDATORS: FieldValidators;

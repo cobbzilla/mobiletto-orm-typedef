@@ -1,4 +1,7 @@
 import * as randomstring from "randomstring";
+import { MobilettoOrmFieldDefConfigs } from "./field.js";
+import { FieldValidators, TypeValidations } from "./validation.js";
+import { MobilettoOrmLogger } from "./util.js";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
@@ -18,4 +21,31 @@ export const AUTO_REDACT_CONTROLS = ["password", "hidden", "system"];
 export type MobilettoOrmNewInstanceOpts = {
     dummy?: boolean;
     full?: boolean;
+    typeName?: string;
+    code?: string;
+};
+
+export type MobilettoOrmTypeDefConfig = {
+    typeName: string;
+    primary?: string;
+    basePath?: string;
+    alternateIdFields?: string[];
+    fields: MobilettoOrmFieldDefConfigs;
+    tableFields?: string[];
+    maxVersions?: number;
+    minWrites?: number;
+    validators?: FieldValidators;
+    validations?: TypeValidations;
+    logger?: MobilettoOrmLogger;
+};
+
+export type MobilettoOrmPersistable = {
+    id: string;
+    version: string;
+    removed?: boolean;
+    ctime: number;
+    mtime: number;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    [prop: string]: any;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 };

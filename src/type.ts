@@ -19,6 +19,8 @@ import {
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
     MIN_VERSION_STAMP_LENGTH,
+    MobilettoOrmTypeDefConfig,
+    MobilettoOrmPersistable,
     MobilettoOrmNewInstanceOpts,
     OBJ_ID_SEP,
     VERSION_SUFFIX_RAND_LEN,
@@ -26,31 +28,7 @@ import {
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
-
-export type MobilettoOrmTypeDefConfig = {
-    typeName: string;
-    primary?: string;
-    basePath?: string;
-    alternateIdFields?: string[];
-    fields: MobilettoOrmFieldDefConfigs;
-    tableFields?: string[];
-    maxVersions?: number;
-    minWrites?: number;
-    validators?: FieldValidators;
-    validations?: TypeValidations;
-    logger?: MobilettoOrmLogger;
-};
-
-export type MobilettoOrmPersistable = {
-    id: string;
-    version: string;
-    removed?: boolean;
-    ctime: number;
-    mtime: number;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    [prop: string]: any;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-};
+import { buildType } from "./builder.js";
 
 export type MobilettoOrmWithId = { id: string };
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -187,6 +165,9 @@ export class MobilettoOrmTypeDef {
     }
     newDummyInstance() {
         return this.newInstance({ dummy: true });
+    }
+    buildType(typeName?: string, out?: string): string {
+        return buildType(typeName || this.typeName, this.fields, out);
     }
 
     async validate(

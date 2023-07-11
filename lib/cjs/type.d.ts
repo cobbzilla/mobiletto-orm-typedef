@@ -1,29 +1,8 @@
 import { ValidationErrors } from "./errors.js";
 import { MobilettoOrmLogger } from "./util.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldValue, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue } from "./field.js";
-import { MobilettoOrmNewInstanceOpts } from "./constants.js";
+import { MobilettoOrmTypeDefConfig, MobilettoOrmPersistable, MobilettoOrmNewInstanceOpts } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
-export type MobilettoOrmTypeDefConfig = {
-    typeName: string;
-    primary?: string;
-    basePath?: string;
-    alternateIdFields?: string[];
-    fields: MobilettoOrmFieldDefConfigs;
-    tableFields?: string[];
-    maxVersions?: number;
-    minWrites?: number;
-    validators?: FieldValidators;
-    validations?: TypeValidations;
-    logger?: MobilettoOrmLogger;
-};
-export type MobilettoOrmPersistable = {
-    id: string;
-    version: string;
-    removed?: boolean;
-    ctime: number;
-    mtime: number;
-    [prop: string]: any;
-};
 export type MobilettoOrmWithId = {
     id: string;
 };
@@ -56,6 +35,7 @@ export declare class MobilettoOrmTypeDef {
     newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmPersistable;
     newFullInstance(): MobilettoOrmPersistable;
     newDummyInstance(): MobilettoOrmPersistable;
+    buildType(typeName?: string, out?: string): string;
     validate(thing: MobilettoOrmPersistable, current?: MobilettoOrmPersistable): Promise<MobilettoOrmPersistable>;
     typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors): Promise<void>;
     hasRedactions(): boolean;
