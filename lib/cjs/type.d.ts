@@ -37,6 +37,8 @@ export declare class MobilettoOrmTypeDef {
     newFullInstance(): MobilettoOrmObject;
     newDummyInstance(): MobilettoOrmObject;
     buildType(typeName?: string, out?: string): string;
+    newId(): string;
+    newVersion(): string;
     validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
     typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors): Promise<void>;
     hasRedactions(): boolean;

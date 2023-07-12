@@ -167,6 +167,13 @@ export class MobilettoOrmTypeDef {
         return buildType(typeName || this.typeName, this.fields, out);
     }
 
+    newId(): string {
+        return generateId(this.idPrefix);
+    }
+    newVersion(): string {
+        return generateId(this.idPrefix + "_v");
+    }
+
     async validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject> {
         const errors = {};
         if (!thing) {
@@ -198,12 +205,12 @@ export class MobilettoOrmTypeDef {
                 thing._meta.mtime = now;
             }
             if (typeof thing._meta.version !== "string" || thing._meta.version.length < MIN_ID_LENGTH) {
-                thing._meta.version = generateId(this.idPrefix);
+                thing._meta.version = this.newId();
             }
         } else {
             thing._meta = {
-                id: generateId(this.idPrefix),
-                version: generateId(this.idPrefix+'_v'),
+                id: this.newId(),
+                version: this.newVersion(),
                 ctime: now,
                 mtime: now,
             };
