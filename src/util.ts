@@ -16,7 +16,7 @@ export const generateId = (prefix?: string) =>
 
 export const MIN_ID_LENGTH = generateId().length;
 
-export const rand = (len: number): string => {
+export const rand = (len = 10): string => {
     let s = "";
     while (s.length < len) {
         s += sha(generateId());

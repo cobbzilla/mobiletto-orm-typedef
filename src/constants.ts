@@ -1,6 +1,6 @@
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
-import { MobilettoOrmLogger, rand } from "./util.js";
+import { MobilettoOrmLogger } from "./util.js";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
