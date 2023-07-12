@@ -21,6 +21,7 @@ import {
     MobilettoOrmObject,
     MobilettoOrmNewInstanceOpts,
     OBJ_ID_SEP,
+    MobilettoOrmObjectMetadata,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
@@ -30,6 +31,11 @@ export type MobilettoOrmWithId = { id: string };
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+const defaultIdPrefix = (typeName: string): string => {
+    if (typeName.length < 4) return typeName.toLowerCase();
+    return (typeName.substring(0, 1) + typeName.substring(1).replace(/[aeiou]+/g, "")).substring(0, 4).toLowerCase();
+};
 
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
@@ -56,10 +62,10 @@ export class MobilettoOrmTypeDef {
         if (config.typeName.includes("%") || config.typeName.includes("~")) {
             throw new MobilettoOrmError("invalid TypeDefConfig: typeName cannot contain % or ~ characters");
         }
-        this.idPrefix = config.idPrefix || "";
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
+        this.idPrefix = config.idPrefix || defaultIdPrefix(this.typeName);
         this.basePath = config.basePath || "";
         this.fields = Object.assign({}, config.fields, DEFAULT_FIELDS);
         this.indexes = [];
@@ -173,6 +179,15 @@ export class MobilettoOrmTypeDef {
     newVersion(): string {
         return generateId(this.idPrefix + "_v");
     }
+    newMeta(id?: string | null): MobilettoOrmObjectMetadata {
+        const now = Date.now();
+        return {
+            id: id ? id : this.newId(),
+            version: this.newVersion(),
+            ctime: now,
+            mtime: now,
+        };
+    }
 
     async validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject> {
         const errors = {};
@@ -208,12 +223,7 @@ export class MobilettoOrmTypeDef {
                 thing._meta.version = this.newId();
             }
         } else {
-            thing._meta = {
-                id: this.newId(),
-                version: this.newVersion(),
-                ctime: now,
-                mtime: now,
-            };
+            thing._meta = this.newMeta();
         }
         const validated = {
             _meta: {
@@ -307,7 +317,9 @@ export class MobilettoOrmTypeDef {
 
     id(thing: MobilettoOrmObject) {
         let foundId = null;
-        if (typeof thing.id === "string" && thing.id.length > 0) {
+        if (thing._meta && typeof thing._meta.id === "string") {
+            foundId = thing._meta.id;
+        } else if (typeof thing.id === "string" && thing.id.length > 0) {
             foundId = normalized(this.fields, "id", thing);
         } else if (this.primary && typeof thing[this.primary] === "string" && thing[this.primary].length > 0) {
             foundId =
@@ -322,7 +334,13 @@ export class MobilettoOrmTypeDef {
                 }
             }
         }
-        return foundId != null ? fsSafeName(`${foundId}`) : null;
+        const resolvedId = foundId != null ? fsSafeName(`${foundId}`) : null;
+        if (!thing._meta) {
+            thing._meta = this.newMeta(resolvedId);
+        } else if (!thing._meta.id && resolvedId) {
+            thing._meta.id = resolvedId;
+        }
+        return resolvedId;
     }
 
     _tabIndexes(fields = this.fields) {
@@ -425,7 +443,7 @@ export class MobilettoOrmTypeDef {
     isTombstone(thing: MobilettoOrmObject) {
         return (
             thing &&
-            typeof thing._meta &&
+            thing._meta &&
             typeof thing._meta.id === "string" &&
             typeof thing._meta.version === "string" &&
             thing.version.length > 0 &&
