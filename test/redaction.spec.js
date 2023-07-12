@@ -1,8 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
-
-const rand = (count) => randomstring(count);
+import { MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
 
 const typeDefConfig = {
     typeName: `TestType_${rand(10)}`,

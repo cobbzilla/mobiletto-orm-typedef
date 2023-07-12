@@ -1,8 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
-
-const rand = (count) => randomstring(count);
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
 
 const SOME_DEFAULT_VALUE = rand(10);
 

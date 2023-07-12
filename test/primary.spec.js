@@ -1,8 +1,6 @@
 import { describe, it } from "mocha";
 import { expect, assert } from "chai";
-import { MobilettoOrmError, MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
-
-const rand = (count) => randomstring(count);
+import { MobilettoOrmError, MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
 
 describe("primary field test", async () => {
     it("throws an error if a TypeDef has more than one primary field", async () => {

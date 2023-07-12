@@ -1,8 +1,6 @@
 import { describe, it } from "mocha";
 import { expect, assert } from "chai";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef, randomstring } from "../lib/esm/index.js";
-
-const rand = (count) => randomstring(count);
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
 
 const nestedType1 = new MobilettoOrmTypeDef({
     typeName: `TestType_${rand(10)}`,
