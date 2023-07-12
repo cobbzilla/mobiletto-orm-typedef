@@ -3,7 +3,7 @@
 
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
 import { ValidationErrors, addError } from "./errors.js";
-import { MobilettoOrmPersistable } from "./constants.js";
+import { MobilettoOrmObject } from "./constants.js";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
 
@@ -33,11 +33,11 @@ export type TypeValidation = {
 export type TypeValidations = Record<string, TypeValidation>;
 
 export const validateFields = (
-    rootThing: MobilettoOrmPersistable,
-    thing: MobilettoOrmPersistable,
+    rootThing: MobilettoOrmObject,
+    thing: MobilettoOrmObject,
     fields: MobilettoOrmFieldDefConfigs,
-    current: MobilettoOrmPersistable | undefined,
-    validated: MobilettoOrmPersistable,
+    current: MobilettoOrmObject | undefined,
+    validated: MobilettoOrmObject,
     validators: FieldValidators,
     errors: ValidationErrors,
     objPath: string

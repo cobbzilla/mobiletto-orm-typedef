@@ -2,7 +2,7 @@
 
 import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
-import { fsSafeName, MobilettoOrmLogger, rand, sha } from "./util.js";
+import { fsSafeName, generateId, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
 import {
     DEFAULT_FIELDS,
     MobilettoOrmDefaultFieldOpts,
@@ -17,13 +17,10 @@ import {
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
-    MIN_VERSION_STAMP_LENGTH,
     MobilettoOrmTypeDefConfig,
-    MobilettoOrmPersistable,
+    MobilettoOrmObject,
     MobilettoOrmNewInstanceOpts,
     OBJ_ID_SEP,
-    VERSION_SUFFIX_RAND_LEN,
-    versionStamp,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
@@ -37,6 +34,7 @@ export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly idPrefix: string;
     readonly basePath: string;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
@@ -58,6 +56,7 @@ export class MobilettoOrmTypeDef {
         if (config.typeName.includes("%") || config.typeName.includes("~")) {
             throw new MobilettoOrmError("invalid TypeDefConfig: typeName cannot contain % or ~ characters");
         }
+        this.idPrefix = config.idPrefix || "";
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
@@ -77,7 +76,7 @@ export class MobilettoOrmTypeDef {
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
-            `^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${VERSION_SUFFIX_RAND_LEN},}\\.json$`,
+            `^${this.typeName}_.+?${OBJ_ID_SEP}_\\d{13,}_[A-Z\\d]{${MIN_ID_LENGTH},}\\.json$`,
             "gi"
         );
         this.validators = Object.assign({}, FIELD_VALIDATORS, config.validators || {});
@@ -124,8 +123,8 @@ export class MobilettoOrmTypeDef {
 
     newInstanceFields(
         fields: MobilettoOrmFieldDefConfigs,
-        rootThing: MobilettoOrmPersistable,
-        thing: MobilettoOrmPersistable,
+        rootThing: MobilettoOrmObject,
+        thing: MobilettoOrmObject,
         opts: MobilettoOrmNewInstanceOpts = {}
     ) {
         const dummy = opts && opts.dummy === true;
@@ -150,11 +149,11 @@ export class MobilettoOrmTypeDef {
         }
     }
 
-    newBlankInstance(): MobilettoOrmPersistable {
-        return { id: "", version: "", ctime: 0, mtime: 0 };
+    newBlankInstance(): MobilettoOrmObject {
+        return { _meta: { id: "", version: "", ctime: 0, mtime: 0 } };
     }
-    newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmPersistable {
-        const newThing: MobilettoOrmPersistable = this.newBlankInstance();
+    newInstance(opts: MobilettoOrmNewInstanceOpts = {}): MobilettoOrmObject {
+        const newThing: MobilettoOrmObject = this.newBlankInstance();
         this.newInstanceFields(this.fields, newThing, newThing, opts);
         return newThing;
     }
@@ -168,10 +167,7 @@ export class MobilettoOrmTypeDef {
         return buildType(typeName || this.typeName, this.fields, out);
     }
 
-    async validate(
-        thing: MobilettoOrmPersistable,
-        current?: MobilettoOrmPersistable
-    ): Promise<MobilettoOrmPersistable> {
+    async validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject> {
         const errors = {};
         if (!thing) {
             addError(errors, ".", "required");
@@ -194,20 +190,31 @@ export class MobilettoOrmTypeDef {
             }
         }
         const now = Date.now();
-        if (typeof thing.ctime !== "number" || thing.ctime < 0) {
-            thing.ctime = now;
-        }
-        if (typeof thing.mtime !== "number" || thing.mtime < thing.ctime) {
-            thing.mtime = now;
-        }
-        if (typeof thing.version !== "string" || thing.version.length < MIN_VERSION_STAMP_LENGTH) {
-            thing.version = versionStamp();
+        if (thing._meta) {
+            if (typeof thing._meta.ctime !== "number" || thing._meta.ctime < 0) {
+                thing._meta.ctime = now;
+            }
+            if (typeof thing._meta.mtime !== "number" || thing._meta.mtime < thing._meta.ctime) {
+                thing._meta.mtime = now;
+            }
+            if (typeof thing._meta.version !== "string" || thing._meta.version.length < MIN_ID_LENGTH) {
+                thing._meta.version = generateId(this.idPrefix);
+            }
+        } else {
+            thing._meta = {
+                id: generateId(this.idPrefix),
+                version: generateId(this.idPrefix+'_v'),
+                ctime: now,
+                mtime: now,
+            };
         }
         const validated = {
-            id: thing.id,
-            version: thing.version,
-            ctime: thing.ctime,
-            mtime: thing.mtime,
+            _meta: {
+                id: thing._meta.id,
+                version: thing._meta.version,
+                ctime: thing._meta.ctime,
+                mtime: thing._meta.mtime,
+            },
         };
         validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "");
         await this.typeDefValidations(validated, errors);
@@ -217,7 +224,7 @@ export class MobilettoOrmTypeDef {
         return validated;
     }
 
-    async typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors) {
+    async typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors) {
         const validationPromises: Promise<void>[] = [];
         Object.keys(this.validations).forEach((vName) => {
             const v = this.validations[vName];
@@ -254,7 +261,7 @@ export class MobilettoOrmTypeDef {
         return this.redaction && this.redaction.length > 0;
     }
 
-    redact(thing: MobilettoOrmPersistable) {
+    redact(thing: MobilettoOrmObject) {
         if (this.redaction && this.redaction.length > 0) {
             for (const objPath of this.redaction) {
                 let objPointer = thing;
@@ -276,7 +283,7 @@ export class MobilettoOrmTypeDef {
         return thing;
     }
 
-    idField(thing: MobilettoOrmPersistable) {
+    idField(thing: MobilettoOrmObject) {
         if (typeof thing.id === "string" && thing.id.length > 0) {
             return "id";
         } else if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
@@ -291,7 +298,7 @@ export class MobilettoOrmTypeDef {
         return null;
     }
 
-    id(thing: MobilettoOrmPersistable) {
+    id(thing: MobilettoOrmObject) {
         let foundId = null;
         if (typeof thing.id === "string" && thing.id.length > 0) {
             foundId = normalized(this.fields, "id", thing);
@@ -348,8 +355,8 @@ export class MobilettoOrmTypeDef {
         return path.basename(p).match(this.specificPathRegex);
     }
 
-    specificBasename(obj: MobilettoOrmPersistable) {
-        return this.typeName + "_" + obj.id + OBJ_ID_SEP + obj.version + ".json";
+    specificBasename(obj: MobilettoOrmObject) {
+        return this.typeName + "_" + obj.id + OBJ_ID_SEP + obj._meta.version + ".json";
     }
 
     idFromPath(p: string) {
@@ -372,7 +379,7 @@ export class MobilettoOrmTypeDef {
         return base.substring(0, idSep);
     }
 
-    specificPath(obj: MobilettoOrmPersistable) {
+    specificPath(obj: MobilettoOrmObject) {
         return this.generalPath(obj.id) + "/" + this.specificBasename(obj);
     }
 
@@ -392,32 +399,35 @@ export class MobilettoOrmTypeDef {
         }
     }
 
-    indexSpecificPath(field: string, obj: MobilettoOrmPersistable) {
+    indexSpecificPath(field: string, obj: MobilettoOrmObject) {
         return `${this.indexPath(field, obj[field])}/${this.specificBasename(obj)}`;
     }
 
-    tombstone(thing: MobilettoOrmPersistable) {
+    tombstone(thing: MobilettoOrmObject) {
         return {
-            id: thing.id,
-            version: versionStamp(),
-            removed: true,
-            ctime: thing.ctime,
-            mtime: Date.now(),
+            _meta: {
+                id: thing._meta.id,
+                version: generateId(),
+                removed: true,
+                ctime: thing._meta.ctime,
+                mtime: Date.now(),
+            },
         };
     }
 
-    isTombstone(thing: MobilettoOrmPersistable) {
+    isTombstone(thing: MobilettoOrmObject) {
         return (
             thing &&
-            typeof thing.id === "string" &&
-            typeof thing.version === "string" &&
+            typeof thing._meta &&
+            typeof thing._meta.id === "string" &&
+            typeof thing._meta.version === "string" &&
             thing.version.length > 0 &&
-            typeof thing.ctime === "number" &&
-            thing.ctime > 0 &&
-            typeof thing.mtime === "number" &&
-            thing.mtime >= thing.ctime &&
-            typeof thing.removed === "boolean" &&
-            thing.removed === true
+            typeof thing._meta.ctime === "number" &&
+            thing._meta.ctime > 0 &&
+            typeof thing._meta.mtime === "number" &&
+            thing._meta.mtime >= thing._meta.ctime &&
+            typeof thing._meta.removed === "boolean" &&
+            thing._meta.removed === true
         );
     }
 

@@ -1,5 +1,5 @@
 import shasum from "shasum";
-import crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 export const fsSafeName = (name: string): string => encodeURIComponent(name).replace(/%/g, "~");
 
@@ -9,27 +9,17 @@ export type MobilettoOrmLogger = {
     error: (msg: string) => void;
 };
 
-export const sha = (val: string | number | boolean) => shasum(val, "SHA-256");
+export const sha = (val: string | number | boolean) => shasum(val, "SHA256");
 
-// adapted from https://stackoverflow.com/q/19387338
-const d2h = (d: number | string): string => (+d).toString(16);
+export const generateId = (prefix?: string) =>
+    `${prefix ? prefix + "_" : ""}${Date.now().toString(16)}_${uuidv4().replace("-", "")}`.toLowerCase();
 
-const win = typeof window !== "undefined" ? window : null;
-const cr = typeof crypto !== "undefined" ? crypto : null;
+export const MIN_ID_LENGTH = generateId().length;
 
 export const rand = (len: number): string => {
-    if (win && win.crypto && typeof win.crypto.getRandomValues === "function") {
-        const a = new Uint8Array(1 + len / 2);
-        win.crypto.getRandomValues(a);
-        let s = "";
-        a.forEach((c) => (s += d2h(c)));
-        return s;
-    } else if (cr && typeof cr.randomBytes === "function") {
-        return cr
-            .randomBytes(1 + len / 2)
-            .toString("hex")
-            .substring(0, len);
-    } else {
-        throw Error("rand: no crypto random function available");
+    let s = "";
+    while (s.length < len) {
+        s += sha(generateId());
     }
+    return s.substring(0, len);
 };

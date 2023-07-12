@@ -9,10 +9,6 @@ export const DEFAULT_ALTERNATE_ID_FIELDS: string[] = ["name", "username", "email
 
 export const OBJ_ID_SEP = "_MORM_";
 
-export const VERSION_SUFFIX_RAND_LEN = 16;
-export const versionStamp = () => `_${Date.now()}_${rand(VERSION_SUFFIX_RAND_LEN)}`;
-export const MIN_VERSION_STAMP_LENGTH = versionStamp().length;
-
 export const RESERVED_FIELD_NAMES = ["redaction", "removed"];
 export const NUMERIC_CONTROL_TYPES = ["duration", "timestamp", "range"];
 export const AUTO_REDACT_CONTROLS = ["password", "hidden", "system"];
@@ -26,6 +22,7 @@ export type MobilettoOrmNewInstanceOpts = {
 
 export type MobilettoOrmTypeDefConfig = {
     typeName: string;
+    idPrefix?: string;
     primary?: string;
     basePath?: string;
     alternateIdFields?: string[];
@@ -38,12 +35,16 @@ export type MobilettoOrmTypeDefConfig = {
     logger?: MobilettoOrmLogger;
 };
 
-export type MobilettoOrmPersistable = {
+export type MobilettoOrmObjectMetadata = {
     id: string;
     version: string;
     removed?: boolean;
     ctime: number;
     mtime: number;
+};
+
+export type MobilettoOrmObject = {
+    _meta: MobilettoOrmObjectMetadata;
     /* eslint-disable @typescript-eslint/no-explicit-any */
     [prop: string]: any;
     /* eslint-enable @typescript-eslint/no-explicit-any */

@@ -1,5 +1,5 @@
 import { fsSafeName } from "./util.js";
-import { MobilettoOrmPersistable } from "./constants.js";
+import { MobilettoOrmObject } from "./constants.js";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
 
@@ -43,7 +43,7 @@ export type MobilettoOrmFieldDefConfig = {
     control?: MobilettoOrmFieldControl;
     default?: MobilettoOrmFieldValue;
     required?: boolean;
-    when?: (val: MobilettoOrmPersistable) => boolean;
+    when?: (val: MobilettoOrmObject) => boolean;
     primary?: boolean;
     updatable?: boolean;
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -92,7 +92,7 @@ export const DEFAULT_FIELDS: MobilettoOrmFieldDefConfigs = {
 export const normalized = (
     fields: MobilettoOrmFieldDefConfigs,
     fieldName: string,
-    thing: MobilettoOrmPersistable
+    thing: MobilettoOrmObject
 ): MobilettoOrmFieldValue => {
     return fields[fieldName] && typeof fields[fieldName].normalize === "function"
         ? /* eslint-disable @typescript-eslint/no-non-null-assertion */

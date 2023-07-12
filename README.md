@@ -26,13 +26,16 @@ You can install `mobiletto-orm-typedef` via npm or yarn
     # install with yarn
     yarn add mobiletto-orm-typedef
 
+    # install with pnpm
+    pnpm add mobiletto-orm-typedef
+
 ### From source
 To access the mobiletto-orm-typedef source:
 
     # Clone source and install dependencies
     git clone https://github.com/cobbzilla/mobiletto-orm-typedef.git
     cd mobiletto-orm-typedef
-    yarn install
+    pnpm install
 
 ### Using Mobiletto ORM Type Definitions
 See the mobiletto-orm documentation on [Type Definitions](https://github.com/cobbzilla/mobiletto-orm#Type-Definitions)

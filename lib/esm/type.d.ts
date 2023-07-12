@@ -1,7 +1,7 @@
 import { ValidationErrors } from "./errors.js";
 import { MobilettoOrmLogger } from "./util.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldValue, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue } from "./field.js";
-import { MobilettoOrmTypeDefConfig, MobilettoOrmPersistable, MobilettoOrmNewInstanceOpts } from "./constants.js";
+import { MobilettoOrmTypeDefConfig, MobilettoOrmObject, MobilettoOrmNewInstanceOpts } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 export type MobilettoOrmWithId = {
     id: string;
@@ -10,6 +10,7 @@ export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly idPrefix: string;
     readonly basePath: string;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
@@ -30,18 +31,18 @@ export declare class MobilettoOrmTypeDef {
     log_warn(msg: string): void;
     log_error(msg: string): void;
     defaultFieldValue(field: MobilettoOrmFieldDefConfig, opts: MobilettoOrmDefaultFieldOpts): MobilettoOrmFieldValue;
-    newInstanceFields(fields: MobilettoOrmFieldDefConfigs, rootThing: MobilettoOrmPersistable, thing: MobilettoOrmPersistable, opts?: MobilettoOrmNewInstanceOpts): void;
-    newBlankInstance(): MobilettoOrmPersistable;
-    newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmPersistable;
-    newFullInstance(): MobilettoOrmPersistable;
-    newDummyInstance(): MobilettoOrmPersistable;
+    newInstanceFields(fields: MobilettoOrmFieldDefConfigs, rootThing: MobilettoOrmObject, thing: MobilettoOrmObject, opts?: MobilettoOrmNewInstanceOpts): void;
+    newBlankInstance(): MobilettoOrmObject;
+    newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmObject;
+    newFullInstance(): MobilettoOrmObject;
+    newDummyInstance(): MobilettoOrmObject;
     buildType(typeName?: string, out?: string): string;
-    validate(thing: MobilettoOrmPersistable, current?: MobilettoOrmPersistable): Promise<MobilettoOrmPersistable>;
-    typeDefValidations(validated: MobilettoOrmPersistable, errors: ValidationErrors): Promise<void>;
+    validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
+    typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors): Promise<void>;
     hasRedactions(): boolean;
-    redact(thing: MobilettoOrmPersistable): MobilettoOrmPersistable;
-    idField(thing: MobilettoOrmPersistable): string | null;
-    id(thing: MobilettoOrmPersistable): string | null;
+    redact(thing: MobilettoOrmObject): MobilettoOrmObject;
+    idField(thing: MobilettoOrmObject): string | null;
+    id(thing: MobilettoOrmObject): string | null;
     _tabIndexes(fields?: MobilettoOrmFieldDefConfigs): string[];
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;
@@ -49,7 +50,7 @@ export declare class MobilettoOrmTypeDef {
         control?: import("./field.js").MobilettoOrmFieldControl | undefined;
         default?: MobilettoOrmFieldValue | undefined;
         required?: boolean | undefined;
-        when?: ((val: MobilettoOrmPersistable) => boolean) | undefined;
+        when?: ((val: MobilettoOrmObject) => boolean) | undefined;
         primary?: boolean | undefined;
         updatable?: boolean | undefined;
         normalize?: import("./field.js").MobilettoOrmNormalizeFunc | undefined;
@@ -71,18 +72,20 @@ export declare class MobilettoOrmTypeDef {
     typePath(): string;
     generalPath(id: MobilettoOrmIdArg): string;
     isSpecificPath(p: string): RegExpMatchArray | null;
-    specificBasename(obj: MobilettoOrmPersistable): string;
+    specificBasename(obj: MobilettoOrmObject): string;
     idFromPath(p: string): string;
-    specificPath(obj: MobilettoOrmPersistable): string;
+    specificPath(obj: MobilettoOrmObject): string;
     indexPath(field: string, value: MobilettoOrmFieldIndexableValue): string;
-    indexSpecificPath(field: string, obj: MobilettoOrmPersistable): string;
-    tombstone(thing: MobilettoOrmPersistable): {
-        id: string;
-        version: string;
-        removed: boolean;
-        ctime: number;
-        mtime: number;
+    indexSpecificPath(field: string, obj: MobilettoOrmObject): string;
+    tombstone(thing: MobilettoOrmObject): {
+        _meta: {
+            id: string;
+            version: string;
+            removed: boolean;
+            ctime: number;
+            mtime: number;
+        };
     };
-    isTombstone(thing: MobilettoOrmPersistable): boolean;
+    isTombstone(thing: MobilettoOrmObject): boolean;
     extend(otherConfig: MobilettoOrmTypeDefConfig): MobilettoOrmTypeDef;
 }
