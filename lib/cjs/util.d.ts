@@ -7,4 +7,4 @@ export type MobilettoOrmLogger = {
 export declare const sha: (val: string | number | boolean) => string;
 export declare const generateId: (prefix?: string) => string;
 export declare const MIN_ID_LENGTH: number;
-export declare const rand: (len: number) => string;
+export declare const rand: (len?: number) => string;

@@ -44,7 +44,7 @@ export type MobilettoOrmObjectMetadata = {
 };
 
 export type MobilettoOrmObject = {
-    _meta: MobilettoOrmObjectMetadata;
+    _meta?: MobilettoOrmObjectMetadata;
     /* eslint-disable @typescript-eslint/no-explicit-any */
     [prop: string]: any;
     /* eslint-enable @typescript-eslint/no-explicit-any */

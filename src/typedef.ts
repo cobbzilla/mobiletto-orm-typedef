@@ -381,6 +381,9 @@ export class MobilettoOrmTypeDef {
     }
 
     specificBasename(obj: MobilettoOrmObject) {
+        if (!obj._meta || !obj._meta.version) {
+            throw new MobilettoOrmError(`specificBasename: no _meta found on object: ${this.id(obj)}`);
+        }
         return this.typeName + "_" + obj.id + OBJ_ID_SEP + obj._meta.version + ".json";
     }
 
@@ -429,6 +432,9 @@ export class MobilettoOrmTypeDef {
     }
 
     tombstone(thing: MobilettoOrmObject) {
+        if (!thing._meta || !thing._meta.id || !thing._meta.ctime || !thing._meta.mtime) {
+            throw new MobilettoOrmError(`tombstone: missing required _meta fields`);
+        }
         return {
             _meta: {
                 id: thing._meta.id,

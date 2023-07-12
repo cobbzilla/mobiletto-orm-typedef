@@ -36,6 +36,6 @@ export type MobilettoOrmObjectMetadata = {
     mtime: number;
 };
 export type MobilettoOrmObject = {
-    _meta: MobilettoOrmObjectMetadata;
+    _meta?: MobilettoOrmObjectMetadata;
     [prop: string]: any;
 };

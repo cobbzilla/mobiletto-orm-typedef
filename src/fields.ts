@@ -9,7 +9,7 @@ import {
 } from "./field.js";
 import { MobilettoOrmError } from "./errors.js";
 import { AUTO_REDACT_CONTROLS, NUMERIC_CONTROL_TYPES, RESERVED_FIELD_NAMES } from "./constants.js";
-import { MobilettoOrmTypeDef } from "./type.js";
+import { MobilettoOrmTypeDef } from "./typedef.js";
 
 const determineFieldControl = (
     fieldName: string,
