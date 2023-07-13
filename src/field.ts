@@ -1,4 +1,3 @@
-import { fsSafeName } from "./util.js";
 import { MobilettoOrmObject } from "./constants.js";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];

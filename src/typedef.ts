@@ -288,6 +288,7 @@ export class MobilettoOrmTypeDef {
     }
 
     idField(thing: MobilettoOrmObject) {
+        if (!thing) return null;
         if (typeof thing.id === "string" && thing.id.length > 0) {
             return "id";
         } else if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
@@ -345,12 +346,7 @@ export class MobilettoOrmTypeDef {
     }
 
     generalPath(id: MobilettoOrmIdArg) {
-        const idVal =
-            typeof id === "object" && id && id.id && typeof id.id === "string"
-                ? id.id
-                : typeof id === "string" && id.length > 0
-                ? id
-                : null;
+        const idVal = typeof id === "object" ? this.id(id) : typeof id === "string" && id.length > 0 ? id : null;
         if (idVal == null) {
             throw new MobilettoOrmError(`typeDef.generalPath: invalid id: ${id}`);
         }
@@ -365,7 +361,7 @@ export class MobilettoOrmTypeDef {
         if (!obj._meta || !obj._meta.version) {
             throw new MobilettoOrmError(`specificBasename: no _meta found on object: ${this.id(obj)}`);
         }
-        return this.typeName + "_" + obj.id + OBJ_ID_SEP + obj._meta.version + ".json";
+        return this.typeName + "_" + this.id(obj) + OBJ_ID_SEP + obj._meta.version + ".json";
     }
 
     idFromPath(p: string) {
@@ -389,7 +385,7 @@ export class MobilettoOrmTypeDef {
     }
 
     specificPath(obj: MobilettoOrmObject) {
-        return this.generalPath(obj.id) + "/" + this.specificBasename(obj);
+        return this.generalPath(this.id(obj)) + "/" + this.specificBasename(obj);
     }
 
     indexPath(field: string, value: MobilettoOrmFieldIndexableValue) {
