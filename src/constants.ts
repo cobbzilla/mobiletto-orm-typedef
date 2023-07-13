@@ -7,6 +7,7 @@ export const DEFAULT_MIN_WRITES = 0;
 
 export const DEFAULT_ALTERNATE_ID_FIELDS: string[] = ["name", "username", "email"];
 
+export const VERSION_PREFIX = "v_";
 export const OBJ_ID_SEP = "_MORM_";
 
 export const RESERVED_FIELD_NAMES = ["redaction", "removed"];

@@ -4,23 +4,24 @@ import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
 import { fsSafeName, generateId, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
 import {
+    compareTabIndexes,
     MobilettoOrmDefaultFieldOpts,
-    MobilettoOrmFieldValue,
     MobilettoOrmFieldDefConfig,
     MobilettoOrmFieldDefConfigs,
-    normalized,
-    compareTabIndexes,
     MobilettoOrmFieldIndexableValue,
+    MobilettoOrmFieldValue,
+    normalized,
 } from "./field.js";
 import {
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
-    MobilettoOrmTypeDefConfig,
-    MobilettoOrmObject,
     MobilettoOrmNewInstanceOpts,
-    OBJ_ID_SEP,
+    MobilettoOrmObject,
     MobilettoOrmObjectMetadata,
+    MobilettoOrmTypeDefConfig,
+    OBJ_ID_SEP,
+    VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
@@ -86,7 +87,7 @@ export class MobilettoOrmTypeDef {
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
-            `^${this.typeName}_.+?${OBJ_ID_SEP}v_[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
+            `^${this.typeName}_.+?${OBJ_ID_SEP}${VERSION_PREFIX}[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
             "gi"
         );
         this.validators = Object.assign({}, FIELD_VALIDATORS, config.validators || {});
@@ -181,7 +182,7 @@ export class MobilettoOrmTypeDef {
         return generateId(this.idPrefix);
     }
     newVersion(): string {
-        return generateId("v_" + this.idPrefix);
+        return generateId(VERSION_PREFIX + this.idPrefix);
     }
     newMeta(id?: string | null): MobilettoOrmObjectMetadata {
         const now = Date.now();
@@ -364,7 +365,17 @@ export class MobilettoOrmTypeDef {
         if (!obj._meta || !obj._meta.version) {
             throw new MobilettoOrmError(`specificBasename: no _meta found on object: ${this.id(obj)}`);
         }
-        return this.typeName + "_" + this.id(obj) + OBJ_ID_SEP + obj._meta.version + ".json";
+        return (
+            this.typeName +
+            "_" +
+            this.id(obj) +
+            OBJ_ID_SEP +
+            VERSION_PREFIX +
+            this.idPrefix +
+            "_" +
+            obj._meta.version +
+            ".json"
+        );
     }
 
     idFromPath(p: string) {
