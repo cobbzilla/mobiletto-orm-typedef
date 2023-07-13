@@ -72,7 +72,7 @@ export class MobilettoOrmTypeDef {
         this.typeName = fsSafeName(config.typeName);
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : defaultIdPrefix(this.typeName);
         this.basePath = config.basePath || "";
-        this.fields = config.fields;
+        this.fields = config.fields || {};
         this.indexes = [];
         // this.primary = null
         this.redaction = [];
