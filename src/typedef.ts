@@ -365,17 +365,7 @@ export class MobilettoOrmTypeDef {
         if (!obj._meta || !obj._meta.version) {
             throw new MobilettoOrmError(`specificBasename: no _meta found on object: ${this.id(obj)}`);
         }
-        return (
-            this.typeName +
-            "_" +
-            this.id(obj) +
-            OBJ_ID_SEP +
-            VERSION_PREFIX +
-            this.idPrefix +
-            "_" +
-            obj._meta.version +
-            ".json"
-        );
+        return this.typeName + "_" + this.id(obj) + OBJ_ID_SEP + obj._meta.version + ".json";
     }
 
     idFromPath(p: string) {
@@ -429,7 +419,7 @@ export class MobilettoOrmTypeDef {
         return {
             _meta: {
                 id: thing._meta.id,
-                version: generateId(),
+                version: this.newVersion(),
                 removed: true,
                 ctime: thing._meta.ctime,
                 mtime: Date.now(),
