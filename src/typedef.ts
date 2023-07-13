@@ -432,7 +432,7 @@ export class MobilettoOrmTypeDef {
             thing._meta &&
             typeof thing._meta.id === "string" &&
             typeof thing._meta.version === "string" &&
-            thing.version.length > 0 &&
+            thing._meta.version.length > 0 &&
             typeof thing._meta.ctime === "number" &&
             thing._meta.ctime > 0 &&
             typeof thing._meta.mtime === "number" &&
