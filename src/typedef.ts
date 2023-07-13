@@ -86,7 +86,7 @@ export class MobilettoOrmTypeDef {
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
-            `^${this.typeName}_.+?${OBJ_ID_SEP}v_[a-z]{2,12}_[\\da-f]{11}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
+            `^${this.typeName}_.+?${OBJ_ID_SEP}v_[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
             "gi"
         );
         this.validators = Object.assign({}, FIELD_VALIDATORS, config.validators || {});

@@ -12,7 +12,10 @@ export type MobilettoOrmLogger = {
 export const sha = (val: string | number | boolean) => shasum(val, "SHA256");
 
 export const generateId = (prefix?: string) =>
-    `${prefix ? prefix + "_" : ""}${Date.now().toString(16)}_${uuidv4().replace("-", "")}`.toLowerCase();
+    `${prefix ? prefix + "_" : ""}${Date.now().toString(16).padStart(12, "0")}_${uuidv4().replace(
+        "-",
+        ""
+    )}`.toLowerCase();
 
 export const MIN_ID_LENGTH = generateId().length;
 
