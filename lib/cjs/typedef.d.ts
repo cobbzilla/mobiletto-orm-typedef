@@ -45,7 +45,7 @@ export declare class MobilettoOrmTypeDef {
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmObject): MobilettoOrmObject;
     idField(thing: MobilettoOrmObject): string | null;
-    id(thing: MobilettoOrmObject): string | null;
+    id(thing: MobilettoOrmObject): string;
     _tabIndexes(fields?: MobilettoOrmFieldDefConfigs): string[];
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;

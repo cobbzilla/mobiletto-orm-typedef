@@ -18,12 +18,16 @@ describe("type builder test", async () => {
         const builtType = typeDef.buildType();
         expect(builtType).eq(
             `export type ${typeDef.typeName}Type = {\n` +
+                "    _meta?: {\n" +
+                "        id: string;\n" +
+                "        version: string;\n" +
+                "        removed?: boolean;\n" +
+                "        ctime: number;\n" +
+                "        mtime: number;\n" +
+                "    };\n" +
                 "    value?: number;\n" +
                 "    int: number;\n" +
                 "    flag?: boolean;\n" +
-                "    id: string;\n" +
-                "    ctime?: number;\n" +
-                "    mtime?: number;\n" +
                 "};\n"
         );
     });
@@ -57,11 +61,15 @@ describe("type builder test", async () => {
                 "};\n" +
                 "\n" +
                 "export type ComplexBuilderType = {\n" +
+                "    _meta?: {\n" +
+                "        id: string;\n" +
+                "        version: string;\n" +
+                "        removed?: boolean;\n" +
+                "        ctime: number;\n" +
+                "        mtime: number;\n" +
+                "    };\n" +
                 "    primary: string;\n" +
                 "    nested?: ComplexBuilder_nestedType;\n" +
-                "    id: string;\n" +
-                "    ctime?: number;\n" +
-                "    mtime?: number;\n" +
                 "};\n"
         );
     });

@@ -40,6 +40,5 @@ export type MobilettoOrmFieldDefConfig = {
     tabIndexes?: string[];
 };
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
-export declare const DEFAULT_FIELDS: MobilettoOrmFieldDefConfigs;
 export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmObject) => MobilettoOrmFieldValue;
 export declare const compareTabIndexes: (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => number;

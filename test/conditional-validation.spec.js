@@ -26,18 +26,18 @@ const conditionalType = new MobilettoOrmTypeDef({
 
 describe("validation test with conditionally required nested objects", async () => {
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
+        const thing = {};
         try {
-            const validated = await conditionalType.validate({});
+            const validated = await conditionalType.validate(thing);
             assert.fail(
                 `expected conditionalType.validate to throw MobilettoOrmValidationError, but it returned ${validated}`
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(2, "expected two errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(1, "expected one errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
+            expect(thing._meta.id.startsWith(conditionalType.idPrefix)).to.be.true;
         }
     });
     it("successfully validates a thing that selects from selector but does not supply any values", async () => {

@@ -15,7 +15,7 @@ describe("primary field test", async () => {
                     },
                 },
             });
-            assert.fail(`expected typeDef constructor throw MobilettoOrmError`);
+            assert.fail(`expected typeDef constructor to throw MobilettoOrmError`);
         } catch (e) {
             expect(e).instanceof(MobilettoOrmError);
         }

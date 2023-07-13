@@ -4,7 +4,6 @@ import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
 import { fsSafeName, generateId, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
 import {
-    DEFAULT_FIELDS,
     MobilettoOrmDefaultFieldOpts,
     MobilettoOrmFieldValue,
     MobilettoOrmFieldDefConfig,
@@ -31,6 +30,8 @@ export type MobilettoOrmWithId = { id: string };
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+const validIdPrefix = (prefix?: string): boolean => (prefix && prefix.length >= 2) || false;
 
 const defaultIdPrefix = (typeName: string): string => {
     if (typeName.length < 4) return typeName.toLowerCase();
@@ -65,9 +66,9 @@ export class MobilettoOrmTypeDef {
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
-        this.idPrefix = config.idPrefix || defaultIdPrefix(this.typeName);
+        this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : defaultIdPrefix(this.typeName);
         this.basePath = config.basePath || "";
-        this.fields = Object.assign({}, config.fields, DEFAULT_FIELDS);
+        this.fields = config.fields;
         this.indexes = [];
         // this.primary = null
         this.redaction = [];
@@ -177,7 +178,7 @@ export class MobilettoOrmTypeDef {
         return generateId(this.idPrefix);
     }
     newVersion(): string {
-        return generateId(this.idPrefix + "_v");
+        return generateId("v_" + this.idPrefix);
     }
     newMeta(id?: string | null): MobilettoOrmObjectMetadata {
         const now = Date.now();
@@ -195,24 +196,10 @@ export class MobilettoOrmTypeDef {
             addError(errors, ".", "required");
             throw new MobilettoOrmValidationError(errors);
         }
-        if (typeof thing.id !== "string" || thing.id.length === 0) {
-            if (this.primary) {
-                if (!thing[this.primary] || thing[this.primary].length === 0) {
-                    addError(errors, this.primary, "required");
-                } else {
-                    thing.id = normalized(this.fields, this.primary, thing) as string;
-                }
-            } else if (this.alternateIdFields) {
-                for (const alt of this.alternateIdFields) {
-                    if (alt in thing) {
-                        thing.id = normalized(this.fields, alt, thing) as string;
-                        break;
-                    }
-                }
-            }
-        }
+        const id = this.id(thing);
         const now = Date.now();
         if (thing._meta) {
+            thing._meta.id = id;
             if (typeof thing._meta.ctime !== "number" || thing._meta.ctime < 0) {
                 thing._meta.ctime = now;
             }
@@ -220,10 +207,10 @@ export class MobilettoOrmTypeDef {
                 thing._meta.mtime = now;
             }
             if (typeof thing._meta.version !== "string" || thing._meta.version.length < MIN_ID_LENGTH) {
-                thing._meta.version = this.newId();
+                thing._meta.version = this.newVersion();
             }
         } else {
-            thing._meta = this.newMeta();
+            thing._meta = this.newMeta(id);
         }
         const validated = {
             _meta: {
@@ -334,13 +321,7 @@ export class MobilettoOrmTypeDef {
                 }
             }
         }
-        const resolvedId = foundId != null ? fsSafeName(`${foundId}`) : null;
-        if (!thing._meta) {
-            thing._meta = this.newMeta(resolvedId);
-        } else if (!thing._meta.id && resolvedId) {
-            thing._meta.id = resolvedId;
-        }
-        return resolvedId;
+        return foundId != null ? fsSafeName(`${foundId}`) : this.newId();
     }
 
     _tabIndexes(fields = this.fields) {

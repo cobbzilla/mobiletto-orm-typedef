@@ -67,28 +67,6 @@ export type MobilettoOrmFieldDefConfig = {
 
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
 
-export const DEFAULT_FIELDS: MobilettoOrmFieldDefConfigs = {
-    id: {
-        required: true,
-        updatable: false,
-        normalize: fsSafeName,
-        regex: /^[^%~]+$/gi,
-    },
-    ctime: {
-        control: "label",
-        type: "number",
-        updatable: false,
-        normalize: () => Date.now(),
-        render: "datetime",
-    },
-    mtime: {
-        control: "label",
-        type: "number",
-        normalize: () => Date.now(),
-        render: "datetime",
-    },
-};
-
 export const normalized = (
     fields: MobilettoOrmFieldDefConfigs,
     fieldName: string,

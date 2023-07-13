@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand, fsSafeName } from "../lib/esm/index.js";
 
 const SOME_DEFAULT_VALUE = rand(10);
 
@@ -57,8 +57,6 @@ const typeDef = new MobilettoOrmTypeDef({
 describe("validation test", async () => {
     it("each field has the correct types and controls", async () => {
         const fieldDefs = typeDef.fields;
-        expect(fieldDefs["id"].type).eq("string");
-        expect(fieldDefs["id"].control).eq("text");
         expect(fieldDefs["value"].type).eq("string");
         expect(fieldDefs["value"].control).eq("text");
         expect(fieldDefs["int"].type).eq("number");
@@ -88,7 +86,6 @@ describe("validation test", async () => {
         expect(ti[6]).eq("restricted");
         expect(ti[7]).eq("multiselect");
         expect(ti[8]).eq("notRequiredButHasMin");
-        expect(ti[9]).eq("id");
     });
     it("typeDef.newInstance returns a correct default object", async () => {
         const instance = typeDef.newInstance();
@@ -123,50 +120,50 @@ describe("validation test", async () => {
         expect(instance.restricted).eq(1);
         expect(instance.multiselect.length).eq(0);
     });
-    it("fails to create an object without any required fields", async () => {
+    it("fails to validate an object without any required fields", async () => {
         try {
             await typeDef.validate({});
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(2, "expected two errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(1, "expected one error");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("required", "expected value.required error");
         }
     });
-    it("fails to create an object with an illegal id and without one required field", async () => {
+    it("fails to validate an object with an illegal id and without one required field", async () => {
+        const thing = { id: "%" + rand(10) };
         try {
-            await typeDef.validate({ id: "%" + rand(10) });
-        } catch (e) {
-            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(2, "expected 1 error");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("regex", "expected id.regex error");
-            expect(e.errors["value"].length).equals(1, "expected 1 value error");
-            expect(e.errors["value"][0]).equals("required", "expected value.required error");
-        }
-    });
-    it("fails to create an object with another illegal id and without one required field", async () => {
-        try {
-            await typeDef.validate({ id: "~" + rand(10) });
-        } catch (e) {
-            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(2, "expected 1 error");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("regex", "expected id.regex error");
-            expect(e.errors["value"].length).equals(1, "expected 1 value error");
-            expect(e.errors["value"][0]).equals("required", "expected value.required error");
-        }
-    });
-    it("fails to create an object without one required field", async () => {
-        try {
-            await typeDef.validate({ id: rand(10) });
+            await typeDef.validate(thing);
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
             expect(Object.keys(e.errors).length).equals(1, "expected 1 error");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("required", "expected value.required error");
+            expect(thing._meta.id).eq(fsSafeName(thing.id)); // id was correctly assigned
+        }
+    });
+    it("fails to create an object with another illegal id and without one required field", async () => {
+        const thing = { id: "~" + rand(10) };
+        try {
+            await typeDef.validate(thing);
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
+            expect(Object.keys(e.errors).length).equals(1, "expected 1 error");
+            expect(e.errors["value"].length).equals(1, "expected 1 value error");
+            expect(e.errors["value"][0]).equals("required", "expected value.required error");
+            expect(thing._meta.id).eq(fsSafeName(thing.id)); // id was correctly assigned
+        }
+    });
+    it("fails to create an object without one required field", async () => {
+        const thing = { id: rand(10) };
+        try {
+            await typeDef.validate(thing);
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
+            expect(Object.keys(e.errors).length).equals(1, "expected 1 error");
+            expect(e.errors["value"].length).equals(1, "expected 1 value error");
+            expect(e.errors["value"][0]).equals("required", "expected value.required error");
+            expect(thing._meta.id).eq(fsSafeName(thing.id)); // id was correctly assigned
         }
     });
     it("fails to create an object with a too-short field", async () => {
@@ -255,42 +252,41 @@ describe("validation test", async () => {
         });
         expect(validated.notRequiredButHasMin).is.null;
     });
-    it("fails to create an object with multiple validation errors", async () => {
+    it("fails to validate an object with multiple validation errors", async () => {
+        const badThing = {
+            value: rand(10),
+            int: 100000,
+            alphaOnly: "222",
+        };
         try {
-            await typeDef.validate({
-                value: rand(10),
-                int: 100000,
-                alphaOnly: "222",
-            });
+            await typeDef.validate(badThing);
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(4, `expected 4 errors (errors=${JSON.stringify(e.errors)})`);
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(3, `expected 3 errors (errors=${JSON.stringify(e.errors)})`);
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("min", "expected value.min error");
             expect(e.errors["int"].length).equals(1, "expected 1 value error");
             expect(e.errors["int"][0]).equals("maxValue", "expected value.maxValue error");
             expect(e.errors["alphaOnly"].length).equals(1, "expected 1 alphaOnly error");
             expect(e.errors["alphaOnly"][0]).equals("regex", "expected alphaOnly.regex error");
+            expect(badThing._meta.id.startsWith(typeDef.idPrefix)).is.true;
         }
     });
-    it("fails to create an object with multiple type errors", async () => {
+    it("fails to validate an object with multiple type errors", async () => {
+        const badThing = {
+            id: 1,
+            value: 42,
+            int: "foo",
+            alphaOnly: false,
+            comments: [],
+            impliedBoolean: "true",
+            restricted: "no",
+        };
         try {
-            await typeDef.validate({
-                id: 1,
-                value: 42,
-                int: "foo",
-                alphaOnly: false,
-                comments: [],
-                impliedBoolean: "true",
-                restricted: "no",
-            });
+            await typeDef.validate(badThing);
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(7, "expected 7 errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("type", "expected id.type error");
+            expect(Object.keys(e.errors).length).equals(6, "expected 6 errors");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("type", "expected value.type error");
             expect(e.errors["int"].length).equals(1, "expected 1 value error");
@@ -303,6 +299,7 @@ describe("validation test", async () => {
             expect(e.errors["impliedBoolean"][0]).equals("type", "expected impliedBoolean.type error");
             expect(e.errors["restricted"].length).equals(1, "expected 1 restricted error");
             expect(e.errors["restricted"][0]).equals("type", "expected restricted.type error");
+            expect(badThing._meta.id.startsWith(typeDef.idPrefix)).is.true;
         }
     });
     it("successfully validates and redacts an object, verifying default fields are properly set and redacted fields are null", async () => {

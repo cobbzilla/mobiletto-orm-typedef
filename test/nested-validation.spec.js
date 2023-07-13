@@ -49,13 +49,10 @@ const nestedType2 = new MobilettoOrmTypeDef({
 
 describe("nested validation test with optional nested object with required fields", async () => {
     it("successfully sets tabIndexes for typeDef and all nested objects", async () => {
-        expect(nestedType1.tabIndexes.length).eq(6);
+        expect(nestedType1.tabIndexes.length).eq(3);
         expect(nestedType1.tabIndexes[0]).eq("otherField");
         expect(nestedType1.tabIndexes[1]).eq("nestedObject");
         expect(nestedType1.tabIndexes[2]).eq("primaryField");
-        expect(nestedType1.tabIndexes[3]).eq("id");
-        expect(nestedType1.tabIndexes[4]).eq("ctime");
-        expect(nestedType1.tabIndexes[5]).eq("mtime");
         expect(nestedType1.fields.nestedObject.tabIndexes.length).eq(3);
         expect(nestedType1.fields.nestedObject.tabIndexes[0]).eq("nested1");
         expect(nestedType1.fields.nestedObject.tabIndexes[1]).eq("nested2");
@@ -80,18 +77,18 @@ describe("nested validation test with optional nested object with required field
         expect(instance.nestedObject.triplyNestedObject.nested3Required).eq("");
     });
     it("successfully validates an empty object against a typedef with an optional nested object with required fields", async () => {
+        const thing = {};
         try {
-            const validated = await nestedType1.validate({});
+            const validated = await nestedType1.validate(thing);
             assert.fail(
                 `expected nestedType1.validate to throw MobilettoOrmValidationError, but it returned ${validated}`
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(2, "expected two errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(1, "expected one errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
+            expect(thing._meta.id.startsWith(nestedType1.idPrefix)).to.be.true;
         }
     });
 });
@@ -105,9 +102,7 @@ describe("nested validation test with required nested object with required field
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(3, "expected three errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(2, "expected two errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
             expect(e.errors["nestedObject"].length).equals(1, "expected 1 nestedObject error");
@@ -122,9 +117,7 @@ describe("nested validation test with required nested object with required field
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(4, "expected four errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(3, "expected three errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
             expect(e.errors["nestedObject.nested1"].length).equals(1, "expected 1 nestedObject.nested1 error");
@@ -157,9 +150,7 @@ describe("nested validation test with required nested object with required field
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(6, "expected six errors");
-            expect(e.errors["id"].length).equals(1, "expected 1 id error");
-            expect(e.errors["id"][0]).equals("required", "expected id.required error");
+            expect(Object.keys(e.errors).length).equals(5, "expected five errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
             expect(e.errors["nestedObject.nested1"].length).equals(1, "expected 1 nestedObject.nested1 error");

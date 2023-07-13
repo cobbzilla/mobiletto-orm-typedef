@@ -9,8 +9,23 @@ type TypeCodeDeclaration = {
 
 const TYPENAME_SUFFIX = "Type";
 
-const buildTypeFields = (name: string, fields: MobilettoOrmFieldDefConfigs, decls: TypeCodeDeclaration[]): void => {
+const buildTypeFields = (
+    name: string,
+    fields: MobilettoOrmFieldDefConfigs,
+    decls: TypeCodeDeclaration[],
+    firstDecl?: boolean
+): void => {
     let code = `export type ${name}${TYPENAME_SUFFIX} = {\n`;
+    if (firstDecl) {
+        code +=
+            "    _meta?: {\n" +
+            "        id: string;\n" +
+            "        version: string;\n" +
+            "        removed?: boolean;\n" +
+            "        ctime: number;\n" +
+            "        mtime: number;\n" +
+            "    };\n";
+    }
     let fieldCode = "";
     for (const fieldName of Object.keys(fields)) {
         const field = fields[fieldName];
@@ -50,7 +65,7 @@ const buildTypeFields = (name: string, fields: MobilettoOrmFieldDefConfigs, decl
 
 export const buildType = (name: string, fields: MobilettoOrmFieldDefConfigs, out?: string): string => {
     const decls: TypeCodeDeclaration[] = [];
-    buildTypeFields(name, fields, decls);
+    buildTypeFields(name, fields, decls, true);
     const code = decls.map((d) => d.code).join("\n");
     if (out) {
         fs.writeFileSync(out, code);
