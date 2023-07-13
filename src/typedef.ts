@@ -82,8 +82,8 @@ export class MobilettoOrmTypeDef {
         this.tableFields = config.tableFields
             ? config.tableFields
             : this.primary
-            ? [this.primary, "ctime", "mtime"]
-            : [this.idField(this.newDummyInstance()), "ctime", "mtime"];
+            ? [this.primary, "_meta.ctime", "_meta.mtime"]
+            : [this.idField(this.newDummyInstance()), "_meta.ctime", "_meta.mtime"];
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
