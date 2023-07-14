@@ -146,10 +146,11 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
 };
 
 export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: string, typeDef: MobilettoOrmTypeDef) => {
+    const invalidPrefix = `invalid TypeDefConfig(${typeDef.typeName}):`;
     Object.keys(fields).forEach((fieldName) => {
         const field = fields[fieldName];
         if (RESERVED_FIELD_NAMES.includes(fieldName)) {
-            throw new MobilettoOrmError(`invalid TypeDefConfig: reserved field name: ${fieldName}`);
+            throw new MobilettoOrmError(`${invalidPrefix} reserved field name: ${fieldName}`);
         }
         field.name = fieldName;
         field.type = determineFieldType(fieldName, field);
@@ -162,34 +163,32 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         if (typeof field.primary === "boolean" && field.primary === true) {
             if (objPath !== "") {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: non-root field ${fieldName} had {primary: true} (not allowed)`
+                    `${invalidPrefix} non-root field ${fieldName} had {primary: true} (not allowed)`
                 );
             }
             if (typeDef.primary) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: multiple fields had {primary: true}: ${typeDef.primary} and ${fieldName}`
+                    `${invalidPrefix} multiple fields had {primary: true}: ${typeDef.primary} and ${fieldName}`
                 );
             }
             if (!VALID_PRIMARY_TYPES.includes(field.type)) {
-                throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: primary ${typeDef.primary} had bad type: ${field.type}`
-                );
+                throw new MobilettoOrmError(`${invalidPrefix} primary ${typeDef.primary} had bad type: ${field.type}`);
             }
             typeDef.primary = fieldName;
             if (typeof field.required === "boolean" && field.required === false) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: primary field ${typeDef.primary} had {required: false} (not allowed)`
+                    `${invalidPrefix} primary field ${typeDef.primary} had {required: false} (not allowed)`
                 );
             }
             field.required = true;
             if (typeof field.updatable === "boolean" && field.updatable === true) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: primary field ${typeDef.primary} had {updatable: true} (not allowed)`
+                    `${invalidPrefix} primary field ${typeDef.primary} had {updatable: true} (not allowed)`
                 );
             }
             if (field.when) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: primary field ${typeDef.primary} had {when} (not allowed)`
+                    `${invalidPrefix} primary field ${typeDef.primary} had {when} (not allowed)`
                 );
             }
             field.updatable = false;
@@ -197,7 +196,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         if (field.index) {
             if (!typeDef) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: non-root field ${fieldName} had {index: true} (not allowed)`
+                    `${invalidPrefix} non-root field ${fieldName} had {index: true} (not allowed)`
                 );
             }
             typeDef.indexes.push(fieldName);
@@ -207,7 +206,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             (typeof field.redact === "boolean" && field.redact === true);
         if (redact) {
             if (fieldName === "id") {
-                throw new MobilettoOrmError(`invalid TypeDefConfig: {redact: true} not allowed on id field`);
+                throw new MobilettoOrmError(`${invalidPrefix} {redact: true} not allowed on id field`);
             }
             field.redact = true;
             typeDef.redaction.push(fieldPath);
@@ -215,9 +214,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
 
         if (field.values && Array.isArray(field.values)) {
             if (field.items) {
-                throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: cannot define both 'values' and 'items' on a field`
-                );
+                throw new MobilettoOrmError(`${invalidPrefix} field ${fieldName} defines both 'values' and 'items'`);
             }
             const hasLabels =
                 field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length;
