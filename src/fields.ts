@@ -213,21 +213,21 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         }
 
         if (field.values && Array.isArray(field.values)) {
-            if (field.items) {
-                throw new MobilettoOrmError(`${invalidPrefix} field ${fieldName} defines both 'values' and 'items'`);
-            }
             const hasLabels =
                 field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length;
-            field.items = [];
+            const hasItems = field.items && Array.isArray(field.items) && field.items.length === field.values.length;
+            if (!hasItems) field.items = [];
             if (!hasLabels) field.labels = [];
             for (let i = 0; i < field.values.length; i++) {
                 const value = field.values[i];
-                field.items.push({
-                    value,
-                    /* eslint-disable @typescript-eslint/no-non-null-assertion */
-                    label: `${hasLabels ? field.labels![i] : value}`,
-                    /* eslint-enable @typescript-eslint/no-non-null-assertion */
-                });
+                if (!hasItems && field.items) {
+                    field.items.push({
+                        value,
+                        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+                        label: `${hasLabels ? field.labels![i] : value}`,
+                        /* eslint-enable @typescript-eslint/no-non-null-assertion */
+                    });
+                }
                 if (!hasLabels) {
                     (field.labels as string[]).push(`${value}`);
                 }
