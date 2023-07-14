@@ -16,8 +16,10 @@ export type MobilettoOrmFieldControl =
     | "select"
     | "multi";
 
+export type MobilettoOrmRawValue = string | number | boolean | null | undefined;
+
 export type MobilettoOrmFieldRenderFunc = (
-    v: string | number | boolean,
+    v: MobilettoOrmRawValue,
     messages: Record<string, string>,
     title: string
 ) => string;
