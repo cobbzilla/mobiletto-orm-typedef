@@ -45,6 +45,12 @@ const typeDef = new MobilettoOrmTypeDef({
             type: "array",
             control: "multi",
             values: ["option-1", "option-2", "option-3", "option-4"],
+            test: {
+                message: "not-option-2",
+                func: (v) => {
+                    return !v.multiselect.includes("option-2");
+                },
+            },
         },
         notRequiredButHasMin: {
             type: "string",
@@ -128,6 +134,18 @@ describe("validation test", async () => {
             expect(Object.keys(e.errors).length).equals(1, "expected one error");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("required", "expected value.required error");
+        }
+    });
+    it("fails to validate an object with a custom-validated field", async () => {
+        try {
+            await typeDef.validate({ multiselect: ["option-2"] });
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
+            expect(Object.keys(e.errors).length).equals(2, "expected one error");
+            expect(e.errors["value"].length).equals(1, "expected 1 value error");
+            expect(e.errors["value"][0]).equals("required", "expected value.required error");
+            expect(e.errors["multiselect"].length).equals(1, "expected 1 multiselect error");
+            expect(e.errors["multiselect"][0]).equals("not-option-2", "expected multiselect.not-option-2 error");
         }
     });
     it("fails to validate an object with an illegal id and without one required field", async () => {
@@ -311,7 +329,7 @@ describe("validation test", async () => {
                 int: 100,
                 alphaOnly: ALPHA_STRING,
                 comments,
-                multiselect: ["option-2", "option-3"],
+                multiselect: ["option-1", "option-3"],
             })
         );
         expect(validated.int).eq(100);
@@ -321,7 +339,7 @@ describe("validation test", async () => {
         expect(validated.impliedBoolean).eq(false);
         expect(validated.restricted).is.null;
         expect(validated.multiselect.length).eq(2);
-        expect(validated.multiselect[0]).eq("option-2");
+        expect(validated.multiselect[0]).eq("option-1");
         expect(validated.multiselect[1]).eq("option-3");
     });
     it("successfully validates an object with an items array", async () => {

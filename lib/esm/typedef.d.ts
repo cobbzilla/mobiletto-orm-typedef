@@ -56,6 +56,7 @@ export declare class MobilettoOrmTypeDef {
         primary?: boolean | undefined;
         updatable?: boolean | undefined;
         normalize?: import("./field.js").MobilettoOrmNormalizeFunc | undefined;
+        test?: import("./field.js").MobilettoOrmCustomFieldTest | undefined;
         regex?: RegExp | undefined;
         min?: number | undefined;
         max?: number | undefined;

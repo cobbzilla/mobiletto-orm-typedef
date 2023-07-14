@@ -55,7 +55,6 @@ export const validateFields = (
                 continue;
             }
         }
-
         if (field.type === "object") {
             if (field.required && thingValueType !== "object") {
                 addError(errors, fieldPath, "required");
@@ -121,6 +120,17 @@ export const validateFields = (
                             continue;
                         }
                         addError(errors, fieldPath, validator);
+                    }
+                }
+            }
+            if (typeof errors[fieldName] === "undefined" && typeof thing[fieldName] !== "undefined") {
+                if (typeof field.test === "object" && field.test.message && typeof field.test.func === "function") {
+                    try {
+                        if (!field.test.func(thing)) {
+                            addError(errors, fieldPath, field.test.message);
+                        }
+                    } catch (e) {
+                        addError(errors, fieldPath, field.test.message);
                     }
                 }
             }

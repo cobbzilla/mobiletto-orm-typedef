@@ -14,6 +14,10 @@ export type MobilettoOrmFieldItem = {
     label: string;
 };
 export type MobilettoOrmNormalizeFunc = (val: any) => any;
+export type MobilettoOrmCustomFieldTest = {
+    message: string;
+    func: (v: Record<string, any>) => boolean;
+};
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
     type?: MobilettoOrmFieldType;
@@ -24,6 +28,7 @@ export type MobilettoOrmFieldDefConfig = {
     primary?: boolean;
     updatable?: boolean;
     normalize?: MobilettoOrmNormalizeFunc;
+    test?: MobilettoOrmCustomFieldTest;
     regex?: RegExp;
     min?: number;
     max?: number;
