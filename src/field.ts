@@ -36,6 +36,7 @@ export type MobilettoOrmDefaultFieldOpts = {
 export type MobilettoOrmFieldItem = {
     value: MobilettoOrmFieldIndexableValue;
     label: string;
+    rawLabel?: boolean;
 };
 
 export type MobilettoOrmNormalizeFunc = (val: unknown) => unknown;
