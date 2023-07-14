@@ -16,7 +16,7 @@ export type MobilettoOrmFieldItem = {
 export type MobilettoOrmNormalizeFunc = (val: any) => any;
 export type MobilettoOrmCustomFieldTest = {
     message: string;
-    func: (v: Record<string, any>) => boolean;
+    valid: (v: Record<string, any>) => boolean;
 };
 export type MobilettoOrmFieldDefConfig = {
     name?: string;

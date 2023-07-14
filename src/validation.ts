@@ -124,9 +124,9 @@ export const validateFields = (
                 }
             }
             if (typeof errors[fieldName] === "undefined" && typeof thing[fieldName] !== "undefined") {
-                if (typeof field.test === "object" && field.test.message && typeof field.test.func === "function") {
+                if (typeof field.test === "object" && field.test.message && typeof field.test.valid === "function") {
                     try {
-                        if (!field.test.func(thing)) {
+                        if (!field.test.valid(thing)) {
                             addError(errors, fieldPath, field.test.message);
                         }
                     } catch (e) {

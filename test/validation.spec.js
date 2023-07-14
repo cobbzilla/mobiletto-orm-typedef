@@ -47,7 +47,7 @@ const typeDef = new MobilettoOrmTypeDef({
             values: ["option-1", "option-2", "option-3", "option-4"],
             test: {
                 message: "not-option-2",
-                func: (v) => {
+                valid: (v) => {
                     return !v.multiselect.includes("option-2");
                 },
             },
