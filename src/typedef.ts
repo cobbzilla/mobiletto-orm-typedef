@@ -25,7 +25,6 @@ import {
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
-import { buildType } from "./builder.js";
 
 export type MobilettoOrmWithId = { id: string };
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -173,9 +172,6 @@ export class MobilettoOrmTypeDef {
     }
     newDummyInstance() {
         return this.newInstance({ dummy: true });
-    }
-    buildType(typeName?: string, out?: string): string {
-        return buildType(typeName || this.typeName, this.fields, out);
     }
 
     newId(): string {

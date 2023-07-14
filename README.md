@@ -16,7 +16,7 @@ For example, to ensure that frontend form validation is synchronized with backen
 I would be sincerely grateful for any [contribution via Patreon](https://www.patreon.com/cobbzilla)
 
 ## Installation and usage
-You can install `mobiletto-orm-typedef` via npm or yarn
+You can install `mobiletto-orm-typedef` via npm or yarn or pnpm
 
 ### npm package
 

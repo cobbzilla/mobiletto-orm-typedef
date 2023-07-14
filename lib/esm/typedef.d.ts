@@ -36,7 +36,6 @@ export declare class MobilettoOrmTypeDef {
     newInstance(opts?: MobilettoOrmNewInstanceOpts): MobilettoOrmObject;
     newFullInstance(): MobilettoOrmObject;
     newDummyInstance(): MobilettoOrmObject;
-    buildType(typeName?: string, out?: string): string;
     newId(): string;
     newVersion(): string;
     newMeta(id?: string | null): MobilettoOrmObjectMetadata;
