@@ -65,16 +65,9 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
     let defaultType: any = typeof field.default;
     /* eslint-enable @typescript-eslint/no-explicit-any */
     if (defaultType !== "undefined") {
-        // @ts-ignore
-        if (
-            Array.isArray(field.default) &&
-            !hasValues &&
-            !hasItems &&
-            // @ts-ignore
-            (!field.type || (field.type !== "select" && field.type !== "multi"))
-        ) {
+        if (Array.isArray(field.default) && !hasValues && !hasItems) {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had an array as default value, but is not a select or multi field`
+                `invalid TypeDefConfig: field ${fieldName} had an array as 'default' value, but has no 'items' or 'values'`
             );
         }
         if ((field.type && field.type === "array") || (field.control && field.control === "multi")) {
