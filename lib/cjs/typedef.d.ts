@@ -49,6 +49,7 @@ export declare class MobilettoOrmTypeDef {
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;
         type?: import("./field.js").MobilettoOrmFieldType | undefined;
+        label?: string | undefined;
         control?: import("./field.js").MobilettoOrmFieldControl | undefined;
         default?: MobilettoOrmFieldValue | undefined;
         required?: boolean | undefined;
