@@ -32,13 +32,12 @@ export type MobilettoOrmFieldItem = {
     label: string;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type MobilettoOrmNormalizeFunc = (val: any) => any;
+export type MobilettoOrmNormalizeFunc = (val: unknown) => unknown;
+
 export type MobilettoOrmCustomFieldTest = {
     message: string;
-    valid: (v: Record<string, any>) => boolean;
+    valid: (v: Record<string, unknown>) => boolean;
 };
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type MobilettoOrmFieldDefConfig = {
     name?: string;

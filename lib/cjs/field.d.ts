@@ -13,10 +13,10 @@ export type MobilettoOrmFieldItem = {
     value: MobilettoOrmFieldIndexableValue;
     label: string;
 };
-export type MobilettoOrmNormalizeFunc = (val: any) => any;
+export type MobilettoOrmNormalizeFunc = (val: unknown) => unknown;
 export type MobilettoOrmCustomFieldTest = {
     message: string;
-    valid: (v: Record<string, any>) => boolean;
+    valid: (v: Record<string, unknown>) => boolean;
 };
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
