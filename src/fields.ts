@@ -214,6 +214,11 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         }
 
         if (field.values && Array.isArray(field.values)) {
+            if (field.items) {
+                throw new MobilettoOrmError(
+                    `invalid TypeDefConfig: cannot define both 'values' and 'items' on a field`
+                );
+            }
             const hasLabels =
                 field.labels && Array.isArray(field.labels) && field.labels.length === field.values.length;
             field.items = [];
@@ -227,14 +232,13 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     /* eslint-enable @typescript-eslint/no-non-null-assertion */
                 });
                 if (!hasLabels) {
-                    /* eslint-disable @typescript-eslint/no-non-null-assertion */
-                    field.labels!.push(`${value}`);
-                    /* eslint-enable @typescript-eslint/no-non-null-assertion */
+                    (field.labels as string[]).push(`${value}`);
                 }
             }
         } else if (field.items && Array.isArray(field.items)) {
             field.values = field.items.map((i) => i.value);
-            field.labels = field.items.map((i) => i.label);
+            field.labels ||= [];
+            field.labels = field.items.map((i) => i.label) as string[];
         }
     });
 };
