@@ -15,7 +15,13 @@ export type MobilettoOrmFieldControl =
     | "flag"
     | "select"
     | "multi";
-export type MobilettoOrmFieldRender = "date" | "time" | "datetime";
+
+export type MobilettoOrmFieldRenderFunc = (
+    v: string | number | boolean,
+    messages: Record<string, string>,
+    title: string
+) => string;
+export type MobilettoOrmFieldRender = "date" | "time" | "datetime" | MobilettoOrmFieldRenderFunc;
 
 export const VALID_PRIMARY_TYPES = ["string", "number"];
 
