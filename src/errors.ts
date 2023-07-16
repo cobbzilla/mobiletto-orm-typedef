@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class MobilettoOrmError extends Error {
-    private readonly err: any;
+    readonly err: any;
     constructor(message: string, err?: any) {
         super(`${message}: ${err ? err : ""}`);
         this.err = err;
@@ -15,7 +15,7 @@ export class MobilettoOrmError extends Error {
 }
 
 export class MobilettoOrmNotFoundError extends Error {
-    private readonly id: any;
+    readonly id: any;
     constructor(id: any) {
         super(`MobilettoOrmNotFoundError: ${id}`);
         this.id = id;
@@ -29,7 +29,7 @@ export class MobilettoOrmNotFoundError extends Error {
 }
 
 export class MobilettoOrmSyncError extends Error {
-    private readonly id: any;
+    readonly id: any;
     constructor(id: any, message?: string) {
         super(message ? message : `MobilettoOrmSyncError: ${id}`);
         this.id = id;
@@ -46,7 +46,7 @@ export class MobilettoOrmSyncError extends Error {
 export type ValidationErrors = Record<string, string[]>;
 
 export class MobilettoOrmValidationError extends Error {
-    private readonly errors: ValidationErrors;
+    readonly errors: ValidationErrors;
     constructor(errors: ValidationErrors) {
         super(JSON.stringify(errors));
         this.errors = errors;
