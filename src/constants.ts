@@ -23,6 +23,7 @@ export type MobilettoOrmNewInstanceOpts = {
 
 export type MobilettoOrmTypeDefConfig = {
     typeName: string;
+    singleton?: string;
     idPrefix?: string;
     primary?: string;
     basePath?: string;

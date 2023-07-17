@@ -10,6 +10,7 @@ export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly singleton?: string;
     readonly idPrefix: string;
     readonly basePath: string;
     primary?: string;

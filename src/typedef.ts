@@ -44,6 +44,7 @@ const defaultIdPrefix = (typeName: string): string => {
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly singleton?: string;
     readonly idPrefix: string;
     readonly basePath: string;
     primary?: string;
@@ -69,11 +70,11 @@ export class MobilettoOrmTypeDef {
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
+        this.singleton = config.singleton || undefined;
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : defaultIdPrefix(this.typeName);
         this.basePath = config.basePath || "";
         this.fields = config.fields || {};
         this.indexes = [];
-        // this.primary = null
         this.redaction = [];
         this.tabIndexes = this._tabIndexes(this.fields);
         processFields(this.fields, "", this);
