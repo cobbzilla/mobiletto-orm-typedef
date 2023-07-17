@@ -45,7 +45,7 @@ export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
     readonly singleton?: string;
-    readonly idPrefix: string;
+    readonly idPrefix?: string;
     readonly basePath: string;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
@@ -71,7 +71,7 @@ export class MobilettoOrmTypeDef {
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;
-        this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : defaultIdPrefix(this.typeName);
+        this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
         this.basePath = config.basePath || "";
         this.fields = config.fields || {};
         this.indexes = [];
@@ -179,7 +179,7 @@ export class MobilettoOrmTypeDef {
         return generateId(this.idPrefix);
     }
     newVersion(): string {
-        return generateId(VERSION_PREFIX + this.idPrefix);
+        return generateId(VERSION_PREFIX + (this.idPrefix || defaultIdPrefix(this.typeName)));
     }
     newMeta(id?: string | null): MobilettoOrmObjectMetadata {
         const now = Date.now();
@@ -308,19 +308,63 @@ export class MobilettoOrmTypeDef {
         let foundId = null;
         if (thing._meta && typeof thing._meta.id === "string") {
             foundId = thing._meta.id;
-        } else if (typeof thing.id === "string" && thing.id.length > 0) {
-            foundId = normalized(this.fields, "id", thing);
-        } else if (this.primary && typeof thing[this.primary] === "string" && thing[this.primary].length > 0) {
+            if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+                this.log_warn(
+                    `id: provided _meta.id did not start with idPrefix ${this.idPrefix}, discarding: ${thing._meta.id} (normalized to ${foundId})`
+                );
+                foundId = null;
+            }
+        }
+        if (foundId == null && typeof thing.id === "string" && thing.id.length > 0) {
+            foundId = normalized(this.fields, "id", thing) as string;
+            if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+                this.log_warn(
+                    `id: provided id did not start with idPrefix ${this.idPrefix}, discarding: ${thing.id} (normalized to ${foundId})`
+                );
+                foundId = null;
+            }
+        }
+        if (
+            foundId == null &&
+            this.primary &&
+            typeof thing[this.primary] === "string" &&
+            thing[this.primary].length > 0
+        ) {
             foundId =
                 thing[this.primary] && thing[this.primary].length > 0
-                    ? normalized(this.fields, this.primary, thing)
+                    ? (normalized(this.fields, this.primary, thing) as string)
                     : null;
-        } else if (this.alternateIdFields) {
+            if (foundId && this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+                this.log_warn(
+                    `id: provided primary field ${this.primary} did not start with idPrefix ${
+                        this.idPrefix
+                    }, discarding: ${thing[this.primary]} (normalized to ${foundId})`
+                );
+                foundId = null;
+            }
+        }
+        if (foundId == null && this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {
                 if (typeof thing[alt] === "string") {
-                    foundId = normalized(this.fields, alt, thing);
-                    break;
+                    foundId = normalized(this.fields, alt, thing) as string;
+                    if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+                        this.log_warn(
+                            `id: provided alternate ID field ${alt} did not start with idPrefix ${this.idPrefix}, discarding: ${thing[alt]} (normalized to ${foundId})`
+                        );
+                        foundId = null;
+                    } else {
+                        break;
+                    }
                 }
+            }
+        }
+        if (this.idPrefix && foundId) {
+            const minIdLength = MIN_ID_LENGTH + this.idPrefix.length;
+            if (!foundId.startsWith(this.idPrefix) || foundId.length < minIdLength) {
+                this.log_warn(
+                    `id: resolved foundId ${foundId} did not start with idPrefix ${this.idPrefix} or was too short (min length ${minIdLength}), discarding`
+                );
+                foundId = null;
             }
         }
         return foundId != null ? fsSafeName(`${foundId}`) : this.newId();

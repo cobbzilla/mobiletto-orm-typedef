@@ -88,7 +88,6 @@ describe("nested validation test with optional nested object with required field
             expect(Object.keys(e.errors).length).equals(1, "expected one errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
-            expect(thing._meta.id.startsWith(nestedType1.idPrefix)).to.be.true;
         }
     });
 });

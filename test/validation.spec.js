@@ -287,7 +287,6 @@ describe("validation test", async () => {
             expect(e.errors["int"][0]).equals("maxValue", "expected value.maxValue error");
             expect(e.errors["alphaOnly"].length).equals(1, "expected 1 alphaOnly error");
             expect(e.errors["alphaOnly"][0]).equals("regex", "expected alphaOnly.regex error");
-            expect(badThing._meta.id.startsWith(typeDef.idPrefix)).is.true;
         }
     });
     it("fails to validate an object with multiple type errors", async () => {
@@ -317,7 +316,6 @@ describe("validation test", async () => {
             expect(e.errors["impliedBoolean"][0]).equals("type", "expected impliedBoolean.type error");
             expect(e.errors["restricted"].length).equals(1, "expected 1 restricted error");
             expect(e.errors["restricted"][0]).equals("type", "expected restricted.type error");
-            expect(badThing._meta.id.startsWith(typeDef.idPrefix)).is.true;
         }
     });
     it("successfully validates and redacts an object, verifying default fields are properly set and redacted fields are null", async () => {

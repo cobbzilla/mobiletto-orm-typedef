@@ -11,7 +11,7 @@ export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
     readonly singleton?: string;
-    readonly idPrefix: string;
+    readonly idPrefix?: string;
     readonly basePath: string;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;

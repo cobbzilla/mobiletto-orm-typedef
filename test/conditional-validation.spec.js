@@ -37,7 +37,6 @@ describe("validation test with conditionally required nested objects", async () 
             expect(Object.keys(e.errors).length).equals(1, "expected one errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
-            expect(thing._meta.id.startsWith(conditionalType.idPrefix)).to.be.true;
         }
     });
     it("successfully validates a thing that selects from selector but does not supply any values", async () => {
