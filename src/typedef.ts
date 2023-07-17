@@ -305,6 +305,10 @@ export class MobilettoOrmTypeDef {
     }
 
     id(thing: MobilettoOrmObject) {
+        if (this.singleton) {
+            // there can be only one
+            return this.singleton;
+        }
         let foundId = null;
         if (thing._meta && typeof thing._meta.id === "string") {
             foundId = thing._meta.id;
