@@ -31,7 +31,7 @@ export type MobilettoOrmWithId = { id: string };
 export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-const ID_PREFIX_REGEX = /^[a-z][a-z~]{1,12}$/g;
+const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 
 const validIdPrefix = (prefix?: string): boolean =>
     (prefix && prefix.length >= 2 && prefix.match(ID_PREFIX_REGEX) != null) || false;
