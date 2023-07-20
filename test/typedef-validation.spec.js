@@ -41,6 +41,22 @@ const asyncErrorConfig = {
 };
 
 describe("typedef validation test", async () => {
+    it("typeDef.isId returns true for a valid id", async () => {
+        const typeDef = new MobilettoOrmTypeDef(typeDefConfig);
+        expect(typeDef.isId(typeDef.newId())).to.be.true;
+    });
+    it("typeDef.isId returns false for an invalid id", async () => {
+        const typeDef = new MobilettoOrmTypeDef(typeDefConfig);
+        expect(typeDef.isId(typeDef.newId() + "0")).to.be.false;
+    });
+    it("typeDef.isVersion returns true for a valid version", async () => {
+        const typeDef = new MobilettoOrmTypeDef(typeDefConfig);
+        expect(typeDef.isVersion(typeDef.newVersion())).to.be.true;
+    });
+    it("typeDef.isVersion returns false for an invalid version", async () => {
+        const typeDef = new MobilettoOrmTypeDef(typeDefConfig);
+        expect(typeDef.isVersion(typeDef.newVersion() + "0")).to.be.false;
+    });
     it("successfully validates with multiple typedef validation errors", async () => {
         const typeDef = new MobilettoOrmTypeDef(typeDefConfig);
         try {

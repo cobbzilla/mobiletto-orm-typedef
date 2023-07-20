@@ -20,6 +20,8 @@ export declare class MobilettoOrmTypeDef {
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;
+    readonly idRegex: RegExp;
+    readonly versionRegex: RegExp;
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
     readonly logger: MobilettoOrmLogger | null;
@@ -35,7 +37,10 @@ export declare class MobilettoOrmTypeDef {
     newFullInstance(): MobilettoOrmObject;
     newDummyInstance(): MobilettoOrmObject;
     newId(): string;
+    versionPrefix(): string;
     newVersion(): string;
+    isId(val: string): boolean;
+    isVersion(val: string): boolean;
     newMeta(id?: string | null): MobilettoOrmObjectMetadata;
     validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
     typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors): Promise<void>;

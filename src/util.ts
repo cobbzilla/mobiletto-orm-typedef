@@ -1,5 +1,6 @@
 import shasum from "shasum";
 import { v4 as uuidv4 } from "uuid";
+import { VERSION_PREFIX } from "./constants";
 
 export const fsSafeName = (name: string): string => encodeURIComponent(name).replace(/%/g, "~");
 
@@ -16,6 +17,9 @@ export const generateId = (prefix?: string) =>
         "-",
         ""
     )}`.toLowerCase();
+
+export const idRegex = (prefix?: string): RegExp =>
+    new RegExp(`^${prefix ? prefix + "_" : ""}[a-f\\d]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}$`, "gi");
 
 export const MIN_ID_LENGTH = generateId().length;
 

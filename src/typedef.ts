@@ -2,7 +2,7 @@
 
 import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
-import { fsSafeName, generateId, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
+import { fsSafeName, generateId, idRegex, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
 import {
     compareTabIndexes,
     MobilettoOrmDefaultFieldOpts,
@@ -54,6 +54,8 @@ export class MobilettoOrmTypeDef {
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;
+    readonly idRegex: RegExp;
+    readonly versionRegex: RegExp;
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
     readonly logger: MobilettoOrmLogger | null;
@@ -87,6 +89,8 @@ export class MobilettoOrmTypeDef {
             `^${this.typeName}_.+?${OBJ_ID_SEP}${VERSION_PREFIX}[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
             "gi"
         );
+        this.idRegex = idRegex(this.idPrefix);
+        this.versionRegex = idRegex(this.versionPrefix());
         this.validators = Object.assign({}, FIELD_VALIDATORS, config.validators || {});
         this.validations =
             config.validations && typeof config.validations === "object" && Object.keys(config.validations).length > 0
@@ -175,8 +179,17 @@ export class MobilettoOrmTypeDef {
     newId(): string {
         return generateId(this.idPrefix);
     }
+    versionPrefix(): string {
+        return VERSION_PREFIX + (this.idPrefix || defaultIdPrefix(this.typeName));
+    }
     newVersion(): string {
-        return generateId(VERSION_PREFIX + (this.idPrefix || defaultIdPrefix(this.typeName)));
+        return generateId(this.versionPrefix());
+    }
+    isId(val: string): boolean {
+        return this.idRegex.test(val);
+    }
+    isVersion(val: string): boolean {
+        return this.versionRegex.test(val);
     }
     newMeta(id?: string | null): MobilettoOrmObjectMetadata {
         const now = Date.now();
