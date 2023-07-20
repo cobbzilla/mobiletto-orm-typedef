@@ -4,7 +4,7 @@ import { MobilettoOrmLogger } from "./util.js";
 export declare const DEFAULT_MAX_VERSIONS = 5;
 export declare const DEFAULT_MIN_WRITES = 0;
 export declare const DEFAULT_ALTERNATE_ID_FIELDS: string[];
-export declare const VERSION_PREFIX = "V_";
+export declare const VERSION_PREFIX = "v_";
 export declare const OBJ_ID_SEP = "_MORM_";
 export declare const RESERVED_FIELD_NAMES: string[];
 export declare const NUMERIC_CONTROL_TYPES: string[];
