@@ -26,10 +26,7 @@ import {
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
 
-export type MobilettoOrmWithId = { id: string };
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
-/* eslint-enable @typescript-eslint/no-explicit-any */
+export type MobilettoOrmIdArg = string | MobilettoOrmObject;
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 

@@ -3,10 +3,7 @@ import { MobilettoOrmLogger } from "./util.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
 import { MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
-export type MobilettoOrmWithId = {
-    id: string;
-};
-export type MobilettoOrmIdArg = string | MobilettoOrmWithId | any;
+export type MobilettoOrmIdArg = string | MobilettoOrmObject;
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
