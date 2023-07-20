@@ -18,7 +18,7 @@ export const generateId = (prefix?: string) =>
     )}`.toLowerCase();
 
 export const idRegex = (prefix?: string): RegExp =>
-    new RegExp(`^${prefix ? prefix + "_" : ""}[a-f\\d]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}$`, "gi");
+    new RegExp(`^${prefix ? prefix + "_" : ""}[a-f\\d]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}$`, "i");
 
 export const MIN_ID_LENGTH = generateId().length;
 
