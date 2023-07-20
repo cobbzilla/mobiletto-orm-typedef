@@ -1,6 +1,5 @@
 import shasum from "shasum";
 import { v4 as uuidv4 } from "uuid";
-import { VERSION_PREFIX } from "./constants";
 
 export const fsSafeName = (name: string): string => encodeURIComponent(name).replace(/%/g, "~");
 
