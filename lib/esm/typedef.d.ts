@@ -4,6 +4,10 @@ import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmF
 import { MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 export type MobilettoOrmIdArg = string | MobilettoOrmObject;
+export type MobilettoOrmIndex = {
+    field: string;
+    unique: boolean;
+};
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -13,7 +17,7 @@ export declare class MobilettoOrmTypeDef {
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
-    readonly indexes: string[];
+    readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
     readonly tableFields: string[];
@@ -70,6 +74,7 @@ export declare class MobilettoOrmTypeDef {
         labels?: string[] | undefined;
         items?: import("./field.js").MobilettoOrmFieldItem[] | undefined;
         index?: boolean | undefined;
+        unique?: boolean | undefined;
         redact?: boolean | undefined;
         tabIndex?: number | undefined;
         render?: import("./field.js").MobilettoOrmFieldRender | undefined;

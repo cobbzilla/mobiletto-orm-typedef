@@ -38,6 +38,11 @@ const defaultIdPrefix = (typeName: string): string => {
     return (typeName.substring(0, 1) + typeName.substring(1).replace(/[aeiou]+/g, "")).substring(0, 4).toLowerCase();
 };
 
+export type MobilettoOrmIndex = {
+    field: string;
+    unique: boolean;
+};
+
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -47,7 +52,7 @@ export class MobilettoOrmTypeDef {
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
-    readonly indexes: string[];
+    readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
     readonly tableFields: string[];
@@ -456,7 +461,7 @@ export class MobilettoOrmTypeDef {
             this.log_warn(`typeDef.indexPath(${field}): coerced value (type ${typeof value}) to string: ${coerced}`);
             value = coerced;
         }
-        if (this.indexes.includes(field)) {
+        if (this.indexes.filter((i) => i.field === field).length > 0) {
             return `${this.typePath()}_idx_${sha(field)}/${sha(value)}`;
         } else {
             throw new MobilettoOrmError(`typeDef.indexPath(${field}): field not indexed`);

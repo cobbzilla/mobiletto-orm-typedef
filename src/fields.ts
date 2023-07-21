@@ -193,13 +193,13 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             }
             field.updatable = false;
         }
-        if (field.index) {
+        if (field.index || field.unique) {
             if (!typeDef) {
                 throw new MobilettoOrmError(
                     `${invalidPrefix} non-root field ${fieldName} had {index: true} (not allowed)`
                 );
             }
-            typeDef.indexes.push(fieldName);
+            typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
         }
         const redact =
             (typeof field.redact === "undefined" && AUTO_REDACT_CONTROLS.includes(field.control)) ||

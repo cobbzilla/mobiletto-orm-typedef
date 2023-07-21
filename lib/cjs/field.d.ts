@@ -42,6 +42,7 @@ export type MobilettoOrmFieldDefConfig = {
     labels?: string[];
     items?: MobilettoOrmFieldItem[];
     index?: boolean;
+    unique?: boolean;
     redact?: boolean;
     tabIndex?: number;
     render?: MobilettoOrmFieldRender;
