@@ -16,3 +16,4 @@ export declare class MobilettoOrmValidationError extends Error {
     constructor(errors: ValidationErrors);
 }
 export declare const addError: (errors: ValidationErrors, fieldPath: string, err: string) => void;
+export declare const hasErrors: (errors: ValidationErrors) => boolean;

@@ -67,3 +67,5 @@ export const addError = (errors: ValidationErrors, fieldPath: string, err: strin
         errors[fieldPath].push(err);
     }
 };
+
+export const hasErrors = (errors: ValidationErrors) => errors && Object.keys(errors).length > 0;
