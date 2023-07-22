@@ -16,6 +16,7 @@ import {
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
+    MobilettoOrmIdArg,
     MobilettoOrmNewInstanceOpts,
     MobilettoOrmObject,
     MobilettoOrmObjectMetadata,
@@ -25,8 +26,6 @@ import {
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
-
-export type MobilettoOrmIdArg = string | MobilettoOrmObject;
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 

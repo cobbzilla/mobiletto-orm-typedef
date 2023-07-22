@@ -38,9 +38,12 @@ export type MobilettoOrmTypeDefConfig = {
     debug?: boolean;
 };
 
+export type MobilettoOrmIdArg = string | MobilettoOrmObject;
+
 export type MobilettoOrmObjectMetadata = {
     id: string;
     version: string;
+    replacesVersion?: MobilettoOrmIdArg;
     removed?: boolean;
     ctime: number;
     mtime: number;
