@@ -13,6 +13,19 @@ export const sha = (val: string | number | boolean) => shasum(`${val}`, "SHA256"
 
 export const typedefHash = (val: string | number | boolean, debug: boolean) => (debug ? val : sha(val));
 
+const insertAtIndex = (str: string, insert: string, index: number): string => {
+    return str.slice(0, index) + insert + str.slice(index);
+};
+
+export const typedefHashDirs = (val: string | number | boolean, debug: boolean, levels: number): string => {
+    if (debug) return `${val}`;
+    let s = sha(val);
+    for (let i = 0; i < levels; i++) {
+        s = insertAtIndex(s, "/", 2 + i * 2);
+    }
+    return s;
+};
+
 export const generateId = (prefix?: string) =>
     `${prefix ? prefix + "_" : ""}${Date.now().toString(16).padStart(12, "0")}_${uuidv4().replace(
         "-",

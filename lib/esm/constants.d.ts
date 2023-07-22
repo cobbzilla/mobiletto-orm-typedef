@@ -21,6 +21,7 @@ export type MobilettoOrmTypeDefConfig = {
     idPrefix?: string;
     primary?: string;
     basePath?: string;
+    indexLevels?: number;
     alternateIdFields?: string[];
     fields: MobilettoOrmFieldDefConfigs;
     tableFields?: string[];

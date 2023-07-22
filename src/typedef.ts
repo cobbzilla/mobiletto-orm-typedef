@@ -2,7 +2,16 @@
 
 import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
-import { fsSafeName, generateId, idRegex, MIN_ID_LENGTH, MobilettoOrmLogger, rand, typedefHash } from "./util.js";
+import {
+    fsSafeName,
+    generateId,
+    idRegex,
+    MIN_ID_LENGTH,
+    MobilettoOrmLogger,
+    rand,
+    typedefHash,
+    typedefHashDirs,
+} from "./util.js";
 import {
     compareTabIndexes,
     MobilettoOrmDefaultFieldOpts,
@@ -48,6 +57,7 @@ export class MobilettoOrmTypeDef {
     readonly singleton?: string;
     readonly idPrefix?: string;
     readonly basePath: string;
+    readonly indexLevels: number;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
@@ -77,6 +87,7 @@ export class MobilettoOrmTypeDef {
         this.singleton = config.singleton || undefined;
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
         this.basePath = config.basePath || "";
+        this.indexLevels = config.indexLevels || 1;
         this.fields = config.fields || {};
         this.indexes = [];
         this.redaction = [];
@@ -415,7 +426,7 @@ export class MobilettoOrmTypeDef {
         if (idVal == null) {
             throw new MobilettoOrmError(`typeDef.generalPath: invalid id: ${id}`);
         }
-        return this.typePath() + "/" + idVal;
+        return this.typePath() + "/" + typedefHashDirs(idVal, this.debug, this.indexLevels);
     }
 
     isSpecificPath(p: string) {
@@ -463,7 +474,12 @@ export class MobilettoOrmTypeDef {
             value = coerced;
         }
         if (this.indexes.filter((i) => i.field === field).length > 0) {
-            return `${this.typePath()}_idx_${typedefHash(field, this.debug)}/${typedefHash(value, this.debug)}`;
+            const indexLevels = this.fields[field].indexLevels || 1;
+            return `${this.typePath()}_idx_${typedefHash(field, this.debug)}/${typedefHashDirs(
+                value,
+                this.debug,
+                indexLevels
+            )}`;
         } else {
             throw new MobilettoOrmError(`typeDef.indexPath(${field}): field not indexed`);
         }

@@ -13,6 +13,7 @@ export declare class MobilettoOrmTypeDef {
     readonly singleton?: string;
     readonly idPrefix?: string;
     readonly basePath: string;
+    readonly indexLevels: number;
     primary?: string;
     readonly alternateIdFields: string[] | null | undefined;
     fields: MobilettoOrmFieldDefConfigs;
@@ -74,6 +75,7 @@ export declare class MobilettoOrmTypeDef {
         labels?: string[] | undefined;
         items?: import("./field.js").MobilettoOrmFieldItem[] | undefined;
         index?: boolean | undefined;
+        indexLevels?: number | undefined;
         unique?: boolean | undefined;
         redact?: boolean | undefined;
         tabIndex?: number | undefined;
