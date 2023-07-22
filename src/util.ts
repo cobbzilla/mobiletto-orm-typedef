@@ -9,7 +9,9 @@ export type MobilettoOrmLogger = {
     error: (msg: string) => void;
 };
 
-export const sha = (val: string | number | boolean) => shasum(val, "SHA256");
+export const sha = (val: string | number | boolean) => shasum(`${val}`, "SHA256");
+
+export const typedefHash = (val: string | number | boolean, debug: boolean) => (debug ? val : sha(val));
 
 export const generateId = (prefix?: string) =>
     `${prefix ? prefix + "_" : ""}${Date.now().toString(16).padStart(12, "0")}_${uuidv4().replace(

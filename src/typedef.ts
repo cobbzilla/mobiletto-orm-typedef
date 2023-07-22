@@ -2,7 +2,7 @@
 
 import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
-import { fsSafeName, generateId, idRegex, MIN_ID_LENGTH, MobilettoOrmLogger, rand, sha } from "./util.js";
+import { fsSafeName, generateId, idRegex, MIN_ID_LENGTH, MobilettoOrmLogger, rand, typedefHash } from "./util.js";
 import {
     compareTabIndexes,
     MobilettoOrmDefaultFieldOpts,
@@ -64,6 +64,7 @@ export class MobilettoOrmTypeDef {
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
     readonly logger: MobilettoOrmLogger | null;
+    readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig) {
         if (typeof config.typeName !== "string" || config.typeName.length <= 0) {
             throw new MobilettoOrmError("invalid TypeDefConfig: no typeName provided");
@@ -102,6 +103,7 @@ export class MobilettoOrmTypeDef {
                 ? config.validations
                 : {};
         this.logger = config.logger || null;
+        this.debug = config.debug || false;
     }
 
     _log(msg: string, level: string) {
@@ -462,7 +464,7 @@ export class MobilettoOrmTypeDef {
             value = coerced;
         }
         if (this.indexes.filter((i) => i.field === field).length > 0) {
-            return `${this.typePath()}_idx_${sha(field)}/${sha(value)}`;
+            return `${this.typePath()}_idx_${typedefHash(field, this.debug)}/${typedefHash(value, this.debug)}`;
         } else {
             throw new MobilettoOrmError(`typeDef.indexPath(${field}): field not indexed`);
         }

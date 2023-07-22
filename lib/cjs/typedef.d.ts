@@ -29,6 +29,7 @@ export declare class MobilettoOrmTypeDef {
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
     readonly logger: MobilettoOrmLogger | null;
+    readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig);
     _log(msg: string, level: string): void;
     log_info(msg: string): void;

@@ -35,6 +35,7 @@ export type MobilettoOrmTypeDefConfig = {
     validators?: FieldValidators;
     validations?: TypeValidations;
     logger?: MobilettoOrmLogger;
+    debug?: boolean;
 };
 
 export type MobilettoOrmObjectMetadata = {
