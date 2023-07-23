@@ -14,7 +14,8 @@ export declare class MobilettoOrmTypeDef {
     readonly basePath: string;
     readonly indexLevels: number;
     primary?: string;
-    readonly alternateIdFields: string[] | null | undefined;
+    readonly alternateIdFields: string[] | null;
+    readonly alternateLookupFields: string[] | null;
     fields: MobilettoOrmFieldDefConfigs;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];

@@ -32,6 +32,7 @@ export type MobilettoOrmTypeDefConfig = {
     basePath?: string;
     indexLevels?: number;
     alternateIdFields?: string[];
+    alternateLookupFields?: string[];
     fields: MobilettoOrmFieldDefConfigs;
     tableFields?: string[];
     maxVersions?: number;

@@ -60,7 +60,8 @@ export class MobilettoOrmTypeDef {
     readonly basePath: string;
     readonly indexLevels: number;
     primary?: string;
-    readonly alternateIdFields: string[] | null | undefined;
+    readonly alternateIdFields: string[] | null;
+    readonly alternateLookupFields: string[] | null;
     fields: MobilettoOrmFieldDefConfigs;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
@@ -84,6 +85,7 @@ export class MobilettoOrmTypeDef {
         }
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
+        this.alternateLookupFields = config.alternateLookupFields || [];
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
