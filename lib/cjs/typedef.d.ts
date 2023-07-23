@@ -1,6 +1,6 @@
 import { ValidationErrors } from "./errors.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
-import { MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
+import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 export type MobilettoOrmIndex = {
     field: string;
@@ -15,8 +15,9 @@ export declare class MobilettoOrmTypeDef {
     readonly indexLevels: number;
     primary?: string;
     readonly alternateIdFields: string[] | null;
-    readonly alternateLookupFields: string[] | null;
+    readonly alternateLookupFields: string[];
     fields: MobilettoOrmFieldDefConfigs;
+    readonly apiConfig: MobilettoApiConfig;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];

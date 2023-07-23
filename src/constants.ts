@@ -24,6 +24,25 @@ export type MobilettoOrmLogger = {
     warn: (msg: string) => void;
     error: (msg: string) => void;
 };
+
+export type MobilettoApiPermission = "admin" | "owner" | "session" | "public";
+
+export type MobilettoApiConfig = {
+    lookup: MobilettoApiPermission;
+    search: MobilettoApiPermission;
+    create: MobilettoApiPermission;
+    update: MobilettoApiPermission;
+    delete: MobilettoApiPermission;
+};
+
+export const DEFAULT_API_CONFIG: MobilettoApiConfig = {
+    lookup: "admin",
+    search: "admin",
+    create: "admin",
+    update: "admin",
+    delete: "admin",
+};
+
 export type MobilettoOrmTypeDefConfig = {
     typeName: string;
     singleton?: string;
@@ -34,6 +53,7 @@ export type MobilettoOrmTypeDefConfig = {
     alternateIdFields?: string[];
     alternateLookupFields?: string[];
     fields: MobilettoOrmFieldDefConfigs;
+    apiConfig?: MobilettoApiConfig;
     tableFields?: string[];
     maxVersions?: number;
     minWrites?: number;

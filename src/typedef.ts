@@ -23,9 +23,11 @@ import {
 } from "./field.js";
 import {
     DEFAULT_ALTERNATE_ID_FIELDS,
+    DEFAULT_API_CONFIG,
     DEFAULT_ID_INDEX_LEVELS,
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
+    MobilettoApiConfig,
     MobilettoOrmIdArg,
     MobilettoOrmLogger,
     MobilettoOrmNewInstanceOpts,
@@ -61,8 +63,9 @@ export class MobilettoOrmTypeDef {
     readonly indexLevels: number;
     primary?: string;
     readonly alternateIdFields: string[] | null;
-    readonly alternateLookupFields: string[] | null;
+    readonly alternateLookupFields: string[];
     fields: MobilettoOrmFieldDefConfigs;
+    readonly apiConfig: MobilettoApiConfig;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
@@ -85,17 +88,20 @@ export class MobilettoOrmTypeDef {
         }
         this.config = config;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
-        this.alternateLookupFields = config.alternateLookupFields || [];
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
         this.basePath = config.basePath || "";
         this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
         this.fields = config.fields || {};
+        this.apiConfig = config.apiConfig || DEFAULT_API_CONFIG;
         this.indexes = [];
         this.redaction = [];
         this.tabIndexes = this._tabIndexes(this.fields);
         processFields(this.fields, "", this);
+        this.alternateLookupFields = Object.values(this.fields)
+            .filter((f) => f.unique)
+            .map((f) => f.name) as string[];
         // @ts-ignore
         this.tableFields = config.tableFields
             ? config.tableFields
