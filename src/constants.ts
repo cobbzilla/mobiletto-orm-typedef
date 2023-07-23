@@ -55,3 +55,6 @@ export type MobilettoOrmObject = {
     [prop: string]: any;
     /* eslint-enable @typescript-eslint/no-explicit-any */
 };
+
+export const DEFAULT_FIELD_INDEX_LEVELS = 1;
+export const DEFAULT_ID_INDEX_LEVELS = 1;

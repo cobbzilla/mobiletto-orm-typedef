@@ -8,7 +8,12 @@ import {
     VALID_PRIMARY_TYPES,
 } from "./field.js";
 import { MobilettoOrmError } from "./errors.js";
-import { AUTO_REDACT_CONTROLS, NUMERIC_CONTROL_TYPES, RESERVED_FIELD_NAMES } from "./constants.js";
+import {
+    AUTO_REDACT_CONTROLS,
+    DEFAULT_FIELD_INDEX_LEVELS,
+    NUMERIC_CONTROL_TYPES,
+    RESERVED_FIELD_NAMES,
+} from "./constants.js";
 import { MobilettoOrmTypeDef } from "./typedef.js";
 
 const determineFieldControl = (
@@ -200,7 +205,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                 );
             }
             typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
-            field.indexLevels = typeDef.debug ? 0 : field.indexLevels || 1;
+            field.indexLevels = typeDef.debug ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
         }
         const redact =
             (typeof field.redact === "undefined" && AUTO_REDACT_CONTROLS.includes(field.control)) ||

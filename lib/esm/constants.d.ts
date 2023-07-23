@@ -44,3 +44,5 @@ export type MobilettoOrmObject = {
     _meta?: MobilettoOrmObjectMetadata;
     [prop: string]: any;
 };
+export declare const DEFAULT_FIELD_INDEX_LEVELS = 1;
+export declare const DEFAULT_ID_INDEX_LEVELS = 1;
