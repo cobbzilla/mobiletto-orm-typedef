@@ -3,11 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export const fsSafeName = (name: string): string => encodeURIComponent(name).replace(/%/g, "~");
 
-export type MobilettoOrmLogger = {
-    info: (msg: string) => void;
-    warn: (msg: string) => void;
-    error: (msg: string) => void;
-};
+export const OBJ_ID_SEP = "_MORM_";
+export const OBJ_DIR_SUFFIX = "_MORM";
 
 export const sha = (val: string | number | boolean) => shasum(`${val}`, "SHA256");
 
@@ -23,7 +20,7 @@ export const typedefHashDirs = (val: string | number | boolean, debug: boolean, 
     for (let i = 0; i < levels; i++) {
         s = insertAtIndex(s, "/", 2 + i * 2);
     }
-    return s;
+    return s + OBJ_DIR_SUFFIX;
 };
 
 export const generateId = (prefix?: string) =>

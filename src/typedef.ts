@@ -7,11 +7,11 @@ import {
     generateId,
     idRegex,
     MIN_ID_LENGTH,
-    MobilettoOrmLogger,
+    OBJ_ID_SEP,
     rand,
     typedefHash,
     typedefHashDirs,
-} from "./util.js";
+} from "./hash.js";
 import {
     compareTabIndexes,
     MobilettoOrmDefaultFieldOpts,
@@ -27,11 +27,11 @@ import {
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
     MobilettoOrmIdArg,
+    MobilettoOrmLogger,
     MobilettoOrmNewInstanceOpts,
     MobilettoOrmObject,
     MobilettoOrmObjectMetadata,
     MobilettoOrmTypeDefConfig,
-    OBJ_ID_SEP,
     VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";

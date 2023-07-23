@@ -1,0 +1,10 @@
+export declare const fsSafeName: (name: string) => string;
+export declare const OBJ_ID_SEP = "_MORM_";
+export declare const OBJ_DIR_SUFFIX = "_MORM";
+export declare const sha: (val: string | number | boolean) => string;
+export declare const typedefHash: (val: string | number | boolean, debug: boolean) => string | number | boolean;
+export declare const typedefHashDirs: (val: string | number | boolean, debug: boolean, levels: number) => string;
+export declare const generateId: (prefix?: string) => string;
+export declare const idRegex: (prefix?: string) => RegExp;
+export declare const MIN_ID_LENGTH: number;
+export declare const rand: (len?: number) => string;
