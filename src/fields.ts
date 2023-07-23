@@ -200,6 +200,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                 );
             }
             typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
+            field.indexLevels = typeDef.debug ? 0 : field.indexLevels || 1;
         }
         const redact =
             (typeof field.redact === "undefined" && AUTO_REDACT_CONTROLS.includes(field.control)) ||

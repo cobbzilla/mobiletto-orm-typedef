@@ -87,7 +87,7 @@ export class MobilettoOrmTypeDef {
         this.singleton = config.singleton || undefined;
         this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
         this.basePath = config.basePath || "";
-        this.indexLevels = config.indexLevels || 1;
+        this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : 1;
         this.fields = config.fields || {};
         this.indexes = [];
         this.redaction = [];
