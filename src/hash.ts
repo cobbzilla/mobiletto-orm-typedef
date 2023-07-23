@@ -15,7 +15,7 @@ const insertAtIndex = (str: string, insert: string, index: number): string => {
 };
 
 export const typedefHashDirs = (val: string | number | boolean, debug: boolean, levels: number): string => {
-    if (debug) return `${val}`;
+    if (debug) return `${val}${OBJ_DIR_SUFFIX}`;
     let s = sha(val);
     for (let i = 0; i < levels; i++) {
         s = insertAtIndex(s, "/", 2 + i * 2);
