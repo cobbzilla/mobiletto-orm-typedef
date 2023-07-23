@@ -25,7 +25,7 @@ export type MobilettoOrmLogger = {
     error: (msg: string) => void;
 };
 
-export type MobilettoApiPermission = "admin" | "owner" | "session" | "public";
+export type MobilettoApiPermission = { admin: true } | { owner: true } | { session: true } | { public: true };
 
 export type MobilettoApiConfig = {
     lookup: MobilettoApiPermission;
@@ -36,11 +36,11 @@ export type MobilettoApiConfig = {
 };
 
 export const DEFAULT_API_CONFIG: MobilettoApiConfig = {
-    lookup: "admin",
-    search: "admin",
-    create: "admin",
-    update: "admin",
-    delete: "admin",
+    lookup: { admin: true },
+    search: { admin: true },
+    create: { admin: true },
+    update: { admin: true },
+    delete: { admin: true },
 };
 
 export type MobilettoOrmTypeDefConfig = {

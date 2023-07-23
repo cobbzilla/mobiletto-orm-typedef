@@ -18,7 +18,15 @@ export type MobilettoOrmLogger = {
     warn: (msg: string) => void;
     error: (msg: string) => void;
 };
-export type MobilettoApiPermission = "admin" | "owner" | "session" | "public";
+export type MobilettoApiPermission = {
+    admin: true;
+} | {
+    owner: true;
+} | {
+    session: true;
+} | {
+    public: true;
+};
 export type MobilettoApiConfig = {
     lookup: MobilettoApiPermission;
     search: MobilettoApiPermission;
