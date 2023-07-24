@@ -112,4 +112,16 @@ describe("typedef validation test", async () => {
             value: 1,
         });
     });
+    it("successfully allows typeDef extension to override field definitions", async () => {
+        const typeDef = new MobilettoOrmTypeDef(asyncErrorConfig);
+        const extended = typeDef.extend({
+            fields: {
+                value: { control: "hidden" },
+            },
+        });
+        expect(typeDef.fields.value.control).eq("text");
+        expect(extended.fields.value.control).eq("hidden");
+        expect(typeDef.tabIndexedFields().find((f) => f.name === "value").control).eq("text");
+        expect(extended.tabIndexedFields().find((f) => f.name === "value").control).eq("hidden");
+    });
 });
