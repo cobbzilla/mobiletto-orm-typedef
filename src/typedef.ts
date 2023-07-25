@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import * as path from "path";
-import { addError, MobilettoOrmError, MobilettoOrmValidationError, ValidationErrors } from "./errors.js";
+import { addError, MobilettoOrmError, MobilettoOrmValidationError, MobilettoOrmValidationErrors } from "./errors.js";
 import {
     fsSafeName,
     generateId,
@@ -265,7 +265,7 @@ export class MobilettoOrmTypeDef {
         return validated;
     }
 
-    async typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors) {
+    async typeDefValidations(validated: MobilettoOrmObject, errors: MobilettoOrmValidationErrors) {
         const validationPromises: Promise<void>[] = [];
         Object.keys(this.validations).forEach((vName) => {
             const v = this.validations[vName];

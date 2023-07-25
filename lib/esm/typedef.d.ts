@@ -1,4 +1,4 @@
-import { ValidationErrors } from "./errors.js";
+import { MobilettoOrmValidationErrors } from "./errors.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
 import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
@@ -49,7 +49,7 @@ export declare class MobilettoOrmTypeDef {
     isVersion(val: string): boolean;
     newMeta(id?: string | null): MobilettoOrmObjectMetadata;
     validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
-    typeDefValidations(validated: MobilettoOrmObject, errors: ValidationErrors): Promise<void>;
+    typeDefValidations(validated: MobilettoOrmObject, errors: MobilettoOrmValidationErrors): Promise<void>;
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmObject): MobilettoOrmObject;
     idField(thing: MobilettoOrmObject): string | null;

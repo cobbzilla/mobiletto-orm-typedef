@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
-import { ValidationErrors, addError } from "./errors.js";
+import { MobilettoOrmValidationErrors, addError } from "./errors.js";
 import { MobilettoOrmObject } from "./constants.js";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
@@ -39,7 +39,7 @@ export const validateFields = (
     current: MobilettoOrmObject | undefined,
     validated: MobilettoOrmObject,
     validators: FieldValidators,
-    errors: ValidationErrors,
+    errors: MobilettoOrmValidationErrors,
     objPath: string
 ) => {
     const isCreate = typeof current === "undefined" || current == null;

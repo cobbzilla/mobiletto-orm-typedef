@@ -43,11 +43,11 @@ export class MobilettoOrmSyncError extends Error {
     }
 }
 
-export type ValidationErrors = Record<string, string[]>;
+export type MobilettoOrmValidationErrors = Record<string, string[]>;
 
 export class MobilettoOrmValidationError extends Error {
-    readonly errors: ValidationErrors;
-    constructor(errors: ValidationErrors) {
+    readonly errors: MobilettoOrmValidationErrors;
+    constructor(errors: MobilettoOrmValidationErrors) {
         super(JSON.stringify(errors));
         this.errors = errors;
         const actualProto = new.target.prototype;
@@ -59,7 +59,7 @@ export class MobilettoOrmValidationError extends Error {
     }
 }
 
-export const addError = (errors: ValidationErrors, fieldPath: string, err: string) => {
+export const addError = (errors: MobilettoOrmValidationErrors, fieldPath: string, err: string) => {
     if (typeof errors[fieldPath] === "undefined") {
         errors[fieldPath] = [];
     }
@@ -68,4 +68,4 @@ export const addError = (errors: ValidationErrors, fieldPath: string, err: strin
     }
 };
 
-export const hasErrors = (errors: ValidationErrors) => errors && Object.keys(errors).length > 0;
+export const hasErrors = (errors: MobilettoOrmValidationErrors) => errors && Object.keys(errors).length > 0;
