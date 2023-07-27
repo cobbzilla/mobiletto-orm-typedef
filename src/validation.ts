@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { MobilettoOrmFieldDefConfigs } from "./field.js";
+import { MobilettoOrmFieldDefConfigs, normalizedValue } from "./field.js";
 import { MobilettoOrmValidationErrors, addError } from "./errors.js";
 import { MobilettoOrmObject } from "./constants.js";
 
@@ -145,10 +145,27 @@ export const validateFields = (
                 } else {
                     val = typeof fieldValue === "undefined" ? null : fieldValue;
                 }
+
                 // only normalize we used the caller-provided value
                 // do not re-normalize if we used the current value
-                if (useThingValue && fieldValue && field.normalize) {
-                    validated[fieldName] = field.normalize(val);
+                if (useThingValue && val) {
+                    // if this is the primary field, it must be a new object,
+                    // or it must match previous value
+                    if (field.primary) {
+                        if (current && current[fieldName] !== val) {
+                            addError(errors, fieldPath, "unmodifiable");
+                        } else if (current) {
+                            // value remains unchanged
+                        } else {
+                            validated[fieldName] = normalizedValue(fields, fieldName, val);
+                            // this is the primary field; rewrite the id
+                            if (validated._meta) {
+                                validated._meta.id = validated[fieldName];
+                            }
+                        }
+                    } else {
+                        validated[fieldName] = normalizedValue(fields, fieldName, val);
+                    }
                 } else {
                     validated[fieldName] = val;
                 }

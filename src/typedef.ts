@@ -263,7 +263,7 @@ export class MobilettoOrmTypeDef {
             throw new MobilettoOrmValidationError(errors);
         }
         // re-check id, validation may have changed value
-        validated._meta.id = this.id(validated);
+        thing._meta.id = validated._meta.id = this.id(validated);
         return validated;
     }
 

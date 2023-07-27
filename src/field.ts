@@ -41,7 +41,7 @@ export type MobilettoOrmFieldItem = {
     rawLabel?: boolean;
 };
 
-export type MobilettoOrmNormalizeFunc = (val: unknown) => unknown;
+export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => MobilettoOrmFieldValue;
 
 export type MobilettoOrmCustomFieldTest = {
     message: string;
@@ -90,6 +90,18 @@ export const normalized = (
           fields[fieldName].normalize!(thing[fieldName])
         : /* eslint-enable @typescript-eslint/no-non-null-assertion */
           thing[fieldName];
+};
+
+export const normalizedValue = (
+    fields: MobilettoOrmFieldDefConfigs,
+    fieldName: string,
+    val: MobilettoOrmFieldValue
+): MobilettoOrmFieldValue => {
+    return fields[fieldName] && typeof fields[fieldName].normalize === "function"
+        ? /* eslint-disable @typescript-eslint/no-non-null-assertion */
+          fields[fieldName].normalize!(val)
+        : /* eslint-enable @typescript-eslint/no-non-null-assertion */
+          val;
 };
 
 export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => {
