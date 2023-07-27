@@ -32,7 +32,7 @@ export type TypeValidation = {
 
 export type TypeValidations = Record<string, TypeValidation>;
 
-export const validateFields = (
+export const validateFields = async (
     rootThing: MobilettoOrmObject,
     thing: MobilettoOrmObject,
     fields: MobilettoOrmFieldDefConfigs,
@@ -157,14 +157,14 @@ export const validateFields = (
                         } else if (current) {
                             // value remains unchanged
                         } else {
-                            validated[fieldName] = normalizedValue(fields, fieldName, val);
+                            validated[fieldName] = await normalizedValue(fields, fieldName, val);
                             // this is the primary field; rewrite the id
                             if (validated._meta) {
                                 validated._meta.id = validated[fieldName];
                             }
                         }
                     } else {
-                        validated[fieldName] = normalizedValue(fields, fieldName, val);
+                        validated[fieldName] = await normalizedValue(fields, fieldName, val);
                     }
                 } else {
                     validated[fieldName] = val;

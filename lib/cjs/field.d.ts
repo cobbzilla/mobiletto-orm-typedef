@@ -16,7 +16,7 @@ export type MobilettoOrmFieldItem = {
     label?: string;
     rawLabel?: boolean;
 };
-export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => MobilettoOrmFieldValue;
+export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;
 export type MobilettoOrmCustomFieldTest = {
     message: string;
     valid: (v: Record<string, unknown>) => boolean;
@@ -51,6 +51,6 @@ export type MobilettoOrmFieldDefConfig = {
     tabIndexes?: string[];
 };
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
-export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmObject) => MobilettoOrmFieldValue;
-export declare const normalizedValue: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, val: MobilettoOrmFieldValue) => MobilettoOrmFieldValue;
+export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmObject) => Promise<MobilettoOrmFieldValue>;
+export declare const normalizedValue: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;
 export declare const compareTabIndexes: (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => number;

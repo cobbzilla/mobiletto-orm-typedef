@@ -11,7 +11,9 @@ const typeDefConfig = {
         },
         slice1_last_digit_3: {
             field: "slice1",
-            valid: (v) => (v.slice1 ?? 0) % 10 !== 3,
+            valid: (v) => {
+                return (v.slice1 ?? 0) % 10 !== 3;
+            },
             error: "invalid",
         },
     },

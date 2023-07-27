@@ -41,7 +41,7 @@ export type MobilettoOrmFieldItem = {
     rawLabel?: boolean;
 };
 
-export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => MobilettoOrmFieldValue;
+export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;
 
 export type MobilettoOrmCustomFieldTest = {
     message: string;
@@ -80,26 +80,26 @@ export type MobilettoOrmFieldDefConfig = {
 
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
 
-export const normalized = (
+export const normalized = async (
     fields: MobilettoOrmFieldDefConfigs,
     fieldName: string,
     thing: MobilettoOrmObject
-): MobilettoOrmFieldValue => {
+): Promise<MobilettoOrmFieldValue> => {
     return fields[fieldName] && typeof fields[fieldName].normalize === "function"
         ? /* eslint-disable @typescript-eslint/no-non-null-assertion */
-          fields[fieldName].normalize!(thing[fieldName])
+          await fields[fieldName].normalize!(thing[fieldName])
         : /* eslint-enable @typescript-eslint/no-non-null-assertion */
           thing[fieldName];
 };
 
-export const normalizedValue = (
+export const normalizedValue = async (
     fields: MobilettoOrmFieldDefConfigs,
     fieldName: string,
     val: MobilettoOrmFieldValue
-): MobilettoOrmFieldValue => {
+): Promise<MobilettoOrmFieldValue> => {
     return fields[fieldName] && typeof fields[fieldName].normalize === "function"
         ? /* eslint-disable @typescript-eslint/no-non-null-assertion */
-          fields[fieldName].normalize!(val)
+          await fields[fieldName].normalize!(val)
         : /* eslint-enable @typescript-eslint/no-non-null-assertion */
           val;
 };

@@ -257,7 +257,7 @@ export class MobilettoOrmTypeDef {
                 mtime: thing._meta.mtime,
             },
         };
-        validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "");
+        await validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "");
         await this.typeDefValidations(validated, errors);
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors);
@@ -342,6 +342,35 @@ export class MobilettoOrmTypeDef {
         return null;
     }
 
+    async normalize(thing: MobilettoOrmObject): Promise<MobilettoOrmObject> {
+        const norm: MobilettoOrmObject = {};
+        const normPromises: Promise<void>[] = [];
+        Object.keys(this.fields).forEach((f) => {
+            const field = this.fields[f];
+            if (typeof thing[f] !== "undefined" && thing[f] != null) {
+                if (typeof field.normalize === "function") {
+                    const normFunc = field.normalize;
+                    normPromises.push(
+                        new Promise<void>((resolve, reject) => {
+                            normFunc(thing[f])
+                                .then((n) => {
+                                    norm[f] = n;
+                                    resolve();
+                                })
+                                .catch((e) => {
+                                    reject(e);
+                                });
+                        })
+                    );
+                } else {
+                    norm[f] = thing[f];
+                }
+            }
+        });
+        if (normPromises.length > 0) await Promise.all(normPromises);
+        return norm;
+    }
+
     id(thing: MobilettoOrmObject) {
         if (this.singleton) {
             // there can be only one
@@ -358,7 +387,7 @@ export class MobilettoOrmTypeDef {
             }
         }
         if (foundId == null && typeof thing.id === "string" && thing.id.length > 0) {
-            foundId = normalized(this.fields, "id", thing) as string;
+            foundId = thing.id;
             if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
                 this.log_warn(
                     `id: provided id did not start with idPrefix ${this.idPrefix}, discarding: ${thing.id} (normalized to ${foundId})`
@@ -372,10 +401,7 @@ export class MobilettoOrmTypeDef {
             typeof thing[this.primary] === "string" &&
             thing[this.primary].length > 0
         ) {
-            foundId =
-                thing[this.primary] && thing[this.primary].length > 0
-                    ? (normalized(this.fields, this.primary, thing) as string)
-                    : null;
+            foundId = thing[this.primary] && thing[this.primary].length > 0 ? thing[this.primary] : null;
             if (foundId && this.idPrefix && !foundId.startsWith(this.idPrefix)) {
                 this.log_warn(
                     `id: provided primary field ${this.primary} did not start with idPrefix ${
@@ -388,7 +414,7 @@ export class MobilettoOrmTypeDef {
         if (foundId == null && this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {
                 if (typeof thing[alt] === "string") {
-                    foundId = normalized(this.fields, alt, thing) as string;
+                    foundId = thing[alt];
                     if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
                         this.log_warn(
                             `id: provided alternate ID field ${alt} did not start with idPrefix ${this.idPrefix}, discarding: ${thing[alt]} (normalized to ${foundId})`
