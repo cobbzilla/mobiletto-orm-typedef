@@ -185,7 +185,11 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     `${invalidPrefix} primary field ${typeDef.primary} had {required: false} (not allowed)`
                 );
             }
-            field.required = true;
+            if (typeof field.unique === "boolean" && field.unique === false) {
+                throw new MobilettoOrmError(
+                    `${invalidPrefix} primary field ${typeDef.primary} had {unique: false} (not allowed)`
+                );
+            }
             if (typeof field.updatable === "boolean" && field.updatable === true) {
                 throw new MobilettoOrmError(
                     `${invalidPrefix} primary field ${typeDef.primary} had {updatable: true} (not allowed)`
@@ -196,6 +200,8 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     `${invalidPrefix} primary field ${typeDef.primary} had {when} (not allowed)`
                 );
             }
+            field.required = true;
+            field.unique = true;
             field.updatable = false;
         }
         if (field.index || field.unique) {
@@ -206,6 +212,9 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             }
             typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
             field.indexLevels = typeDef.debug ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
+            if (field.unique) {
+                field.required = true;
+            }
         }
         const redact =
             (typeof field.redact === "undefined" && AUTO_REDACT_CONTROLS.includes(field.control)) ||
