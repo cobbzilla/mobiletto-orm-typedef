@@ -262,6 +262,8 @@ export class MobilettoOrmTypeDef {
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors);
         }
+        // re-check id, validation may have changed value
+        validated._meta.id = this.id(validated);
         return validated;
     }
 
