@@ -104,3 +104,10 @@ export type MobilettoOrmFindOpts = {
 export const FIND_FIRST = { first: true };
 export const FIND_REMOVED = { removed: true };
 export const FIND_NOREDACT = { noRedact: true };
+
+export type MobilettoOrmPurgeOpts = {
+    force?: boolean;
+};
+
+export type MobilettoOrmPurgeResult = string | string[];
+export type MobilettoOrmPurgeResults = MobilettoOrmPurgeResult[];

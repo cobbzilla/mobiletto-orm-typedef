@@ -90,3 +90,8 @@ export declare const FIND_REMOVED: {
 export declare const FIND_NOREDACT: {
     noRedact: boolean;
 };
+export type MobilettoOrmPurgeOpts = {
+    force?: boolean;
+};
+export type MobilettoOrmPurgeResult = string | string[];
+export type MobilettoOrmPurgeResults = MobilettoOrmPurgeResult[];
