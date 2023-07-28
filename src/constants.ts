@@ -81,3 +81,26 @@ export type MobilettoOrmObject = {
 
 export const DEFAULT_FIELD_INDEX_LEVELS = 1;
 export const DEFAULT_ID_INDEX_LEVELS = 1;
+
+export type MobilettoOrmPredicate = (thing: MobilettoOrmObject) => boolean;
+
+export const MobilettoMatchAll: MobilettoOrmPredicate = () => true;
+
+export type MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise<unknown>;
+
+export const MobilettoNoopFunc: MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise.resolve(null);
+
+export type MobilettoOrmFindOpts = {
+    first?: boolean;
+    removed?: boolean;
+    noRedact?: boolean;
+    predicate?: MobilettoOrmPredicate;
+    apply?: MobilettoOrmApplyFunc;
+    applyResults?: Record<string, unknown>;
+    noCollect?: boolean;
+    idPath?: boolean;
+};
+
+export const FIND_FIRST = { first: true };
+export const FIND_REMOVED = { removed: true };
+export const FIND_NOREDACT = { noRedact: true };
