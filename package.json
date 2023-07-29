@@ -1,6 +1,6 @@
 {
   "name": "mobiletto-orm-typedef",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "type": "module",
   "description": "type definition system for mobiletto object-relational-mapper (ORM)",
   "keywords": [

@@ -212,7 +212,11 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             }
             if (!field.primary) {
                 typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
-                field.indexLevels = typeDef.debug ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
+                if (field.type === "boolean" && field.indexLevels && field.indexLevels !== 0) {
+                    throw new MobilettoOrmError(`${invalidPrefix} indexLevels > 0 not allowed on boolean field`);
+                }
+                field.indexLevels =
+                    typeDef.debug || field.type === "boolean" ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
             } else if (field.unique) {
                 field.required = true;
             }
