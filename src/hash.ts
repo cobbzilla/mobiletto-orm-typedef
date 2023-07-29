@@ -18,7 +18,7 @@ export const typedefHashDirs = (val: string | number | boolean, debug: boolean, 
     if (debug) return `${val}${OBJ_DIR_SUFFIX}`;
     let s = sha(val);
     for (let i = 0; i < levels; i++) {
-        s = insertAtIndex(s, "/", 2 + i * 2);
+        s = insertAtIndex(s, "/", 2 + 3 * i);
     }
     return s + OBJ_DIR_SUFFIX;
 };
