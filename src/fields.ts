@@ -210,20 +210,20 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     `${invalidPrefix} non-root field ${fieldName} had {index: true} (not allowed)`
                 );
             }
+            if (field.type === "boolean" && field.indexLevels && field.indexLevels !== 0) {
+                throw new MobilettoOrmError(`${invalidPrefix} indexLevels > 0 not allowed on boolean field`);
+            }
             if (!field.primary) {
                 typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
-                if (field.type === "boolean" && field.indexLevels && field.indexLevels !== 0) {
-                    throw new MobilettoOrmError(`${invalidPrefix} indexLevels > 0 not allowed on boolean field`);
-                }
-                field.indexLevels =
-                    typeDef.debug || field.type === "boolean"
-                        ? 0
-                        : field.indexLevels
-                        ? field.indexLevels
-                        : DEFAULT_FIELD_INDEX_LEVELS;
             } else if (field.unique) {
                 field.required = true;
             }
+            field.indexLevels =
+                typeDef.debug || field.type === "boolean"
+                    ? 0
+                    : field.indexLevels
+                    ? field.indexLevels
+                    : DEFAULT_FIELD_INDEX_LEVELS;
         }
         const redact =
             (typeof field.redact === "undefined" && AUTO_REDACT_CONTROLS.includes(field.control)) ||
