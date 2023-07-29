@@ -104,6 +104,7 @@ export type MobilettoOrmFindOpts = {
 export const FIND_FIRST = { first: true };
 export const FIND_REMOVED = { removed: true };
 export const FIND_NOREDACT = { noRedact: true };
+export const FIND_ALL: MobilettoOrmPredicate = () => true;
 
 export type MobilettoOrmPurgeOpts = {
     force?: boolean;

@@ -90,6 +90,7 @@ export declare const FIND_REMOVED: {
 export declare const FIND_NOREDACT: {
     noRedact: boolean;
 };
+export declare const FIND_ALL: MobilettoOrmPredicate;
 export type MobilettoOrmPurgeOpts = {
     force?: boolean;
 };
