@@ -86,7 +86,7 @@ export type MobilettoOrmPredicate = (thing: MobilettoOrmObject) => boolean;
 
 export type MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise<unknown>;
 
-export const MobilettoNoopFunc: MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise.resolve(null);
+export const MobilettoNoopFunc: MobilettoOrmApplyFunc = () => Promise.resolve(null);
 
 export type MobilettoOrmFindOpts = {
     first?: boolean;

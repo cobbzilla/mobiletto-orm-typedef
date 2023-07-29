@@ -19,7 +19,6 @@ import {
     MobilettoOrmFieldDefConfigs,
     MobilettoOrmFieldIndexableValue,
     MobilettoOrmFieldValue,
-    normalized,
 } from "./field.js";
 import {
     DEFAULT_ALTERNATE_ID_FIELDS,
