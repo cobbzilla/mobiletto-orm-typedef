@@ -210,9 +210,10 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     `${invalidPrefix} non-root field ${fieldName} had {index: true} (not allowed)`
                 );
             }
-            typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
-            field.indexLevels = typeDef.debug ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
-            if (field.unique) {
+            if (!field.primary) {
+                typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
+                field.indexLevels = typeDef.debug ? 0 : field.indexLevels || DEFAULT_FIELD_INDEX_LEVELS;
+            } else if (field.unique) {
                 field.required = true;
             }
         }
