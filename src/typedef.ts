@@ -23,6 +23,7 @@ import {
 import {
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_API_CONFIG,
+    DEFAULT_FIELD_INDEX_LEVELS,
     DEFAULT_ID_INDEX_LEVELS,
     DEFAULT_MAX_VERSIONS,
     DEFAULT_MIN_WRITES,
@@ -510,7 +511,10 @@ export class MobilettoOrmTypeDef {
             value = coerced;
         }
         if (this.indexes.filter((i) => i.field === field).length > 0) {
-            const indexLevels = this.fields[field].indexLevels || 1;
+            const indexLevels =
+                typeof this.fields[field].indexLevels !== "undefined" && this.fields[field].indexLevels != null
+                    ? parseInt(`${this.fields[field].indexLevels}`)
+                    : DEFAULT_FIELD_INDEX_LEVELS;
             return `${this.typePath()}_idx_${typedefHash(field, this.debug)}/${typedefHashDirs(
                 value,
                 this.debug,
