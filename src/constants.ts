@@ -84,8 +84,6 @@ export const DEFAULT_ID_INDEX_LEVELS = 1;
 
 export type MobilettoOrmPredicate = (thing: MobilettoOrmObject) => boolean;
 
-export const MobilettoMatchAll: MobilettoOrmPredicate = () => true;
-
 export type MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise<unknown>;
 
 export const MobilettoNoopFunc: MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise.resolve(null);

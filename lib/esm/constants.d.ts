@@ -68,7 +68,6 @@ export type MobilettoOrmObject = {
 export declare const DEFAULT_FIELD_INDEX_LEVELS = 1;
 export declare const DEFAULT_ID_INDEX_LEVELS = 1;
 export type MobilettoOrmPredicate = (thing: MobilettoOrmObject) => boolean;
-export declare const MobilettoMatchAll: MobilettoOrmPredicate;
 export type MobilettoOrmApplyFunc = (thing: MobilettoOrmObject) => Promise<unknown>;
 export declare const MobilettoNoopFunc: MobilettoOrmApplyFunc;
 export type MobilettoOrmFindOpts = {
