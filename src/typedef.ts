@@ -38,6 +38,7 @@ import {
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
+import { mergeConfigs } from "./extend.js";
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 
@@ -561,21 +562,6 @@ export class MobilettoOrmTypeDef {
     }
 
     extend(otherConfig: MobilettoOrmTypeDefConfig) {
-        const extConfig = Object.assign({}, this.config, otherConfig);
-        if (this.config.fields) {
-            for (const fieldName of Object.keys(this.config.fields)) {
-                if (typeof extConfig.fields[fieldName] === "undefined") {
-                    // @ts-ignore
-                    extConfig.fields[fieldName] = Object.assign(
-                        {},
-                        // @ts-ignore
-                        this.config.fields[fieldName],
-                        // @ts-ignore
-                        extConfig.fields[fieldName]
-                    );
-                }
-            }
-        }
-        return new MobilettoOrmTypeDef(extConfig);
+        return new MobilettoOrmTypeDef(mergeConfigs(this.config, otherConfig));
     }
 }

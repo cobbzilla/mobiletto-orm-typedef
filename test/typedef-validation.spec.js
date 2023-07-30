@@ -126,4 +126,30 @@ describe("typedef validation test", async () => {
         expect(typeDef.tabIndexedFields().find((f) => f.name === "value").control).eq("text");
         expect(extended.tabIndexedFields().find((f) => f.name === "value").control).eq("hidden");
     });
+    it("successfully allows typeDef extension to override nested field definitions", async () => {
+        const typeDef = new MobilettoOrmTypeDef({
+            typeName: "basicNested",
+            fields: {
+                compound: {
+                    fields: {
+                        nested: { default: "foo" },
+                        secondField: { default: "bar" },
+                    },
+                },
+            },
+        });
+        const extended = typeDef.extend({
+            fields: {
+                compound: { fields: { nested: { required: true } } },
+            },
+        });
+        expect(typeDef.fields.compound.fields.nested.default).eq("foo");
+        expect(extended.fields.compound.fields.nested.default).eq("foo");
+        expect(typeDef.fields.compound.fields.secondField.default).eq("bar");
+        expect(extended.fields.compound.fields.secondField.default).eq("bar");
+        expect(typeDef.fields.compound.fields.secondField.required).is.not.true;
+        expect(extended.fields.compound.fields.secondField.required).is.not.true;
+        expect(typeDef.fields.compound.fields.nested.required).is.not.true;
+        expect(extended.fields.compound.fields.nested.required).is.true;
+    });
 });
