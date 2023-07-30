@@ -62,7 +62,7 @@ export const validateFields = async (
                 validated[fieldName] = {};
                 const currentValue =
                     current && typeof current === "object" && current[fieldName] ? current[fieldName] : null;
-                validateFields(
+                await validateFields(
                     rootThing,
                     thing[fieldName],
                     field.fields,
