@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import * as path from "path";
 import { addError, MobilettoOrmError, MobilettoOrmValidationError, MobilettoOrmValidationErrors } from "./errors.js";
 import {
     fsSafeName,
@@ -21,6 +20,7 @@ import {
     MobilettoOrmFieldValue,
 } from "./field.js";
 import {
+    basename,
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_API_CONFIG,
     DEFAULT_FIELD_INDEX_LEVELS,
@@ -468,7 +468,7 @@ export class MobilettoOrmTypeDef {
     }
 
     isSpecificPath(p: string) {
-        return path.basename(p).match(this.specificPathRegex);
+        return basename(p).match(this.specificPathRegex);
     }
 
     specificBasename(obj: MobilettoOrmObject) {
@@ -480,7 +480,7 @@ export class MobilettoOrmTypeDef {
 
     idFromPath(p: string) {
         // start with basename
-        let base = path.basename(p);
+        let base = basename(p);
 
         // chop type prefix
         if (!base.startsWith(this.typeName + "_")) {

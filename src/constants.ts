@@ -110,3 +110,11 @@ export type MobilettoOrmPurgeOpts = {
 
 export type MobilettoOrmPurgeResult = string | string[];
 export type MobilettoOrmPurgeResults = MobilettoOrmPurgeResult[];
+
+export const basename = (path: string) => {
+    // strip trailing slashes, if any
+    const p = path.endsWith("/") ? path.replace(/\/+$/, "") : path;
+    const lastSlash = p.lastIndexOf("/");
+    const base = lastSlash === -1 ? p : p.substring(lastSlash + 1);
+    return base === "" ? "." : base;
+};
