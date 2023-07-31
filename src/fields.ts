@@ -244,6 +244,11 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         }
         const filenameField = typeof field.inFileName === "boolean" && field.inFileName;
         if (filenameField) {
+            if (!field.required) {
+                throw new MobilettoOrmError(
+                    `${invalidPrefix} {inFileName: true} not allowed on field that is not required: ${fieldPath}`
+                );
+            }
             typeDef.filenameFields.push(fieldPath);
         }
 
