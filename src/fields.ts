@@ -210,6 +210,7 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             field.required = true;
             field.unique = true;
             field.updatable = false;
+            field.inFileName = true;
         }
         if (field.index || field.unique) {
             if (!typeDef) {
