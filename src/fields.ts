@@ -242,6 +242,10 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             field.redact = true;
             typeDef.redaction.push(fieldPath);
         }
+        const filenameField = typeof field.inFileName === "boolean" && field.inFileName;
+        if (filenameField) {
+            typeDef.filenameFields.push(fieldPath);
+        }
 
         if (field.values && Array.isArray(field.values)) {
             const hasLabels =

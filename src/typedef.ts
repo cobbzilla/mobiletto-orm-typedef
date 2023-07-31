@@ -70,6 +70,7 @@ export class MobilettoOrmTypeDef {
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
+    readonly filenameFields: string[];
     readonly tableFields: string[];
     readonly maxVersions: number;
     readonly minWrites: number;
@@ -98,6 +99,7 @@ export class MobilettoOrmTypeDef {
         this.apiConfig = config.apiConfig || DEFAULT_API_CONFIG;
         this.indexes = [];
         this.redaction = [];
+        this.filenameFields = [];
         this.tabIndexes = this._tabIndexes(this.fields);
         processFields(this.fields, "", this);
         this.alternateLookupFields = Object.values(this.fields)
@@ -467,6 +469,15 @@ export class MobilettoOrmTypeDef {
         return this.typePath() + "/" + typedefHashDirs(idVal, this.debug, this.indexLevels);
     }
 
+    renderFilenameFields(obj: MobilettoOrmObject): string | null {
+        if (this.filenameFields && this.filenameFields.length > 0) {
+            let s = "";
+            this.filenameFields.forEach((f) => (s += `_${f}-${obj[f]}`));
+            return s;
+        }
+        return null;
+    }
+
     isSpecificPath(p: string) {
         return basename(p).match(this.specificPathRegex);
     }
@@ -475,7 +486,9 @@ export class MobilettoOrmTypeDef {
         if (!obj._meta || !obj._meta.version) {
             throw new MobilettoOrmError(`specificBasename: no _meta found on object: ${this.id(obj)}`);
         }
-        return this.typeName + "_" + this.id(obj) + OBJ_ID_SEP + obj._meta.version + ".json";
+        const fieldDesc = this.renderFilenameFields(obj);
+        const description = fieldDesc ? fieldDesc : this.id(obj);
+        return this.typeName + "_" + description + OBJ_ID_SEP + obj._meta.version + ".json";
     }
 
     idFromPath(p: string) {
@@ -516,7 +529,7 @@ export class MobilettoOrmTypeDef {
                 typeof this.fields[field].indexLevels !== "undefined" && this.fields[field].indexLevels != null
                     ? parseInt(`${this.fields[field].indexLevels}`)
                     : DEFAULT_FIELD_INDEX_LEVELS;
-            return `${this.typePath()}_idx_${typedefHash(field, this.debug)}/${typedefHashDirs(
+            return `indexes/${this.typePath()}_idx_${field}_${typedefHash(field, this.debug)}/${typedefHashDirs(
                 value,
                 this.debug,
                 indexLevels

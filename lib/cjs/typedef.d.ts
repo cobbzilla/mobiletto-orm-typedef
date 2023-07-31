@@ -21,6 +21,7 @@ export declare class MobilettoOrmTypeDef {
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
     readonly redaction: string[];
+    readonly filenameFields: string[];
     readonly tableFields: string[];
     readonly maxVersions: number;
     readonly minWrites: number;
@@ -59,6 +60,7 @@ export declare class MobilettoOrmTypeDef {
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;
         type?: import("./field.js").MobilettoOrmFieldType | undefined;
+        inFileName?: boolean | undefined;
         label?: string | undefined;
         control?: import("./field.js").MobilettoOrmFieldControl | undefined;
         default?: MobilettoOrmFieldValue | undefined;
@@ -87,6 +89,7 @@ export declare class MobilettoOrmTypeDef {
     }[];
     typePath(): string;
     generalPath(id: MobilettoOrmIdArg): string;
+    renderFilenameFields(obj: MobilettoOrmObject): string | null;
     isSpecificPath(p: string): RegExpMatchArray | null;
     specificBasename(obj: MobilettoOrmObject): string;
     idFromPath(p: string): string;

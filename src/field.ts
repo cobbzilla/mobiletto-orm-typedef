@@ -51,6 +51,7 @@ export type MobilettoOrmCustomFieldTest = {
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
     type?: MobilettoOrmFieldType;
+    inFileName?: boolean;
     label?: string;
     control?: MobilettoOrmFieldControl;
     default?: MobilettoOrmFieldValue;
