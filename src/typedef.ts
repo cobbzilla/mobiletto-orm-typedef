@@ -332,7 +332,11 @@ export class MobilettoOrmTypeDef {
     }
 
     idFieldName(): string {
-        return this.primary ? this.primary : this.alternateIdFields ? this.alternateIdFields[0] : "id";
+        return typeof this.primary === "string" && this.primary.length > 0
+            ? this.primary
+            : this.alternateIdFields && this.alternateIdFields.length > 0
+            ? this.alternateIdFields[0]
+            : "id";
     }
 
     idField(thing: MobilettoOrmObject) {
