@@ -484,11 +484,11 @@ export class MobilettoOrmTypeDef {
     renderFilenameFields(obj: MobilettoOrmObject): string | null {
         if (this.filenameFields && this.filenameFields.length > 0) {
             if (this.filenameFields.length === 1) {
-                return "_" + obj[this.filenameFields[0]];
+                return obj[this.filenameFields[0]];
             }
             let s = "";
             this.filenameFields.forEach((f) => (s += `_${f}-${obj[f]}`));
-            return s;
+            return s.substring(1); // drop leading _
         }
         return null;
     }
