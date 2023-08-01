@@ -110,6 +110,8 @@ export class MobilettoOrmTypeDef {
             ? config.tableFields
             : this.primary
             ? [this.primary, "_meta.ctime", "_meta.mtime"]
+            : this.alternateIdFields && this.alternateIdFields.length > 0
+            ? [...this.alternateIdFields, "_meta.ctime", "_meta.mtime"]
             : [this.idField(this.newDummyInstance()), "_meta.ctime", "_meta.mtime"];
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
@@ -329,11 +331,13 @@ export class MobilettoOrmTypeDef {
         return thing;
     }
 
+    idFieldName(): string {
+        return this.primary ? this.primary : this.alternateIdFields ? this.alternateIdFields[0] : "id";
+    }
+
     idField(thing: MobilettoOrmObject) {
         if (!thing) return null;
-        if (typeof thing.id === "string" && thing.id.length > 0) {
-            return "id";
-        } else if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
+        if (this.primary && thing[this.primary] && thing[this.primary].length > 0) {
             return this.primary;
         } else if (this.alternateIdFields) {
             for (const alt of this.alternateIdFields) {

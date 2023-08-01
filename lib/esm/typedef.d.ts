@@ -53,6 +53,7 @@ export declare class MobilettoOrmTypeDef {
     typeDefValidations(validated: MobilettoOrmObject, errors: MobilettoOrmValidationErrors): Promise<void>;
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmObject): MobilettoOrmObject;
+    idFieldName(): string;
     idField(thing: MobilettoOrmObject): string | null;
     normalize(thing: MobilettoOrmObject): Promise<MobilettoOrmObject>;
     id(thing: MobilettoOrmObject): any;
