@@ -9,8 +9,8 @@ export type MobilettoOrmIndex = {
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly shortName?: string;
     readonly singleton?: string;
-    readonly idPrefix?: string;
     readonly basePath: string;
     readonly indexLevels: number;
     primary?: string;

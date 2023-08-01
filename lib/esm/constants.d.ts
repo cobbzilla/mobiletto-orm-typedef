@@ -38,7 +38,7 @@ export declare const DEFAULT_API_CONFIG: MobilettoApiConfig;
 export type MobilettoOrmTypeDefConfig = {
     typeName: string;
     singleton?: string;
-    idPrefix?: string;
+    shortName?: string;
     primary?: string;
     basePath?: string;
     indexLevels?: number;

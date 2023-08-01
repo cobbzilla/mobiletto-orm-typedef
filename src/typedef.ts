@@ -42,10 +42,10 @@ import { mergeConfigs } from "./extend.js";
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 
-const validIdPrefix = (prefix?: string): boolean =>
+const validShortName = (prefix?: string): boolean =>
     (prefix && prefix.length >= 2 && prefix.match(ID_PREFIX_REGEX) != null) || false;
 
-const defaultIdPrefix = (typeName: string): string => {
+const defaultShortName = (typeName: string): string => {
     if (typeName.length < 4) return typeName.toLowerCase();
     return (typeName.substring(0, 1) + typeName.substring(1).replace(/[aeiou]+/g, "")).substring(0, 4).toLowerCase();
 };
@@ -58,8 +58,8 @@ export type MobilettoOrmIndex = {
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly shortName?: string;
     readonly singleton?: string;
-    readonly idPrefix?: string;
     readonly basePath: string;
     readonly indexLevels: number;
     primary?: string;
@@ -82,7 +82,7 @@ export class MobilettoOrmTypeDef {
     readonly logger: MobilettoOrmLogger | null;
     readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig) {
-        if (typeof config.typeName !== "string" || config.typeName.length <= 0) {
+        if (!config.typeName || typeof config.typeName !== "string" || config.typeName.length <= 0) {
             throw new MobilettoOrmError("invalid TypeDefConfig: no typeName provided");
         }
         if (config.typeName.includes("%") || config.typeName.includes("~")) {
@@ -92,7 +92,7 @@ export class MobilettoOrmTypeDef {
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;
-        this.idPrefix = validIdPrefix(config.idPrefix) ? (config.idPrefix as string) : undefined;
+        this.shortName = validShortName(config.shortName) ? (config.shortName as string) : undefined;
         this.basePath = config.basePath || "";
         this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
         this.fields = config.fields || {};
@@ -117,7 +117,7 @@ export class MobilettoOrmTypeDef {
             `^${this.typeName}_.+?${OBJ_ID_SEP}${VERSION_PREFIX}[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
             "gi"
         );
-        this.idRegex = idRegex(this.idPrefix);
+        this.idRegex = idRegex(this.shortName);
         this.versionRegex = idRegex(this.versionPrefix());
         this.validators = Object.assign({}, FIELD_VALIDATORS, config.validators || {});
         this.validations =
@@ -206,10 +206,10 @@ export class MobilettoOrmTypeDef {
     }
 
     newId(): string {
-        return generateId(this.idPrefix);
+        return generateId(this.shortName);
     }
     versionPrefix(): string {
-        return VERSION_PREFIX + (this.idPrefix || defaultIdPrefix(this.typeName));
+        return VERSION_PREFIX + (this.shortName || defaultShortName(this.typeName));
     }
     newVersion(): string {
         return generateId(this.versionPrefix());
@@ -386,18 +386,18 @@ export class MobilettoOrmTypeDef {
         let foundId = null;
         if (thing._meta && typeof thing._meta.id === "string") {
             foundId = thing._meta.id;
-            if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+            if (this.shortName && !foundId.startsWith(this.shortName)) {
                 this.log_warn(
-                    `id: provided _meta.id did not start with idPrefix ${this.idPrefix}, discarding: ${thing._meta.id} (normalized to ${foundId})`
+                    `id: provided _meta.id did not start with ${this.shortName}, discarding: ${thing._meta.id} (normalized to ${foundId})`
                 );
                 foundId = null;
             }
         }
         if (foundId == null && typeof thing.id === "string" && thing.id.length > 0) {
             foundId = thing.id;
-            if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+            if (this.shortName && !foundId.startsWith(this.shortName)) {
                 this.log_warn(
-                    `id: provided id did not start with idPrefix ${this.idPrefix}, discarding: ${thing.id} (normalized to ${foundId})`
+                    `id: provided id did not start with ${this.shortName}, discarding: ${thing.id} (normalized to ${foundId})`
                 );
                 foundId = null;
             }
@@ -409,11 +409,11 @@ export class MobilettoOrmTypeDef {
             thing[this.primary].length > 0
         ) {
             foundId = thing[this.primary] && thing[this.primary].length > 0 ? thing[this.primary] : null;
-            if (foundId && this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+            if (foundId && this.shortName && !foundId.startsWith(this.shortName)) {
                 this.log_warn(
-                    `id: provided primary field ${this.primary} did not start with idPrefix ${
-                        this.idPrefix
-                    }, discarding: ${thing[this.primary]} (normalized to ${foundId})`
+                    `id: provided primary field ${this.primary} did not start with ${this.shortName}, discarding: ${
+                        thing[this.primary]
+                    } (normalized to ${foundId})`
                 );
                 foundId = null;
             }
@@ -422,9 +422,9 @@ export class MobilettoOrmTypeDef {
             for (const alt of this.alternateIdFields) {
                 if (typeof thing[alt] === "string") {
                     foundId = thing[alt];
-                    if (this.idPrefix && !foundId.startsWith(this.idPrefix)) {
+                    if (this.shortName && !foundId.startsWith(this.shortName)) {
                         this.log_warn(
-                            `id: provided alternate ID field ${alt} did not start with idPrefix ${this.idPrefix}, discarding: ${thing[alt]} (normalized to ${foundId})`
+                            `id: provided alternate ID field ${alt} did not start with ${this.shortName}, discarding: ${thing[alt]} (normalized to ${foundId})`
                         );
                         foundId = null;
                     } else {
@@ -433,11 +433,11 @@ export class MobilettoOrmTypeDef {
                 }
             }
         }
-        if (this.idPrefix && foundId) {
-            const minIdLength = MIN_ID_LENGTH + this.idPrefix.length;
-            if (!foundId.startsWith(this.idPrefix) || foundId.length < minIdLength) {
+        if (this.shortName && foundId) {
+            const minIdLength = MIN_ID_LENGTH + this.shortName.length;
+            if (!foundId.startsWith(this.shortName) || foundId.length < minIdLength) {
                 this.log_warn(
-                    `id: resolved foundId ${foundId} did not start with idPrefix ${this.idPrefix} or was too short (min length ${minIdLength}), discarding`
+                    `id: resolved foundId ${foundId} did not start with ${this.shortName} or was too short (min length ${minIdLength}), discarding`
                 );
                 foundId = null;
             }
