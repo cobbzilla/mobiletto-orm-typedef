@@ -39,6 +39,7 @@ export type MobilettoOrmFieldItem = {
     value: MobilettoOrmFieldIndexableValue;
     label?: string;
     rawLabel?: boolean;
+    hint?: string;
 };
 
 export type MobilettoOrmNormalizeFunc = (val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;
