@@ -8,7 +8,7 @@ import {
     rand,
 } from "../lib/esm/index.js";
 
-describe("type registry test", async () => {
+describe("typedef registry test", async () => {
     it("validation fails for a typedef with reference field and no registry", async () => {
         try {
             new MobilettoOrmTypeDef({
@@ -43,7 +43,7 @@ describe("type registry test", async () => {
     });
     it("validation fails for a typedef with reference field and where the resolver returns null", () => {
         const registry = new MobilettoOrmTypeDefRegistry("myReg");
-        registry.register("other", (_id) => null);
+        registry.register("other", () => null);
         const invalidId = `foo_${rand(2)}`;
         try {
             new MobilettoOrmTypeDef({
@@ -63,7 +63,7 @@ describe("type registry test", async () => {
     });
     it("validation succeeds for a typedef with a reference field that is resolvable", () => {
         const registry = new MobilettoOrmTypeDefRegistry("myReg");
-        registry.register("other", (_id) => ({ someId }));
+        registry.register("other", () => ({ someId }));
         const someId = `foo_${rand(2)}`;
         new MobilettoOrmTypeDef({
             typeName: `TestType_${rand(4)}`,

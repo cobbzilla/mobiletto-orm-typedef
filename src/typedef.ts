@@ -578,17 +578,18 @@ export class MobilettoOrmTypeDef {
 
     isTombstone(thing: MobilettoOrmObject) {
         return (
-            thing &&
-            thing._meta &&
-            typeof thing._meta.id === "string" &&
-            typeof thing._meta.version === "string" &&
-            thing._meta.version.length > 0 &&
-            typeof thing._meta.ctime === "number" &&
-            thing._meta.ctime > 0 &&
-            typeof thing._meta.mtime === "number" &&
-            thing._meta.mtime >= thing._meta.ctime &&
-            typeof thing._meta.removed === "boolean" &&
-            thing._meta.removed === true
+            (thing &&
+                thing._meta &&
+                typeof thing._meta.id === "string" &&
+                typeof thing._meta.version === "string" &&
+                thing._meta.version.length > 0 &&
+                typeof thing._meta.ctime === "number" &&
+                thing._meta.ctime > 0 &&
+                typeof thing._meta.mtime === "number" &&
+                thing._meta.mtime >= thing._meta.ctime &&
+                typeof thing._meta.removed === "boolean" &&
+                thing._meta.removed === true) ||
+            false
         );
     }
 

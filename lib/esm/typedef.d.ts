@@ -109,6 +109,6 @@ export declare class MobilettoOrmTypeDef {
             mtime: number;
         };
     };
-    isTombstone(thing: MobilettoOrmObject): boolean | undefined;
+    isTombstone(thing: MobilettoOrmObject): boolean;
     extend(otherConfig: MobilettoOrmTypeDefConfig): MobilettoOrmTypeDef;
 }
