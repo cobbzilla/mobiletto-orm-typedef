@@ -1,4 +1,4 @@
-import { MobilettoOrmObject } from "./constants.js";
+import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
 
@@ -49,9 +49,17 @@ export type MobilettoOrmCustomFieldTest = {
     valid: (v: Record<string, unknown>) => boolean;
 };
 
+export type MobilettoOrmRefSpec = {
+    refType?: string;
+    refLabel?: string;
+};
+
+export type MobilettoOrmRefResolver = (id: MobilettoOrmIdArg) => MobilettoOrmObject | Promise<MobilettoOrmObject>;
+
 export type MobilettoOrmFieldDefConfig = {
     name?: string;
     type?: MobilettoOrmFieldType;
+    ref?: MobilettoOrmRefSpec;
     inFileName?: boolean;
     label?: string;
     control?: MobilettoOrmFieldControl;

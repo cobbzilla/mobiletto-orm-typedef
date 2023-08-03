@@ -1,5 +1,6 @@
 import { MobilettoOrmFieldDefConfigs } from "./field.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
+import { MobilettoOrmTypeDefRegistry } from "./registry";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
@@ -45,6 +46,7 @@ export const DEFAULT_API_CONFIG: MobilettoApiConfig = {
 
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
+    registry?: MobilettoOrmTypeDefRegistry;
     singleton?: string;
     shortName?: string;
     primary?: string;

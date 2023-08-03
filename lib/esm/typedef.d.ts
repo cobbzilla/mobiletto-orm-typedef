@@ -2,6 +2,7 @@ import { MobilettoOrmValidationErrors } from "./errors.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
 import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
+import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 export type MobilettoOrmIndex = {
     field: string;
     unique: boolean;
@@ -9,6 +10,7 @@ export type MobilettoOrmIndex = {
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly registry?: MobilettoOrmTypeDefRegistry;
     readonly shortName?: string;
     readonly singleton?: string;
     readonly basePath: string;
@@ -61,6 +63,7 @@ export declare class MobilettoOrmTypeDef {
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;
         type?: import("./field.js").MobilettoOrmFieldType | undefined;
+        ref?: import("./field.js").MobilettoOrmRefSpec | undefined;
         inFileName?: boolean | undefined;
         label?: string | undefined;
         control?: import("./field.js").MobilettoOrmFieldControl | undefined;

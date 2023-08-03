@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { MobilettoOrmIdArg } from "./constants.js";
+
 export class MobilettoOrmError extends Error {
     readonly err: any;
     constructor(message: string, err?: any) {
@@ -33,6 +35,27 @@ export class MobilettoOrmSyncError extends Error {
     constructor(id: any, message?: string) {
         super(message ? message : `MobilettoOrmSyncError: ${id}`);
         this.id = id;
+        const actualProto = new.target.prototype;
+        if (Object.setPrototypeOf) {
+            Object.setPrototypeOf(this, actualProto);
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this as any).__proto__ = actualProto;
+        }
+    }
+}
+
+export class MobilettoOrmReferenceError extends Error {
+    readonly refType: string;
+    readonly refId: MobilettoOrmIdArg;
+    readonly message: string;
+    readonly cause?: any;
+    constructor(refType: string, refId: MobilettoOrmIdArg, message: string, cause?: any) {
+        super(`${refType}: ${message}${cause ? ` (caused by ${cause})` : ""}`);
+        this.refType = refType;
+        this.refId = refId;
+        this.message = message;
+        this.cause = cause;
         const actualProto = new.target.prototype;
         if (Object.setPrototypeOf) {
             Object.setPrototypeOf(this, actualProto);

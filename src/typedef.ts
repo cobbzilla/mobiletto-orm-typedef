@@ -39,6 +39,7 @@ import {
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
 import { mergeConfigs } from "./extend.js";
+import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 
@@ -58,6 +59,7 @@ export type MobilettoOrmIndex = {
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly registry?: MobilettoOrmTypeDefRegistry;
     readonly shortName?: string;
     readonly singleton?: string;
     readonly basePath: string;
@@ -89,6 +91,7 @@ export class MobilettoOrmTypeDef {
             throw new MobilettoOrmError("invalid TypeDefConfig: typeName cannot contain % or ~ characters");
         }
         this.config = config;
+        this.registry = config.registry;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;

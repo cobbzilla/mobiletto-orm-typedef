@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { MobilettoOrmFieldDefConfigs, normalizedValue } from "./field.js";
-import { MobilettoOrmValidationErrors, addError } from "./errors.js";
+import { MobilettoOrmValidationErrors, addError, MobilettoOrmReferenceError } from "./errors.js";
 import { MobilettoOrmObject } from "./constants.js";
+import { ERR_REF_NOT_FOUND, ERR_REF_UNREGISTERED, MobilettoOrmTypeDefRegistry } from "./registry.js";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
 
@@ -32,6 +33,8 @@ export type TypeValidation = {
 
 export type TypeValidations = Record<string, TypeValidation>;
 
+export const ERR_REQUIRED = "required";
+
 export const validateFields = async (
     rootThing: MobilettoOrmObject,
     thing: MobilettoOrmObject,
@@ -40,7 +43,8 @@ export const validateFields = async (
     validated: MobilettoOrmObject,
     validators: FieldValidators,
     errors: MobilettoOrmValidationErrors,
-    objPath: string
+    objPath: string,
+    registry?: MobilettoOrmTypeDefRegistry
 ) => {
     const isCreate = typeof current === "undefined" || current == null;
     for (const fieldName of Object.keys(fields)) {
@@ -57,7 +61,7 @@ export const validateFields = async (
         }
         if (field.type === "object") {
             if (field.required && thingValueType !== "object") {
-                addError(errors, fieldPath, "required");
+                addError(errors, fieldPath, ERR_REQUIRED);
             } else if (field.fields && thingValueType === "object") {
                 validated[fieldName] = {};
                 const currentValue =
@@ -111,15 +115,43 @@ export const validateFields = async (
                 addError(errors, fieldPath, "values");
                 continue;
             }
-            for (const validator of Object.keys(validators)) {
-                // @ts-ignore
-                if (typeof field[validator] !== "undefined") {
+            if (field.ref) {
+                if (!registry) {
+                    addError(errors, fieldPath, "noRegistry");
+                    continue;
+                }
+                if (typeof fieldValue === "undefined" || fieldValue == null || `${fieldValue}`.length === 0) {
+                    addError(errors, fieldPath, ERR_REQUIRED);
+                    continue;
+                }
+                const refType = field.ref.refType ? field.ref.refType : fieldName;
+                if (!registry.isRegistered(refType)) {
+                    addError(errors, fieldPath, ERR_REF_UNREGISTERED);
+                    continue;
+                }
+                try {
+                    const found = registry.resolve(refType, fieldValue);
+                    if (!found) {
+                        addError(errors, fieldPath, ERR_REF_NOT_FOUND);
+                        continue;
+                    }
+                } catch (e) {
+                    if (e instanceof MobilettoOrmReferenceError) {
+                        addError(errors, fieldPath, e.message);
+                        continue;
+                    }
+                }
+            } else {
+                for (const validator of Object.keys(validators)) {
                     // @ts-ignore
-                    if (!validators[validator](fieldValue, field[validator])) {
-                        if (validator === "required" && typeof field.default !== "undefined") {
-                            continue;
+                    if (typeof field[validator] !== "undefined") {
+                        // @ts-ignore
+                        if (!validators[validator](fieldValue, field[validator])) {
+                            if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
+                                continue;
+                            }
+                            addError(errors, fieldPath, validator);
                         }
-                        addError(errors, fieldPath, validator);
                     }
                 }
             }
@@ -146,7 +178,7 @@ export const validateFields = async (
                     val = typeof fieldValue === "undefined" ? null : fieldValue;
                 }
 
-                // only normalize we used the caller-provided value
+                // only normalize if we used the caller-provided value
                 // do not re-normalize if we used the current value
                 if (useThingValue && val) {
                     // if this is the primary field, it must be a new object,
