@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { MobilettoOrmIdArg } from "./constants.js";
+import { MobilettoOrmFieldValue } from "./field";
 
 export class MobilettoOrmError extends Error {
     readonly err: any;
@@ -47,10 +48,10 @@ export class MobilettoOrmSyncError extends Error {
 
 export class MobilettoOrmReferenceError extends Error {
     readonly refType: string;
-    readonly refId: MobilettoOrmIdArg;
+    readonly refId: MobilettoOrmFieldValue;
     readonly message: string;
     readonly cause?: any;
-    constructor(refType: string, refId: MobilettoOrmIdArg, message: string, cause?: any) {
+    constructor(refType: string, refId: MobilettoOrmFieldValue, message: string, cause?: any) {
         super(`${refType}: ${message}${cause ? ` (caused by ${cause})` : ""}`);
         this.refType = refType;
         this.refId = refId;

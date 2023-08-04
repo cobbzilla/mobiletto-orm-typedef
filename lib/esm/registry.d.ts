@@ -1,5 +1,5 @@
-import { MobilettoOrmRefResolver } from "./field.js";
-import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
+import { MobilettoOrmFieldValue, MobilettoOrmRefResolver } from "./field.js";
+import { MobilettoOrmObject } from "./constants.js";
 export type MobilettoOrmTypeDefRegistryConfig = {
     name: string;
     strict?: boolean;
@@ -15,5 +15,5 @@ export declare class MobilettoOrmTypeDefRegistry {
     constructor(config: MobilettoOrmTypeDefRegistryConfig);
     register(typeDefName: string, resolver: MobilettoOrmRefResolver): void;
     isRegistered(typeDefName: string): boolean;
-    resolve(typeDefName: string, id: MobilettoOrmIdArg): Promise<MobilettoOrmObject>;
+    resolve(typeDefName: string, id: MobilettoOrmFieldValue): Promise<MobilettoOrmObject | MobilettoOrmObject[]>;
 }

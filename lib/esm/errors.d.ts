@@ -1,4 +1,4 @@
-import { MobilettoOrmIdArg } from "./constants.js";
+import { MobilettoOrmFieldValue } from "./field";
 export declare class MobilettoOrmError extends Error {
     readonly err: any;
     constructor(message: string, err?: any);
@@ -13,10 +13,10 @@ export declare class MobilettoOrmSyncError extends Error {
 }
 export declare class MobilettoOrmReferenceError extends Error {
     readonly refType: string;
-    readonly refId: MobilettoOrmIdArg;
+    readonly refId: MobilettoOrmFieldValue;
     readonly message: string;
     readonly cause?: any;
-    constructor(refType: string, refId: MobilettoOrmIdArg, message: string, cause?: any);
+    constructor(refType: string, refId: MobilettoOrmFieldValue, message: string, cause?: any);
 }
 export type MobilettoOrmValidationErrors = Record<string, string[]>;
 export declare class MobilettoOrmValidationError extends Error {

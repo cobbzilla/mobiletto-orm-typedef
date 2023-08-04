@@ -74,7 +74,8 @@ export const validateFields = async (
                     validated[fieldName],
                     validators,
                     errors,
-                    fieldPath
+                    fieldPath,
+                    registry
                 );
             }
             continue;
@@ -130,7 +131,7 @@ export const validateFields = async (
                     continue;
                 }
                 try {
-                    const found = registry.resolve(refType, fieldValue);
+                    const found = await registry.resolve(refType, fieldValue);
                     if (!found) {
                         addError(errors, fieldPath, ERR_REF_NOT_FOUND);
                         continue;

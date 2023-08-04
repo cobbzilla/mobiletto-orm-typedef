@@ -265,7 +265,7 @@ export class MobilettoOrmTypeDef {
                 mtime: thing._meta.mtime,
             },
         };
-        await validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "");
+        await validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "", this.registry);
         await this.typeDefValidations(validated, errors);
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors);

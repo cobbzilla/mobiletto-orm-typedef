@@ -1,4 +1,4 @@
-import { MobilettoOrmRefResolver } from "./field.js";
+import { MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue, MobilettoOrmRefResolver } from "./field.js";
 import { MobilettoOrmNotFoundError, MobilettoOrmReferenceError } from "./errors.js";
 import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
 
@@ -34,21 +34,61 @@ export class MobilettoOrmTypeDefRegistry {
         return !!this.resolvers[typeDefName];
     }
 
-    async resolve(typeDefName: string, id: MobilettoOrmIdArg): Promise<MobilettoOrmObject> {
+    async resolve(typeDefName: string, id: MobilettoOrmFieldValue): Promise<MobilettoOrmObject | MobilettoOrmObject[]> {
         if (!this.resolvers[typeDefName]) {
             throw new MobilettoOrmReferenceError(typeDefName, id, ERR_REF_UNREGISTERED);
         }
-        let resolved;
-        try {
-            resolved = await this.resolvers[typeDefName](id);
-        } catch (e) {
-            if (e instanceof MobilettoOrmNotFoundError) {
-                // expected, will re-throw below as MobilettoOrmReferenceError
-            } else {
-                throw new MobilettoOrmReferenceError(typeDefName, id, ERR_REF_UNKNOWN_ERROR, e);
-            }
+        const isArray = Array.isArray(id);
+        const ids = isArray ? id : [id];
+        const expected = ids.length;
+        const resolved: MobilettoOrmObject[] = [];
+        const notFound: MobilettoOrmFieldIndexableValue[] = [];
+        const errors: MobilettoOrmReferenceError[] = [];
+        const promises = [];
+        for (const i of ids) {
+            promises.push(
+                new Promise<void>((resolve) => {
+                    try {
+                        Promise.resolve(this.resolvers[typeDefName](i))
+                            .then((r: MobilettoOrmObject | null | undefined) => {
+                                if (typeof r === "undefined" || r == null) {
+                                    notFound.push(i);
+                                    resolve();
+                                } else {
+                                    resolved.push(r);
+                                    resolve();
+                                }
+                            })
+                            .catch((e) => {
+                                if (e instanceof MobilettoOrmNotFoundError) {
+                                    // expected, will re-throw below as MobilettoOrmReferenceError
+                                    notFound.push(i);
+                                } else {
+                                    errors.push(
+                                        new MobilettoOrmReferenceError(typeDefName, i, ERR_REF_UNKNOWN_ERROR, e)
+                                    );
+                                }
+                                resolve();
+                            });
+                    } catch (e) {
+                        if (e instanceof MobilettoOrmNotFoundError) {
+                            // expected, will re-throw below as MobilettoOrmReferenceError
+                            notFound.push(i);
+                        } else {
+                            errors.push(new MobilettoOrmReferenceError(typeDefName, i, ERR_REF_UNKNOWN_ERROR, e));
+                        }
+                        resolve();
+                    }
+                })
+            );
         }
-        if (!resolved) throw new MobilettoOrmReferenceError(typeDefName, id, ERR_REF_NOT_FOUND);
-        return resolved;
+        await Promise.all(promises);
+        if (errors.length > 0) {
+            throw new MobilettoOrmReferenceError(typeDefName, id, ERR_REF_UNKNOWN_ERROR, errors);
+        }
+        if (notFound.length > 0 || resolved.length !== expected) {
+            throw new MobilettoOrmReferenceError(typeDefName, notFound, ERR_REF_NOT_FOUND);
+        }
+        return isArray ? resolved : resolved[0];
     }
 }
