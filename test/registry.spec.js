@@ -8,6 +8,7 @@ import {
     MobilettoOrmValidationError,
     rand,
 } from "../lib/esm/index.js";
+import exp from "constants";
 
 describe("typedef registry test", async () => {
     it("validation fails for a typedef with reference field and no registry", async () => {
@@ -23,7 +24,8 @@ describe("typedef registry test", async () => {
             }).validate({ value: rand(2), other: "foo" });
             assert.fail(`expected MobilettoOrmError for reference field with no registry`);
         } catch (e) {
-            expect(e).instanceof(MobilettoOrmError);
+            expect(e).instanceof(MobilettoOrmValidationError);
+            expect(e.errors.other[0]).eq("noRegistry");
         }
     });
     it("validation fails for a typedef with reference field and no registered resolver", async () => {
@@ -41,7 +43,8 @@ describe("typedef registry test", async () => {
             }).validate({ value: rand(2), other: "foo" });
             assert.fail(`expected MobilettoOrmError for reference field with no registered resolver`);
         } catch (e) {
-            expect(e).instanceof(MobilettoOrmError);
+            expect(e).instanceof(MobilettoOrmValidationError);
+            expect(e.errors.other[0]).eq("refUnregistered");
         }
     });
     it("validation fails for a typedef with reference field where the resolver returns null", async () => {

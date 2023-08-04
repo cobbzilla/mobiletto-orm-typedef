@@ -4,7 +4,6 @@ import { MobilettoOrmObject } from "./constants.js";
 
 export type MobilettoOrmTypeDefRegistryConfig = {
     name: string;
-    strict?: boolean;
 };
 
 export const ERR_REF_UNREGISTERED = "refUnregistered";
@@ -14,18 +13,14 @@ export const ERR_REF_ALREADY_REGISTERED = "refAlreadyRegistered";
 
 export class MobilettoOrmTypeDefRegistry {
     readonly name: string;
-    readonly strict: boolean;
     readonly resolvers: Record<string, MobilettoOrmRefResolver> = {};
     constructor(config: MobilettoOrmTypeDefRegistryConfig) {
         this.name = config.name;
-        this.strict = config.strict || true;
     }
 
     register(typeDefName: string, resolver: MobilettoOrmRefResolver) {
         if (this.resolvers[typeDefName]) {
-            if (this.strict) {
-                throw new MobilettoOrmReferenceError(typeDefName, "", ERR_REF_ALREADY_REGISTERED);
-            }
+            throw new MobilettoOrmReferenceError(typeDefName, "", ERR_REF_ALREADY_REGISTERED);
         }
         this.resolvers[typeDefName] = resolver;
     }
