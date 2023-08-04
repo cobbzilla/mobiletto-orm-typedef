@@ -34,6 +34,7 @@ import {
     MobilettoOrmObject,
     MobilettoOrmObjectMetadata,
     MobilettoOrmTypeDefConfig,
+    MobilettoOrmValidationOpts,
     VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
@@ -235,13 +236,18 @@ export class MobilettoOrmTypeDef {
         };
     }
 
-    async validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject> {
+    async validate(
+        thing: MobilettoOrmObject,
+        current?: MobilettoOrmObject,
+        opts?: MobilettoOrmValidationOpts
+    ): Promise<MobilettoOrmObject> {
         const errors = {};
         if (!thing) {
             addError(errors, ".", "required");
             throw new MobilettoOrmValidationError(errors);
         }
         const id = this.id(thing);
+        const checkRefs = !opts || !opts.checkRefs || opts.checkRefs === true;
         const now = Date.now();
         if (thing._meta) {
             thing._meta.id = id;
@@ -265,7 +271,17 @@ export class MobilettoOrmTypeDef {
                 mtime: thing._meta.mtime,
             },
         };
-        await validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "", this.registry);
+        await validateFields(
+            thing,
+            thing,
+            this.fields,
+            current,
+            validated,
+            this.validators,
+            errors,
+            "",
+            checkRefs ? this.registry : undefined
+        );
         await this.typeDefValidations(validated, errors);
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors);
@@ -273,6 +289,10 @@ export class MobilettoOrmTypeDef {
         // re-check id, validation may have changed value
         thing._meta.id = validated._meta.id = this.id(validated);
         return validated;
+    }
+
+    async validateNoRefCheck(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject> {
+        return await this.validate(thing, current, { checkRefs: false });
     }
 
     async typeDefValidations(validated: MobilettoOrmObject, errors: MobilettoOrmValidationErrors) {

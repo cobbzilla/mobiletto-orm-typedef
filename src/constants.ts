@@ -44,6 +44,10 @@ export const DEFAULT_API_CONFIG: MobilettoApiConfig = {
     delete: { admin: true },
 };
 
+export type MobilettoOrmValidationOpts = {
+    checkRefs?: boolean;
+};
+
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
     registry?: MobilettoOrmTypeDefRegistry;

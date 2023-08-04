@@ -1,6 +1,6 @@
 import { MobilettoOrmValidationErrors } from "./errors.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
-import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig } from "./constants.js";
+import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig, MobilettoOrmValidationOpts } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 export type MobilettoOrmIndex = {
@@ -51,7 +51,8 @@ export declare class MobilettoOrmTypeDef {
     isId(val: string): boolean;
     isVersion(val: string): boolean;
     newMeta(id?: string | null): MobilettoOrmObjectMetadata;
-    validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
+    validate(thing: MobilettoOrmObject, current?: MobilettoOrmObject, opts?: MobilettoOrmValidationOpts): Promise<MobilettoOrmObject>;
+    validateNoRefCheck(thing: MobilettoOrmObject, current?: MobilettoOrmObject): Promise<MobilettoOrmObject>;
     typeDefValidations(validated: MobilettoOrmObject, errors: MobilettoOrmValidationErrors): Promise<void>;
     hasRedactions(): boolean;
     redact(thing: MobilettoOrmObject): MobilettoOrmObject;

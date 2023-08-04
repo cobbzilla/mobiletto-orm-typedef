@@ -117,29 +117,27 @@ export const validateFields = async (
                 continue;
             }
             if (field.ref) {
-                if (!registry) {
-                    addError(errors, fieldPath, "noRegistry");
-                    continue;
-                }
                 if (typeof fieldValue === "undefined" || fieldValue == null || `${fieldValue}`.length === 0) {
                     addError(errors, fieldPath, ERR_REQUIRED);
                     continue;
                 }
-                const refType = field.ref.refType ? field.ref.refType : fieldName;
-                if (!registry.isRegistered(refType)) {
-                    addError(errors, fieldPath, ERR_REF_UNREGISTERED);
-                    continue;
-                }
-                try {
-                    const found = await registry.resolve(refType, fieldValue);
-                    if (!found) {
-                        addError(errors, fieldPath, ERR_REF_NOT_FOUND);
+                if (registry) {
+                    const refType = field.ref.refType ? field.ref.refType : fieldName;
+                    if (!registry.isRegistered(refType)) {
+                        addError(errors, fieldPath, ERR_REF_UNREGISTERED);
                         continue;
                     }
-                } catch (e) {
-                    if (e instanceof MobilettoOrmReferenceError) {
-                        addError(errors, fieldPath, e.message);
-                        continue;
+                    try {
+                        const found = await registry.resolve(refType, fieldValue);
+                        if (!found) {
+                            addError(errors, fieldPath, ERR_REF_NOT_FOUND);
+                            continue;
+                        }
+                    } catch (e) {
+                        if (e instanceof MobilettoOrmReferenceError) {
+                            addError(errors, fieldPath, e.message);
+                            continue;
+                        }
                     }
                 }
             } else {

@@ -4,29 +4,21 @@ import {
     ERR_REF_NOT_FOUND,
     MobilettoOrmTypeDef,
     MobilettoOrmTypeDefRegistry,
-    MobilettoOrmError,
     MobilettoOrmValidationError,
     rand,
 } from "../lib/esm/index.js";
-import exp from "constants";
 
 describe("typedef registry test", async () => {
-    it("validation fails for a typedef with reference field and no registry", async () => {
-        try {
-            await new MobilettoOrmTypeDef({
-                typeName: `TestType_${rand(4)}`,
-                fields: {
-                    value: { primary: true },
-                    other: {
-                        ref: {},
-                    },
+    it("validation succeeds for a typedef with reference field and no registry", async () => {
+        await new MobilettoOrmTypeDef({
+            typeName: `TestType_${rand(4)}`,
+            fields: {
+                value: { primary: true },
+                other: {
+                    ref: {},
                 },
-            }).validate({ value: rand(2), other: "foo" });
-            assert.fail(`expected MobilettoOrmError for reference field with no registry`);
-        } catch (e) {
-            expect(e).instanceof(MobilettoOrmValidationError);
-            expect(e.errors.other[0]).eq("noRegistry");
-        }
+            },
+        }).validate({ value: rand(2), other: "foo" });
     });
     it("validation fails for a typedef with reference field and no registered resolver", async () => {
         const registry = new MobilettoOrmTypeDefRegistry("myReg");

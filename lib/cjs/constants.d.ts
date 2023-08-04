@@ -36,6 +36,9 @@ export type MobilettoApiConfig = {
     delete: MobilettoApiPermission;
 };
 export declare const DEFAULT_API_CONFIG: MobilettoApiConfig;
+export type MobilettoOrmValidationOpts = {
+    checkRefs?: boolean;
+};
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
     registry?: MobilettoOrmTypeDefRegistry;
