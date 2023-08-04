@@ -1,6 +1,6 @@
 import { MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue, MobilettoOrmRefResolver } from "./field.js";
 import { MobilettoOrmNotFoundError, MobilettoOrmReferenceError } from "./errors.js";
-import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
+import { MobilettoOrmObject } from "./constants.js";
 
 export type MobilettoOrmTypeDefRegistryConfig = {
     name: string;

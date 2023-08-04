@@ -1,4 +1,4 @@
-import { MobilettoOrmFieldValue } from "./field";
+import { MobilettoOrmFieldValue } from "./field.js";
 export declare class MobilettoOrmError extends Error {
     readonly err: any;
     constructor(message: string, err?: any);

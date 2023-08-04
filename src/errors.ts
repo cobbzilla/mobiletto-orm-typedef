@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { MobilettoOrmIdArg } from "./constants.js";
-import { MobilettoOrmFieldValue } from "./field";
+import { MobilettoOrmFieldValue } from "./field.js";
 
 export class MobilettoOrmError extends Error {
     readonly err: any;
