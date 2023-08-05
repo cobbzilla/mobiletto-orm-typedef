@@ -28,12 +28,17 @@ export type MobilettoApiPermission = {
 } | {
     public: true;
 };
+export type MobilettoApiValidation = (caller: MobilettoOrmObject, target: MobilettoOrmObject | MobilettoOrmIdArg, opts?: Record<string, any>) => Promise<boolean>;
+export type MobilettoApiEndpointConfig = {
+    permission: MobilettoApiPermission;
+    validate?: MobilettoApiValidation;
+};
 export type MobilettoApiConfig = {
-    lookup: MobilettoApiPermission;
-    search: MobilettoApiPermission;
-    create: MobilettoApiPermission;
-    update: MobilettoApiPermission;
-    delete: MobilettoApiPermission;
+    lookup: MobilettoApiEndpointConfig;
+    search: MobilettoApiEndpointConfig;
+    create: MobilettoApiEndpointConfig;
+    update: MobilettoApiEndpointConfig;
+    delete: MobilettoApiEndpointConfig;
 };
 export declare const DEFAULT_API_CONFIG: MobilettoApiConfig;
 export type MobilettoOrmValidationOpts = {

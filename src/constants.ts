@@ -28,20 +28,31 @@ export type MobilettoOrmLogger = {
 
 export type MobilettoApiPermission = { admin: true } | { owner: true } | { session: true } | { public: true };
 
+export type MobilettoApiValidation = (
+    caller: MobilettoOrmObject,
+    target: MobilettoOrmObject | MobilettoOrmIdArg,
+    opts?: Record<string, any>
+) => Promise<boolean>;
+
+export type MobilettoApiEndpointConfig = {
+    permission: MobilettoApiPermission;
+    validate?: MobilettoApiValidation;
+};
+
 export type MobilettoApiConfig = {
-    lookup: MobilettoApiPermission;
-    search: MobilettoApiPermission;
-    create: MobilettoApiPermission;
-    update: MobilettoApiPermission;
-    delete: MobilettoApiPermission;
+    lookup: MobilettoApiEndpointConfig;
+    search: MobilettoApiEndpointConfig;
+    create: MobilettoApiEndpointConfig;
+    update: MobilettoApiEndpointConfig;
+    delete: MobilettoApiEndpointConfig;
 };
 
 export const DEFAULT_API_CONFIG: MobilettoApiConfig = {
-    lookup: { admin: true },
-    search: { admin: true },
-    create: { admin: true },
-    update: { admin: true },
-    delete: { admin: true },
+    lookup: { permission: { admin: true } },
+    search: { permission: { admin: true } },
+    create: { permission: { admin: true } },
+    update: { permission: { admin: true } },
+    delete: { permission: { admin: true } },
 };
 
 export type MobilettoOrmValidationOpts = {
