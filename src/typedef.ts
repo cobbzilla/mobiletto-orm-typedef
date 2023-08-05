@@ -108,7 +108,7 @@ export class MobilettoOrmTypeDef {
         this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
         this.fields = config.fields || {};
         this.apiConfig = config.apiConfig
-            ? Object.assign({}, config.apiConfig, DEFAULT_API_CONFIG)
+            ? Object.assign({}, DEFAULT_API_CONFIG, config.apiConfig)
             : DEFAULT_API_CONFIG;
         this.indexes = [];
         this.redaction = [];
