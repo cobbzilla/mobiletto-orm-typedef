@@ -40,11 +40,11 @@ export type MobilettoApiEndpointConfig = {
 };
 
 export type MobilettoApiConfig = {
-    lookup: MobilettoApiEndpointConfig;
-    search: MobilettoApiEndpointConfig;
-    create: MobilettoApiEndpointConfig;
-    update: MobilettoApiEndpointConfig;
-    delete: MobilettoApiEndpointConfig;
+    lookup?: MobilettoApiEndpointConfig;
+    search?: MobilettoApiEndpointConfig;
+    create?: MobilettoApiEndpointConfig;
+    update?: MobilettoApiEndpointConfig;
+    delete?: MobilettoApiEndpointConfig;
 };
 
 export const DEFAULT_API_CONFIG: MobilettoApiConfig = {

@@ -34,11 +34,11 @@ export type MobilettoApiEndpointConfig = {
     validate?: MobilettoApiValidation;
 };
 export type MobilettoApiConfig = {
-    lookup: MobilettoApiEndpointConfig;
-    search: MobilettoApiEndpointConfig;
-    create: MobilettoApiEndpointConfig;
-    update: MobilettoApiEndpointConfig;
-    delete: MobilettoApiEndpointConfig;
+    lookup?: MobilettoApiEndpointConfig;
+    search?: MobilettoApiEndpointConfig;
+    create?: MobilettoApiEndpointConfig;
+    update?: MobilettoApiEndpointConfig;
+    delete?: MobilettoApiEndpointConfig;
 };
 export declare const DEFAULT_API_CONFIG: MobilettoApiConfig;
 export type MobilettoOrmValidationOpts = {
