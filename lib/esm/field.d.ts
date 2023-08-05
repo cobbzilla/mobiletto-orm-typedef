@@ -57,6 +57,13 @@ export type MobilettoOrmFieldDefConfig = {
     fields?: Record<string, MobilettoOrmFieldDefConfig>;
     tabIndexes?: string[];
 };
+export declare const META_ID_FIELD: MobilettoOrmFieldDefConfig;
+export declare const META_CTIME_FIELD: MobilettoOrmFieldDefConfig;
+export declare const META_MTIME_FIELD: MobilettoOrmFieldDefConfig;
+export declare const META_VERSION_FIELD: MobilettoOrmFieldDefConfig;
+export declare const META_REMOVED_FIELD: MobilettoOrmFieldDefConfig;
+export declare const META_FIELDS: Record<string, MobilettoOrmFieldDefConfig>;
+export declare const metaField: (field: string) => MobilettoOrmFieldDefConfig;
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
 export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmObject) => Promise<MobilettoOrmFieldValue>;
 export declare const normalizedValue: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;

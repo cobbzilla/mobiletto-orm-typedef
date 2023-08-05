@@ -1,4 +1,5 @@
 import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
+import { MobilettoOrmError } from "./errors.js";
 
 export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
 
@@ -85,6 +86,51 @@ export type MobilettoOrmFieldDefConfig = {
     render?: MobilettoOrmFieldRender;
     fields?: Record<string, MobilettoOrmFieldDefConfig>;
     tabIndexes?: string[];
+};
+
+export const META_ID_FIELD: MobilettoOrmFieldDefConfig = {
+    name: "id",
+    type: "string",
+    unique: true,
+    control: "label",
+};
+export const META_CTIME_FIELD: MobilettoOrmFieldDefConfig = {
+    name: "ctime",
+    type: "number",
+    control: "label",
+    render: "datetime",
+};
+export const META_MTIME_FIELD: MobilettoOrmFieldDefConfig = {
+    name: "mtime",
+    type: "number",
+    control: "label",
+    render: "datetime",
+};
+export const META_VERSION_FIELD: MobilettoOrmFieldDefConfig = {
+    name: "version",
+    type: "string",
+    unique: true,
+    control: "label",
+};
+export const META_REMOVED_FIELD: MobilettoOrmFieldDefConfig = {
+    name: "removed",
+    type: "boolean",
+    control: "label",
+};
+export const META_FIELDS: Record<string, MobilettoOrmFieldDefConfig> = {
+    id: META_ID_FIELD,
+    version: META_VERSION_FIELD,
+    ctime: META_CTIME_FIELD,
+    mtime: META_MTIME_FIELD,
+    removed: META_REMOVED_FIELD,
+};
+
+export const metaField = (field: string): MobilettoOrmFieldDefConfig => {
+    const norm = field.replace(/\./, "_");
+    const underscore = norm.lastIndexOf("_");
+    const f = underscore === -1 || underscore === norm.length - 1 ? norm : norm.substring(underscore + 1);
+    if (META_FIELDS[f]) return META_FIELDS[f];
+    throw new MobilettoOrmError(`metaField(${field}): ${f} is not a valid meta field`);
 };
 
 export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefConfig>;
