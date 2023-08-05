@@ -7,6 +7,12 @@ export type MobilettoOrmIndex = {
     field: string;
     unique: boolean;
 };
+export type MobilettoOrmRefType = {
+    refType: string;
+    RefType: string;
+    fieldPaths: string[];
+    safeFieldPaths: string[];
+};
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
@@ -19,6 +25,7 @@ export declare class MobilettoOrmTypeDef {
     readonly alternateIdFields: string[] | null;
     readonly alternateLookupFields: string[];
     fields: MobilettoOrmFieldDefConfigs;
+    readonly refTypes: MobilettoOrmRefType[];
     readonly apiConfig: MobilettoApiConfig;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
@@ -35,6 +42,7 @@ export declare class MobilettoOrmTypeDef {
     readonly logger: MobilettoOrmLogger | null;
     readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig);
+    addRef(fieldPath: string, refType: string): void;
     _log(msg: string, level: string): void;
     log_info(msg: string): void;
     log_warn(msg: string): void;

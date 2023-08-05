@@ -224,6 +224,10 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                 );
             }
             field.index = true;
+            if (!field.ref.refType) {
+                field.ref.refType = fieldName;
+            }
+            typeDef.addRef(fieldPath, field.ref.refType);
         }
         if (field.index || field.unique) {
             if (!typeDef) {

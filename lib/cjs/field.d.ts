@@ -24,7 +24,6 @@ export type MobilettoOrmCustomFieldTest = {
 };
 export type MobilettoOrmRefSpec = {
     refType?: string;
-    refLabel?: string;
 };
 export type MobilettoOrmRefResolver = (id: MobilettoOrmIdArg) => MobilettoOrmObject | Promise<MobilettoOrmObject>;
 export type MobilettoOrmFieldDefConfig = {

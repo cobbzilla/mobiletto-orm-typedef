@@ -56,6 +56,12 @@ export type MobilettoOrmIndex = {
     field: string;
     unique: boolean;
 };
+export type MobilettoOrmRefType = {
+    refType: string;
+    RefType: string;
+    fieldPaths: string[];
+    safeFieldPaths: string[];
+};
 
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
@@ -69,6 +75,7 @@ export class MobilettoOrmTypeDef {
     readonly alternateIdFields: string[] | null;
     readonly alternateLookupFields: string[];
     fields: MobilettoOrmFieldDefConfigs;
+    readonly refTypes: MobilettoOrmRefType[];
     readonly apiConfig: MobilettoApiConfig;
     readonly indexes: MobilettoOrmIndex[];
     readonly tabIndexes: string[];
@@ -105,6 +112,7 @@ export class MobilettoOrmTypeDef {
         this.redaction = [];
         this.filenameFields = [];
         this.tabIndexes = this._tabIndexes(this.fields);
+        this.refTypes = [];
         processFields(this.fields, "", this);
         this.alternateLookupFields = Object.values(this.fields)
             .filter((f) => f.unique)
@@ -132,6 +140,22 @@ export class MobilettoOrmTypeDef {
                 : {};
         this.logger = config.logger || null;
         this.debug = config.debug || false;
+    }
+
+    addRef(fieldPath: string, refType: string) {
+        const safePath = fieldPath.replace(/\./, "_");
+        const foundType = this.refTypes.find((r) => r.refType === refType);
+        if (!foundType) {
+            this.refTypes.push({
+                refType,
+                RefType: refType.substring(0).toUpperCase() + (refType.length > 1 ? refType.substring(1) : ""),
+                fieldPaths: [fieldPath],
+                safeFieldPaths: [safePath],
+            });
+        } else {
+            foundType.fieldPaths.push(fieldPath);
+            foundType.safeFieldPaths.push(safePath);
+        }
     }
 
     _log(msg: string, level: string) {
