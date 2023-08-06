@@ -44,6 +44,7 @@ export declare class MobilettoOrmTypeDef {
     readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig);
     addRef(fieldPath: string, refType: string): void;
+    textMatch(obj: MobilettoOrmObject, textSearch: string): boolean;
     _log(msg: string, level: string): void;
     log_info(msg: string): void;
     log_warn(msg: string): void;

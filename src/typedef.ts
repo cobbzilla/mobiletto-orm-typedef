@@ -163,6 +163,13 @@ export class MobilettoOrmTypeDef {
         }
     }
 
+    textMatch(obj: MobilettoOrmObject, textSearch: string): boolean {
+        for (const f of this.textSearchFields) {
+            if (`${obj[f] ? obj[f] : ""}`.includes(textSearch)) return true;
+        }
+        return false;
+    }
+
     _log(msg: string, level: string) {
         /* eslint-disable @typescript-eslint/no-explicit-any */
         if (this.logger && typeof (this.logger as any)[level] === "function") {
