@@ -105,16 +105,12 @@ export const validateFields = async (
                 continue;
             }
             // @ts-ignore
-            if (
-                field.values &&
-                fieldValue &&
-                ((field.type === "array" &&
-                    Array.isArray(fieldValue) &&
-                    !fieldValue.every((v) => typeof field.values !== "undefined" && field.values.includes(v))) ||
-                    (field.type !== "array" && !field.values.includes(fieldValue)))
-            ) {
-                addError(errors, fieldPath, "values");
-                continue;
+            if (field.values && fieldValue && field.type === "array" && Array.isArray(fieldValue)) {
+                const filtered = fieldValue.filter((v) => v != null && v !== "");
+                if (!filtered.every((v) => typeof field.values !== "undefined" && field.values.includes(v))) {
+                    addError(errors, fieldPath, "values");
+                    continue;
+                }
             }
             if (field.ref) {
                 if (typeof fieldValue === "undefined" || fieldValue == null || `${fieldValue}`.length === 0) {

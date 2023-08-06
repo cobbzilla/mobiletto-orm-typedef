@@ -149,7 +149,7 @@ describe("nested validation test with required nested object with required field
             );
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(5, "expected five errors");
+            expect(Object.keys(e.errors).length).equals(4, "expected five errors");
             expect(e.errors["primaryField"].length).equals(1, "expected 1 primary error");
             expect(e.errors["primaryField"][0]).equals("required", "expected primary.required error");
             expect(e.errors["nestedObject.nested1"].length).equals(1, "expected 1 nestedObject.nested1 error");
@@ -159,14 +159,6 @@ describe("nested validation test with required nested object with required field
             );
             expect(e.errors["nestedObject.nested2"].length).equals(1, "expected 1 nestedObject.nested2 error");
             expect(e.errors["nestedObject.nested2"][0]).equals("regex", "expected nestedObject.nested2.regex error");
-            expect(e.errors["nestedObject.triplyNestedObject.nested3Plain"].length).equals(
-                1,
-                "expected 1 nestedObject.triplyNestedObject.nested3Plain error"
-            );
-            expect(e.errors["nestedObject.triplyNestedObject.nested3Plain"][0]).equals(
-                "values",
-                "expected nestedObject.triplyNestedObject.nested3Plain.values error"
-            );
             expect(e.errors["nestedObject.triplyNestedObject.nested3Required"].length).equals(
                 1,
                 "expected 1 nestedObject.triplyNestedObject.nested3Required error"
