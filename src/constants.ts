@@ -1,6 +1,6 @@
-import { MobilettoOrmFieldDefConfigs } from "./field.js";
+import { MobilettoOrmFieldDefConfigs, MobilettoOrmFieldValue } from "./field.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
-import { MobilettoOrmTypeDefRegistry } from "./registry";
+import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
@@ -31,12 +31,13 @@ export type MobilettoApiPermission = { admin: true } | { owner: true } | { sessi
 export type MobilettoApiValidation = (
     caller: MobilettoOrmObject,
     target: MobilettoOrmObject | MobilettoOrmIdArg,
-    opts?: Record<string, any>
+    opts?: Record<string, MobilettoOrmFieldValue>
 ) => Promise<boolean>;
 
 export type MobilettoApiEndpointConfig = {
     permission: MobilettoApiPermission;
     validate?: MobilettoApiValidation;
+    hasValidate?: boolean;
 };
 
 export type MobilettoApiConfig = {

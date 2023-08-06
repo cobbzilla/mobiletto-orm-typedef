@@ -41,6 +41,7 @@ import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } fr
 import { processFields } from "./fields.js";
 import { mergeConfigs } from "./extend.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
+import { processApiConfig } from "./api.js";
 
 const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
 
@@ -107,9 +108,9 @@ export class MobilettoOrmTypeDef {
         this.basePath = config.basePath || "";
         this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
         this.fields = config.fields || {};
-        this.apiConfig = config.apiConfig
-            ? Object.assign({}, DEFAULT_API_CONFIG, config.apiConfig)
-            : DEFAULT_API_CONFIG;
+        this.apiConfig = processApiConfig(
+            config.apiConfig ? Object.assign({}, DEFAULT_API_CONFIG, config.apiConfig) : DEFAULT_API_CONFIG
+        );
         this.indexes = [];
         this.redaction = [];
         this.filenameFields = [];
