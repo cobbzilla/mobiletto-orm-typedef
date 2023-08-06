@@ -109,15 +109,7 @@ export declare class MobilettoOrmTypeDef {
     specificPath(obj: MobilettoOrmObject): string;
     indexPath(field: string, value: MobilettoOrmFieldIndexableValue): string;
     indexSpecificPath(field: string, obj: MobilettoOrmObject): string;
-    tombstone(thing: MobilettoOrmObject): {
-        _meta: {
-            id: string;
-            version: string;
-            removed: boolean;
-            ctime: number;
-            mtime: number;
-        };
-    };
+    tombstone(thing: MobilettoOrmObject): MobilettoOrmObject;
     isTombstone(thing: MobilettoOrmObject): boolean;
     extend(otherConfig: MobilettoOrmTypeDefConfig): MobilettoOrmTypeDef;
 }

@@ -612,7 +612,7 @@ export class MobilettoOrmTypeDef {
         if (!thing._meta || !thing._meta.id || !thing._meta.ctime || !thing._meta.mtime) {
             throw new MobilettoOrmError(`tombstone: missing required _meta fields`);
         }
-        return {
+        const marker: MobilettoOrmObject = {
             _meta: {
                 id: thing._meta.id,
                 version: this.newVersion(),
@@ -621,6 +621,10 @@ export class MobilettoOrmTypeDef {
                 mtime: Date.now(),
             },
         };
+        if (this.primary) {
+            marker[this.primary] = thing[this.primary];
+        }
+        return marker;
     }
 
     isTombstone(thing: MobilettoOrmObject) {
