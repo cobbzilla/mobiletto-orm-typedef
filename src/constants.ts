@@ -1,6 +1,7 @@
 import { MobilettoOrmFieldDefConfigs, MobilettoOrmFieldValue } from "./field.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
+import { MobilettoOrmValidationErrors } from "./errors";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
@@ -32,7 +33,7 @@ export type MobilettoApiValidation = (
     caller: MobilettoOrmObject,
     target: MobilettoOrmObject | MobilettoOrmIdArg,
     opts?: Record<string, MobilettoOrmFieldValue>
-) => Promise<boolean>;
+) => Promise<MobilettoOrmValidationErrors | boolean>;
 
 export type MobilettoApiEndpointConfig = {
     permission: MobilettoApiPermission;
