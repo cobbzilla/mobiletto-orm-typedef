@@ -165,7 +165,7 @@ export class MobilettoOrmTypeDef {
 
     textMatch(obj: MobilettoOrmObject, textSearch: string): boolean {
         for (const f of this.textSearchFields) {
-            if (`${obj[f] ? obj[f] : ""}`.includes(textSearch)) return true;
+            if (`${obj[f] ? JSON.stringify(obj[f]) : ""}`.includes(textSearch)) return true;
         }
         return false;
     }
