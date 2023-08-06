@@ -32,6 +32,7 @@ export declare class MobilettoOrmTypeDef {
     readonly redaction: string[];
     readonly filenameFields: string[];
     readonly tableFields: string[];
+    readonly textSearchFields: string[];
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;

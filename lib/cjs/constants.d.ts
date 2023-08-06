@@ -58,6 +58,7 @@ export type MobilettoOrmTypeDefConfig = {
     fields: MobilettoOrmFieldDefConfigs;
     apiConfig?: MobilettoApiConfig;
     tableFields?: string[];
+    textSearchFields?: string[];
     maxVersions?: number;
     minWrites?: number;
     validators?: FieldValidators;

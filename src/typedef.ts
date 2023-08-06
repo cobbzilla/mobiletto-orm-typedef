@@ -83,6 +83,7 @@ export class MobilettoOrmTypeDef {
     readonly redaction: string[];
     readonly filenameFields: string[];
     readonly tableFields: string[];
+    readonly textSearchFields: string[];
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;
@@ -128,6 +129,7 @@ export class MobilettoOrmTypeDef {
             : this.alternateIdFields && this.alternateIdFields.length > 0
             ? [...this.alternateIdFields, "_meta.ctime", "_meta.mtime"]
             : [this.idField(this.newDummyInstance()), "_meta.ctime", "_meta.mtime"];
+        this.textSearchFields = config.textSearchFields ? config.textSearchFields : [];
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
