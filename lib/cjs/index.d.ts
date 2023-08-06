@@ -5,3 +5,4 @@ export * from "./registry.js";
 export * from "./field.js";
 export * from "./validation.js";
 export * from "./typedef.js";
+export * from "./merge.js";
