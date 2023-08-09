@@ -1,5 +1,6 @@
-import { MobilettoOrmFieldDefConfigs } from "./field";
+import { MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs } from "./field";
 import { MobilettoOrmTypeDefConfig } from "./constants";
+import { MobilettoOrmTypeDef } from "./typedef";
 
 const mergeFields = (
     baseFields: MobilettoOrmFieldDefConfigs,
@@ -40,4 +41,12 @@ export const mergeConfigs = (
         extConfig.fields = mergeFields(baseConfig.fields, overrideConfig.fields);
     }
     return extConfig;
+};
+
+export const hideTypeDefFields = (typeDef: MobilettoOrmTypeDef, fields: string[]): MobilettoOrmTypeDef => {
+    const hidden: Record<string, MobilettoOrmFieldDefConfig> = {};
+    fields.forEach((f) => {
+        hidden[f] = { control: "hidden" };
+    });
+    return typeDef.extend({ typeName: typeDef.typeName, fields: hidden });
 };

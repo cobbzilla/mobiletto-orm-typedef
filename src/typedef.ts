@@ -39,7 +39,7 @@ import {
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
-import { mergeConfigs } from "./extend.js";
+import { hideTypeDefFields, mergeConfigs } from "./extend.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 import { processApiConfig } from "./api.js";
 
@@ -655,5 +655,9 @@ export class MobilettoOrmTypeDef {
 
     extend(otherConfig: MobilettoOrmTypeDefConfig) {
         return new MobilettoOrmTypeDef(mergeConfigs(this.config, otherConfig));
+    }
+
+    hideFields(toHide: string[]): MobilettoOrmTypeDef {
+        return hideTypeDefFields(this, toHide);
     }
 }
