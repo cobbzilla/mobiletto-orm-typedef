@@ -119,7 +119,7 @@ export class MobilettoOrmTypeDef {
         this.refTypes = [];
         processFields(this.fields, "", this);
         this.alternateLookupFields = Object.values(this.fields)
-            .filter((f) => f.unique)
+            .filter((f) => f.unique && !f.primary)
             .map((f) => f.name) as string[];
         // @ts-ignore
         this.tableFields = config.tableFields
