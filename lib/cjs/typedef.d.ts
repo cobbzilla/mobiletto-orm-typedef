@@ -114,4 +114,5 @@ export declare class MobilettoOrmTypeDef {
     tombstone(thing: MobilettoOrmObject): MobilettoOrmObject;
     isTombstone(thing: MobilettoOrmObject): boolean;
     extend(otherConfig: MobilettoOrmTypeDefConfig): MobilettoOrmTypeDef;
+    hideFields(toHide: string[]): MobilettoOrmTypeDef;
 }
