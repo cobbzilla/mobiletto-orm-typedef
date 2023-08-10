@@ -108,7 +108,11 @@ export class MobilettoOrmTypeDef {
         this.singleton = config.singleton || undefined;
         this.shortName = validShortName(config.shortName) ? (config.shortName as string) : undefined;
         this.basePath = config.basePath || "";
-        this.indexLevels = config.debug ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
+        if (this.singleton && config.indexLevels && config.indexLevels > 0) {
+            throw new MobilettoOrmError("invalid TypeDefConfig: indexLevels cannot be > 0 for singleton type");
+        }
+        this.indexLevels =
+            config.debug || config.singleton ? 0 : config.indexLevels ? config.indexLevels : DEFAULT_ID_INDEX_LEVELS;
         this.fields = config.fields || {};
         this.apiConfig = processApiConfig(
             config.apiConfig ? Object.assign({}, DEFAULT_API_CONFIG, config.apiConfig) : DEFAULT_API_CONFIG
