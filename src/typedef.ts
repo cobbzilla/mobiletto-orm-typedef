@@ -91,6 +91,7 @@ export class MobilettoOrmTypeDef {
     readonly versionRegex: RegExp;
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
+    readonly transientFields: string[];
     readonly logger: MobilettoOrmLogger | null;
     readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig) {
@@ -118,6 +119,9 @@ export class MobilettoOrmTypeDef {
         this.tabIndexes = this._tabIndexes(this.fields);
         this.refTypes = [];
         processFields(this.fields, "", this);
+        this.transientFields = Object.values(this.fields)
+            .filter((f) => f.transient)
+            .map((f) => f.name) as string[];
         this.alternateLookupFields = Object.values(this.fields)
             .filter((f) => f.unique && !f.primary)
             .map((f) => f.name) as string[];

@@ -40,6 +40,7 @@ export declare class MobilettoOrmTypeDef {
     readonly versionRegex: RegExp;
     readonly validators: FieldValidators;
     readonly validations: TypeValidations;
+    readonly transientFields: string[];
     readonly logger: MobilettoOrmLogger | null;
     readonly debug: boolean;
     constructor(config: MobilettoOrmTypeDefConfig);
