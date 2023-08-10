@@ -38,6 +38,7 @@ export type MobilettoOrmFieldDefConfig = {
     when?: (val: MobilettoOrmObject) => boolean;
     primary?: boolean;
     updatable?: boolean;
+    transient?: boolean;
     normalize?: MobilettoOrmNormalizeFunc;
     test?: MobilettoOrmCustomFieldTest;
     regex?: RegExp;

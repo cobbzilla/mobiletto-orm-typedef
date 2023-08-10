@@ -83,6 +83,7 @@ export declare class MobilettoOrmTypeDef {
         when?: ((val: MobilettoOrmObject) => boolean) | undefined;
         primary?: boolean | undefined;
         updatable?: boolean | undefined;
+        transient?: boolean | undefined;
         normalize?: import("./field.js").MobilettoOrmNormalizeFunc | undefined;
         test?: import("./field.js").MobilettoOrmCustomFieldTest | undefined;
         regex?: RegExp | undefined;
