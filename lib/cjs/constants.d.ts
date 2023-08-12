@@ -46,7 +46,7 @@ export declare const DEFAULT_API_CONFIG: MobilettoApiConfig;
 export type MobilettoOrmValidationOpts = {
     checkRefs?: boolean;
 };
-export type MobilettoOrmTypeDefScope = "global" | "local";
+export type MobilettoOrmTypeDefScope = "global" | "local" | "any";
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
     scope?: MobilettoOrmTypeDefScope;
