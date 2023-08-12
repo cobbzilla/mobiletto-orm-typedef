@@ -104,7 +104,7 @@ export class MobilettoOrmTypeDef {
             throw new MobilettoOrmError("invalid TypeDefConfig: typeName cannot contain % or ~ characters");
         }
         this.config = config;
-        this.scope = config.scope || "global";
+        this.scope = config.scope || "any";
         this.registry = config.registry;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
