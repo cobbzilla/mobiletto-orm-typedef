@@ -570,7 +570,7 @@ export class MobilettoOrmTypeDef {
         }
         const fieldDesc = this.renderFilenameFields(obj);
         const description = fieldDesc ? fieldDesc : this.id(obj);
-        return this.typeName + "_" + description + OBJ_ID_SEP + obj._meta.version + ".json";
+        return fsSafeName(this.typeName + "_" + description + OBJ_ID_SEP + obj._meta.version + ".json");
     }
 
     idFromPath(p: string) {
