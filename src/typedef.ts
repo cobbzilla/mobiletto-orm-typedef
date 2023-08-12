@@ -35,6 +35,7 @@ import {
     MobilettoOrmObjectMetadata,
     MobilettoOrmTypeDefConfig,
     MobilettoOrmValidationOpts,
+    MobilettoOrmTypeDefScope,
     VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
@@ -67,6 +68,7 @@ export type MobilettoOrmRefType = {
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
+    readonly scope: MobilettoOrmTypeDefScope;
     registry?: MobilettoOrmTypeDefRegistry;
     readonly shortName?: string;
     readonly singleton?: string;
@@ -102,6 +104,7 @@ export class MobilettoOrmTypeDef {
             throw new MobilettoOrmError("invalid TypeDefConfig: typeName cannot contain % or ~ characters");
         }
         this.config = config;
+        this.scope = config.scope || "global";
         this.registry = config.registry;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);

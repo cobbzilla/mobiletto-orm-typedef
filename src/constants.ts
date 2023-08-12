@@ -1,7 +1,7 @@
 import { MobilettoOrmFieldDefConfigs, MobilettoOrmFieldValue } from "./field.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
-import { MobilettoOrmValidationErrors } from "./errors";
+import { MobilettoOrmValidationErrors } from "./errors.js";
 
 export const DEFAULT_MAX_VERSIONS = 5;
 export const DEFAULT_MIN_WRITES = 0;
@@ -61,8 +61,11 @@ export type MobilettoOrmValidationOpts = {
     checkRefs?: boolean;
 };
 
+export type MobilettoOrmTypeDefScope = "global" | "local";
+
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
+    scope?: MobilettoOrmTypeDefScope;
     registry?: MobilettoOrmTypeDefRegistry;
     singleton?: string;
     shortName?: string;
