@@ -113,11 +113,16 @@ export const validateFields = async (
                 }
             }
             if (field.ref) {
-                if (typeof fieldValue === "undefined" || fieldValue == null || `${fieldValue}`.length === 0) {
+                const fieldEmpty =
+                    typeof fieldValue === "undefined" ||
+                    fieldValue == null ||
+                    (fieldValue.length && fieldValue.length === 0) ||
+                    `${fieldValue}`.length === 0;
+                if (fieldEmpty && field.required) {
                     addError(errors, fieldPath, ERR_REQUIRED);
                     continue;
                 }
-                if (registry) {
+                if (registry && !fieldEmpty) {
                     const refType = field.ref.refType ? field.ref.refType : fieldName;
                     if (!registry.isRegistered(refType)) {
                         addError(errors, fieldPath, ERR_REF_UNREGISTERED);
