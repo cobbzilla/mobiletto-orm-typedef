@@ -1,9 +1,27 @@
 import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
 import { MobilettoOrmError } from "./errors.js";
 
-export const VALID_FIELD_TYPES = ["string", "number", "boolean", "object", "array"];
+export const VALID_FIELD_TYPES = [
+    "string",
+    "number",
+    "boolean",
+    "object",
+    "string[]",
+    "number[]",
+    "boolean[]",
+    "object[]",
+];
 
-export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "array";
+export type MobilettoOrmFieldType =
+    | "number"
+    | "string"
+    | "boolean"
+    | "object"
+    | "string[]"
+    | "number[]"
+    | "boolean[]"
+    | "object[]";
+
 export type MobilettoOrmFieldControl =
     | "label"
     | "text"

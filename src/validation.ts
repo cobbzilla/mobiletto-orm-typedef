@@ -5,6 +5,7 @@ import { MobilettoOrmFieldDefConfigs, normalizedValue } from "./field.js";
 import { MobilettoOrmValidationErrors, addError, MobilettoOrmReferenceError } from "./errors.js";
 import { MobilettoOrmObject } from "./constants.js";
 import { ERR_REF_NOT_FOUND, ERR_REF_UNREGISTERED, MobilettoOrmTypeDefRegistry } from "./registry.js";
+import { isArrayType } from "./fields.js";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
 
@@ -50,7 +51,14 @@ export const validateFields = async (
     for (const fieldName of Object.keys(fields)) {
         const fieldPath = objPath === "" ? fieldName : `${objPath}.${fieldName}`;
         let field = fields[fieldName];
-        const thingValueType = typeof thing[fieldName];
+        let thingValueType: string = thing[fieldName] == null ? "undefined" : typeof thing[fieldName];
+        if (thingValueType === "object" && Array.isArray(thing[fieldName])) {
+            if (thing[fieldName].length > 0) {
+                thingValueType = `${typeof thing[fieldName][0]}[]`;
+            } else {
+                thingValueType = "undefined";
+            }
+        }
 
         if (typeof field.when === "function") {
             if (field.when(thing)) {
@@ -95,14 +103,24 @@ export const validateFields = async (
             fieldValue = null;
         }
         if (useThingValue) {
-            if (
-                field.type &&
-                fieldValue != null &&
-                field.type !== thingValueType &&
-                !(field.type === "array" && Array.isArray(fieldValue))
-            ) {
+            if (field.type && fieldValue != null && field.type !== thingValueType) {
                 addError(errors, fieldPath, "type");
                 continue;
+            }
+            if (thing[fieldName] && field.type && isArrayType(field.type)) {
+                if (!Array.isArray(thing[fieldName])) {
+                    addError(errors, fieldPath, "type");
+                    continue;
+                }
+                let valueErrors = false;
+                for (const v of thing[fieldName]) {
+                    if (!field.type.startsWith(typeof v)) {
+                        addError(errors, fieldPath, "type");
+                        valueErrors = true;
+                        break;
+                    }
+                }
+                if (valueErrors) continue;
             }
             // @ts-ignore
             if (field.values && fieldValue && field.type === "array" && Array.isArray(fieldValue)) {
@@ -145,12 +163,24 @@ export const validateFields = async (
                 for (const validator of Object.keys(validators)) {
                     // @ts-ignore
                     if (typeof field[validator] !== "undefined") {
-                        // @ts-ignore
-                        if (!validators[validator](fieldValue, field[validator])) {
-                            if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
-                                continue;
+                        if (isArrayType(field.type) && Array.isArray(fieldValue)) {
+                            for (const val of fieldValue) {
+                                // @ts-ignore
+                                if (!validators[validator](val, field[validator])) {
+                                    if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
+                                        continue;
+                                    }
+                                    addError(errors, fieldPath, validator);
+                                }
                             }
-                            addError(errors, fieldPath, validator);
+                        } else {
+                            // @ts-ignore
+                            if (!validators[validator](fieldValue, field[validator])) {
+                                if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
+                                    continue;
+                                }
+                                addError(errors, fieldPath, validator);
+                            }
                         }
                     }
                 }

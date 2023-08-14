@@ -42,7 +42,7 @@ const typeDef = new MobilettoOrmTypeDef({
             values: [1, 2, 3],
         },
         multiselect: {
-            type: "array",
+            // type: "array",
             control: "multi",
             values: ["option-1", "option-2", "option-3", "option-4"],
             test: {
@@ -56,6 +56,9 @@ const typeDef = new MobilettoOrmTypeDef({
             type: "string",
             required: false,
             min: NOT_REQUIRED_MIN_LEN,
+        },
+        multistring: {
+            type: "string[]",
         },
     },
 });
@@ -77,8 +80,10 @@ describe("validation test", async () => {
         expect(fieldDefs["impliedBoolean"].control).eq("flag");
         expect(fieldDefs["restricted"].type).eq("number");
         expect(fieldDefs["restricted"].control).eq("select");
-        expect(fieldDefs["multiselect"].type).eq("array");
+        expect(fieldDefs["multiselect"].type).eq("string[]");
         expect(fieldDefs["multiselect"].control).eq("multi");
+        expect(fieldDefs["multistring"].type).eq("string[]");
+        expect(fieldDefs["multistring"].control).eq("text");
     });
     it("typeDef.tabIndexes returns the field names in the correct order", async () => {
         const ti = typeDef.tabIndexes;
@@ -298,12 +303,13 @@ describe("validation test", async () => {
             comments: [],
             impliedBoolean: "true",
             restricted: "no",
+            multistring: [1, 2, 3],
         };
         try {
             await typeDef.validate(badThing);
         } catch (e) {
             expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
-            expect(Object.keys(e.errors).length).equals(6, "expected 6 errors");
+            expect(Object.keys(e.errors).length).equals(7, "expected 6 errors");
             expect(e.errors["value"].length).equals(1, "expected 1 value error");
             expect(e.errors["value"][0]).equals("type", "expected value.type error");
             expect(e.errors["int"].length).equals(1, "expected 1 value error");
@@ -316,6 +322,8 @@ describe("validation test", async () => {
             expect(e.errors["impliedBoolean"][0]).equals("type", "expected impliedBoolean.type error");
             expect(e.errors["restricted"].length).equals(1, "expected 1 restricted error");
             expect(e.errors["restricted"][0]).equals("type", "expected restricted.type error");
+            expect(e.errors["multistring"].length).equals(1, "expected 1 multistring error");
+            expect(e.errors["multistring"][0]).equals("type", "expected multistring.type error");
         }
     });
     it("successfully validates and redacts an object, verifying default fields are properly set and redacted fields are null", async () => {
@@ -328,6 +336,7 @@ describe("validation test", async () => {
                 alphaOnly: ALPHA_STRING,
                 comments,
                 multiselect: ["option-1", "option-3"],
+                multistring: ["foo", "bar", "baz"],
             })
         );
         expect(validated.int).eq(100);
@@ -339,6 +348,9 @@ describe("validation test", async () => {
         expect(validated.multiselect.length).eq(2);
         expect(validated.multiselect[0]).eq("option-1");
         expect(validated.multiselect[1]).eq("option-3");
+        expect(validated.multistring[0]).eq("foo");
+        expect(validated.multistring[1]).eq("bar");
+        expect(validated.multistring[2]).eq("baz");
     });
     it("successfully validates an object with an items array", async () => {
         await new MobilettoOrmTypeDef({

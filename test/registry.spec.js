@@ -84,7 +84,7 @@ describe("typedef registry test", async () => {
             fields: {
                 value: { primary: true },
                 other: {
-                    type: "array",
+                    type: "number[]",
                     control: "multi",
                     values: [0, 1, 2, 3, 4],
                     ref: {},
@@ -118,7 +118,7 @@ describe("typedef registry test", async () => {
                 fields: {
                     value: { primary: true },
                     other: {
-                        type: "array",
+                        type: "number[]",
                         control: "multi",
                         values: [0, 1, 2, 3, 4],
                         ref: {},

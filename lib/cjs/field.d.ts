@@ -1,6 +1,6 @@
 import { MobilettoOrmIdArg, MobilettoOrmObject } from "./constants.js";
 export declare const VALID_FIELD_TYPES: string[];
-export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "array";
+export type MobilettoOrmFieldType = "number" | "string" | "boolean" | "object" | "string[]" | "number[]" | "boolean[]" | "object[]";
 export type MobilettoOrmFieldControl = "label" | "text" | "password" | "hidden" | "textarea" | "duration" | "timestamp" | "range" | "flag" | "select" | "multi";
 export type MobilettoOrmRawValue = string | number | boolean | null | undefined;
 export type MobilettoOrmFieldRenderFunc = (v: MobilettoOrmRawValue, messages: Record<string, string>, title: string) => string;

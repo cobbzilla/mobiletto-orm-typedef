@@ -16,79 +16,87 @@ import {
 } from "./constants.js";
 import { MobilettoOrmTypeDef } from "./typedef.js";
 
-const determineFieldControl = (
+export const isArrayType = (t?: string) => (t && t.endsWith("[]") ? true : t ? false : null);
+
+export const determineFieldControl = (
     fieldName: string,
     field: MobilettoOrmFieldDefConfig,
     fieldType: MobilettoOrmFieldType
 ): MobilettoOrmFieldControl => {
     if (field.control) return field.control;
     if (fieldType === "boolean") return "flag";
-    if (fieldType === "array") return "multi";
+    const hasValues = field.values && Array.isArray(field.values) && field.values.length > 0;
+    const hasItems = field.items && Array.isArray(field.items) && field.items.length > 0;
+    if (isArrayType(fieldType)) {
+        return hasValues || hasItems ? "multi" : "text";
+    }
     if (fieldType === "number" && typeof field.minValue === "number" && typeof field.maxValue === "number")
         return "range";
     if (fieldType === "object" && typeof field.fields === "undefined") return "textarea";
-    if (
-        (field.values && Array.isArray(field.values) && field.values.length > 0) ||
-        (field.items && Array.isArray(field.items) && field.items.length > 0)
-    )
-        return "select";
+    if (hasValues || hasItems) return "select";
     if (fieldName === "password") return "password";
     return "text";
 };
 
-const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig) => {
-    let foundType = field.type ? field.type : null;
+export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig): MobilettoOrmFieldType => {
+    let foundType: MobilettoOrmFieldType | null = field.type ? field.type : null;
+    const isArray = isArrayType(field.type);
+    const hasItems = field.items && Array.isArray(field.items);
+    const hasValues = field.values && Array.isArray(field.values);
+    const hasLabels = field.labels && Array.isArray(field.labels);
+    const isMulti = field.control && field.control === "multi";
     if (
         typeof field.min === "number" ||
         typeof field.max === "number" ||
         typeof field.regex === "string" ||
         (typeof field.regex === "object" && field.regex instanceof RegExp)
     ) {
-        if (foundType != null && foundType !== "string") {
+        if (foundType != null && foundType !== "string" && foundType !== "string[]") {
             throw new MobilettoOrmError(
                 `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / string`
             );
         }
-        foundType = "string";
+
+        foundType = isArray || isMulti ? "string[]" : "string";
     }
     if (
         typeof field.minValue === "number" ||
         typeof field.maxValue === "number" ||
         (field.control && NUMERIC_CONTROL_TYPES.includes(field.control))
     ) {
-        if (foundType != null && foundType !== "number") {
+        if (foundType != null && foundType !== "number" && foundType !== "number[]") {
             throw new MobilettoOrmError(
                 `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / number`
             );
         }
-        foundType = "number";
+        foundType = isArray || isMulti ? "number[]" : "number";
     }
-    const hasItems = field.items && Array.isArray(field.items);
-    const hasValues = field.values && Array.isArray(field.values);
-    const hasLabels = field.labels && Array.isArray(field.labels);
     /* eslint-disable @typescript-eslint/no-explicit-any */
     let defaultType: any = typeof field.default;
     /* eslint-enable @typescript-eslint/no-explicit-any */
     if (defaultType !== "undefined") {
-        if (Array.isArray(field.default) && !hasValues && !hasItems) {
-            throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had an array as 'default' value, but has no 'items' or 'values'`
-            );
-        }
-        if ((field.type && field.type === "array") || (field.control && field.control === "multi")) {
+        if (field.type && isArrayType(field.type)) {
             if (!Array.isArray(field.default)) {
                 throw new MobilettoOrmError(
                     `invalid TypeDefConfig: field ${fieldName} had type 'array' or control 'multi' but default value type is ${defaultType} (expected array)`
                 );
             }
-            defaultType = "array";
+            defaultType = field.type;
+        } else if (Array.isArray(field.default)) {
+            if (field.default.length > 0) {
+                defaultType = `${typeof field.default[0]}[]`;
+            } else {
+                defaultType = null;
+            }
         }
-        if (foundType != null && foundType !== defaultType) {
-            throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`
-            );
+        if (defaultType) {
+            if (foundType != null && foundType !== defaultType) {
+                throw new MobilettoOrmError(
+                    `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`
+                );
+            }
+            foundType = defaultType;
         }
-        foundType = defaultType;
     }
     if (hasValues || hasItems) {
         /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -115,7 +123,7 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
                 );
             }
         }
-        if ((!field.control || field.control !== "multi") && (!field.type || field.type !== "array")) {
+        if (!isMulti && !isArrayType(field.type)) {
             const vType =
                 hasItems && items.length > 0 && typeof items[0].value !== "undefined" && items[0].value != null
                     ? typeof items[0].value
@@ -130,6 +138,8 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
                 }
                 foundType = vType as MobilettoOrmFieldType;
             }
+        } else if (isMulti && foundType && !isArrayType(foundType)) {
+            foundType += "[]";
         }
     }
     const hasFields = field.fields && typeof field.fields === "object";
@@ -142,12 +152,20 @@ const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDefConfig
         foundType = "object";
     }
     if (foundType) {
+        if (field.type && foundType !== field.type) {
+            throw new MobilettoOrmError(
+                `invalid TypeDefConfig: field ${fieldName} had type: ${field.type} but discovered type was ${foundType}`
+            );
+        }
         if (!VALID_FIELD_TYPES.includes(foundType)) {
             throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had invalid type: ${foundType}`);
         }
-        return foundType;
+        if (isMulti && foundType && !isArrayType(foundType)) {
+            return (foundType + "[]") as MobilettoOrmFieldType;
+        }
+        return foundType as MobilettoOrmFieldType;
     }
-    return "string";
+    return isMulti ? "string[]" : "string";
 };
 
 export const FIELD_NAME_REGEX = /^[A-Z][A-Z\d]*$/i;

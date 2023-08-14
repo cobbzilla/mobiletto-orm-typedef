@@ -40,7 +40,7 @@ import {
     VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
-import { processFields } from "./fields.js";
+import { isArrayType, processFields } from "./fields.js";
 import { hideTypeDefFields, mergeConfigs } from "./extend.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 import { processApiConfig } from "./api.js";
@@ -202,7 +202,7 @@ export class MobilettoOrmTypeDef {
     defaultFieldValue(field: MobilettoOrmFieldDefConfig, opts: MobilettoOrmDefaultFieldOpts): MobilettoOrmFieldValue {
         const dummy = opts && opts.dummy === true;
         if (field.default) return field.default;
-        if (field.type === "array") return [];
+        if (isArrayType(field.type)) return [];
         if (field.values) return field.values[0];
         if (field.type === "string") return dummy ? rand(Math.ceil(Math.random() * (field.max ? field.max : 10))) : "";
         if (field.type === "number") return dummy ? Math.random() * (field.max ? field.max : 100) : 0;
