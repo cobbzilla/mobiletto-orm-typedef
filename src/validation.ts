@@ -103,24 +103,26 @@ export const validateFields = async (
             fieldValue = null;
         }
         if (useThingValue) {
-            if (field.type && fieldValue != null && field.type !== thingValueType) {
-                addError(errors, fieldPath, "type");
-                continue;
-            }
-            if (thing[fieldName] && field.type && isArrayType(field.type)) {
-                if (!Array.isArray(thing[fieldName])) {
+            if (field.type && typeof thing[fieldName] !== "undefined" && thing[fieldName] != null) {
+                if (fieldValue != null && field.type !== thingValueType) {
                     addError(errors, fieldPath, "type");
                     continue;
                 }
-                let valueErrors = false;
-                for (const v of thing[fieldName]) {
-                    if (!field.type.startsWith(typeof v)) {
+                if (isArrayType(field.type)) {
+                    if (!Array.isArray(thing[fieldName])) {
                         addError(errors, fieldPath, "type");
-                        valueErrors = true;
-                        break;
+                        continue;
                     }
+                    let valueErrors = false;
+                    for (const v of thing[fieldName]) {
+                        if (!field.type.startsWith(typeof v)) {
+                            addError(errors, fieldPath, "type");
+                            valueErrors = true;
+                            break;
+                        }
+                    }
+                    if (valueErrors) continue;
                 }
-                if (valueErrors) continue;
             }
             // @ts-ignore
             if (field.values && fieldValue && field.type === "array" && Array.isArray(fieldValue)) {
