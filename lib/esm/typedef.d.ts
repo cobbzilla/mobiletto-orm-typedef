@@ -1,5 +1,5 @@
 import { MobilettoOrmValidationErrors } from "./errors.js";
-import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldValue } from "./field.js";
+import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldScalarValue, MobilettoOrmFieldValue } from "./field.js";
 import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig, MobilettoOrmValidationOpts, MobilettoOrmTypeDefScope } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
@@ -112,8 +112,9 @@ export declare class MobilettoOrmTypeDef {
     specificBasename(obj: MobilettoOrmObject): string;
     idFromPath(p: string): string;
     specificPath(obj: MobilettoOrmObject): string;
-    indexPath(field: string, value: MobilettoOrmFieldIndexableValue): string;
-    indexSpecificPath(field: string, obj: MobilettoOrmObject): string;
+    _indexPath(field: string, value: MobilettoOrmFieldScalarValue): string;
+    indexPaths(field: string, value: MobilettoOrmFieldIndexableValue): string[];
+    indexSpecificPaths(field: string, obj: MobilettoOrmObject): string[];
     tombstone(thing: MobilettoOrmObject): MobilettoOrmObject;
     isTombstone(thing: MobilettoOrmObject): boolean;
     extend(otherConfig: MobilettoOrmTypeDefConfig): MobilettoOrmTypeDef;

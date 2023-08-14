@@ -28,7 +28,9 @@ export type MobilettoOrmFieldRender = "date" | "time" | "datetime" | MobilettoOr
 
 export const VALID_PRIMARY_TYPES = ["string", "number"];
 
-export type MobilettoOrmFieldIndexableValue = string | number | boolean;
+export type MobilettoOrmFieldIndexableValue = MobilettoOrmFieldScalarValue | MobilettoOrmFieldScalarValue[];
+export type MobilettoOrmFieldScalarValue = string | number | boolean;
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type MobilettoOrmFieldValue = string | number | boolean | Record<string, any> | string[] | number[] | boolean[];
 /* eslint-enable @typescript-eslint/no-explicit-any */

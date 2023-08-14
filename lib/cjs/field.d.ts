@@ -6,7 +6,8 @@ export type MobilettoOrmRawValue = string | number | boolean | null | undefined;
 export type MobilettoOrmFieldRenderFunc = (v: MobilettoOrmRawValue, messages: Record<string, string>, title: string) => string;
 export type MobilettoOrmFieldRender = "date" | "time" | "datetime" | MobilettoOrmFieldRenderFunc;
 export declare const VALID_PRIMARY_TYPES: string[];
-export type MobilettoOrmFieldIndexableValue = string | number | boolean;
+export type MobilettoOrmFieldIndexableValue = MobilettoOrmFieldScalarValue | MobilettoOrmFieldScalarValue[];
+export type MobilettoOrmFieldScalarValue = string | number | boolean;
 export type MobilettoOrmFieldValue = string | number | boolean | Record<string, any> | string[] | number[] | boolean[];
 export type MobilettoOrmDefaultFieldOpts = {
     dummy?: boolean;

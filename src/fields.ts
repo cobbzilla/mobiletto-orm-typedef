@@ -240,8 +240,10 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
             }
             if (!field.primary) {
                 typeDef.indexes.push({ field: fieldName, unique: field.unique || false });
-            } else if (field.unique) {
+            }
+            if (field.unique) {
                 field.required = true;
+                field.index = true;
             }
             field.indexLevels =
                 typeDef.debug || field.type === "boolean"

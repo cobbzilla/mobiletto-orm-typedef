@@ -17,6 +17,7 @@ import {
     MobilettoOrmFieldDefConfig,
     MobilettoOrmFieldDefConfigs,
     MobilettoOrmFieldIndexableValue,
+    MobilettoOrmFieldScalarValue,
     MobilettoOrmFieldValue,
 } from "./field.js";
 import {
@@ -600,15 +601,7 @@ export class MobilettoOrmTypeDef {
         return this.generalPath(this.id(obj)) + "/" + this.specificBasename(obj);
     }
 
-    indexPath(field: string, value: MobilettoOrmFieldIndexableValue) {
-        if (typeof value === "undefined" || value == null) {
-            throw new MobilettoOrmError(`typeDef.indexPath(${field}): undefined value`);
-        }
-        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-            const coerced = `${value}`;
-            this.log_warn(`typeDef.indexPath(${field}): coerced value (type ${typeof value}) to string: ${coerced}`);
-            value = coerced;
-        }
+    _indexPath(field: string, value: MobilettoOrmFieldScalarValue) {
         if (this.indexes.filter((i) => i.field === field).length > 0) {
             const indexLevels =
                 typeof this.fields[field].indexLevels !== "undefined" && this.fields[field].indexLevels != null
@@ -620,12 +613,28 @@ export class MobilettoOrmTypeDef {
                 indexLevels
             )}`;
         } else {
-            throw new MobilettoOrmError(`typeDef.indexPath(${field}): field not indexed`);
+            throw new MobilettoOrmError(`typeDef._indexPath(${field}): field not indexed`);
         }
     }
 
-    indexSpecificPath(field: string, obj: MobilettoOrmObject) {
-        return `${this.indexPath(field, obj[field])}/${this.specificBasename(obj)}`;
+    indexPaths(field: string, value: MobilettoOrmFieldIndexableValue) {
+        if (typeof value === "undefined" || value == null) {
+            return [];
+        }
+        if (Array.isArray(value)) {
+            return value.map((v) => this._indexPath(field, v));
+        }
+        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            const coerced = `${value}`;
+            this.log_warn(`typeDef.indexPath(${field}): coerced value (type ${typeof value}) to string: ${coerced}`);
+            return [this._indexPath(field, coerced)];
+        }
+        return [this._indexPath(field, value)];
+    }
+
+    indexSpecificPaths(field: string, obj: MobilettoOrmObject) {
+        return this.indexPaths(field, obj[field]).map((p) => `${p}/${this.specificBasename(obj)}`);
+        // return `${this.indexPath(field, obj[field])}/${this.specificBasename(obj)}`;
     }
 
     tombstone(thing: MobilettoOrmObject) {
