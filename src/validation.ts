@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { MobilettoOrmFieldDefConfigs, normalizedValue } from "./field.js";
-import { MobilettoOrmValidationErrors, addError, MobilettoOrmReferenceError } from "./errors.js";
+import { addError, MobilettoOrmReferenceError, MobilettoOrmValidationErrors } from "./errors.js";
 import { MobilettoOrmObject } from "./constants.js";
 import { ERR_REF_NOT_FOUND, ERR_REF_UNREGISTERED, MobilettoOrmTypeDefRegistry } from "./registry.js";
 import { isArrayType } from "./fields.js";
@@ -132,16 +132,16 @@ export const validateFields = async (
                     continue;
                 }
             }
+            const fieldEmpty =
+                typeof fieldValue === "undefined" ||
+                fieldValue == null ||
+                (fieldValue.length && fieldValue.length === 0) ||
+                `${fieldValue}`.length === 0;
+            if (fieldEmpty && field.required && (field.ref || typeof field.default === "undefined")) {
+                addError(errors, fieldPath, ERR_REQUIRED);
+                continue;
+            }
             if (field.ref) {
-                const fieldEmpty =
-                    typeof fieldValue === "undefined" ||
-                    fieldValue == null ||
-                    (fieldValue.length && fieldValue.length === 0) ||
-                    `${fieldValue}`.length === 0;
-                if (fieldEmpty && field.required) {
-                    addError(errors, fieldPath, ERR_REQUIRED);
-                    continue;
-                }
                 if (registry && !fieldEmpty) {
                     const refType = field.ref.refType ? field.ref.refType : fieldName;
                     if (!registry.isRegistered(refType)) {
@@ -162,20 +162,22 @@ export const validateFields = async (
                     }
                 }
             } else {
-                for (const validator of Object.keys(validators)) {
-                    // @ts-ignore
-                    if (typeof field[validator] !== "undefined") {
-                        if (isArrayType(field.type) && Array.isArray(fieldValue)) {
-                            for (const val of fieldValue) {
+                if (isArrayType(field.type) && fieldValue && Array.isArray(fieldValue)) {
+                    for (const val of fieldValue) {
+                        for (const validator of Object.keys(validators)) {
+                            // @ts-ignore
+                            if (typeof field[validator] !== "undefined") {
                                 // @ts-ignore
                                 if (!validators[validator](val, field[validator])) {
-                                    if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
-                                        continue;
-                                    }
                                     addError(errors, fieldPath, validator);
                                 }
                             }
-                        } else {
+                        }
+                    }
+                } else {
+                    for (const validator of Object.keys(validators)) {
+                        // @ts-ignore
+                        if (typeof field[validator] !== "undefined") {
                             // @ts-ignore
                             if (!validators[validator](fieldValue, field[validator])) {
                                 if (validator === ERR_REQUIRED && typeof field.default !== "undefined") {
