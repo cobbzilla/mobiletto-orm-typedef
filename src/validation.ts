@@ -103,6 +103,15 @@ export const validateFields = async (
             fieldValue = null;
         }
         if (useThingValue) {
+            const fieldEmpty =
+                typeof fieldValue === "undefined" ||
+                fieldValue == null ||
+                (fieldValue.length && fieldValue.length === 0) ||
+                `${fieldValue}`.length === 0;
+            if (fieldEmpty && field.required && (field.ref || typeof field.default === "undefined")) {
+                addError(errors, fieldPath, ERR_REQUIRED);
+                continue;
+            }
             if (field.type && typeof thing[fieldName] !== "undefined" && thing[fieldName] != null) {
                 if (fieldValue != null && field.type !== thingValueType) {
                     addError(errors, fieldPath, "type");
@@ -131,15 +140,6 @@ export const validateFields = async (
                     addError(errors, fieldPath, "values");
                     continue;
                 }
-            }
-            const fieldEmpty =
-                typeof fieldValue === "undefined" ||
-                fieldValue == null ||
-                (fieldValue.length && fieldValue.length === 0) ||
-                `${fieldValue}`.length === 0;
-            if (fieldEmpty && field.required && (field.ref || typeof field.default === "undefined")) {
-                addError(errors, fieldPath, ERR_REQUIRED);
-                continue;
             }
             if (field.ref) {
                 if (registry && !fieldEmpty) {
