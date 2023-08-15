@@ -11,12 +11,11 @@ import { MobilettoOrmError } from "./errors.js";
 import {
     AUTO_REDACT_CONTROLS,
     DEFAULT_FIELD_INDEX_LEVELS,
+    isArrayType,
     NUMERIC_CONTROL_TYPES,
     RESERVED_FIELD_NAMES,
 } from "./constants.js";
 import { MobilettoOrmTypeDef } from "./typedef.js";
-
-export const isArrayType = (t?: string) => (t && t.endsWith("[]") ? true : t ? false : null);
 
 export const determineFieldControl = (
     fieldName: string,

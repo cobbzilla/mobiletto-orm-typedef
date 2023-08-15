@@ -141,3 +141,5 @@ export const basename = (path: string) => {
     const base = lastSlash === -1 ? p : p.substring(lastSlash + 1);
     return base === "" ? "." : base;
 };
+
+export const isArrayType = (t?: string) => (t && t.endsWith("[]") ? true : t ? false : null);

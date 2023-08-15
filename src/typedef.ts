@@ -22,6 +22,7 @@ import {
 } from "./field.js";
 import {
     basename,
+    isArrayType,
     DEFAULT_ALTERNATE_ID_FIELDS,
     DEFAULT_API_CONFIG,
     DEFAULT_FIELD_INDEX_LEVELS,
@@ -40,7 +41,7 @@ import {
     VERSION_PREFIX,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
-import { isArrayType, processFields } from "./fields.js";
+import { processFields } from "./fields.js";
 import { hideTypeDefFields, mergeConfigs } from "./extend.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 import { processApiConfig } from "./api.js";

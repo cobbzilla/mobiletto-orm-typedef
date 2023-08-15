@@ -111,3 +111,4 @@ export type MobilettoOrmPurgeOpts = {
 export type MobilettoOrmPurgeResult = string | string[];
 export type MobilettoOrmPurgeResults = MobilettoOrmPurgeResult[];
 export declare const basename: (path: string) => string;
+export declare const isArrayType: (t?: string) => boolean | null;

@@ -3,9 +3,8 @@
 
 import { MobilettoOrmFieldDefConfigs, normalizedValue } from "./field.js";
 import { addError, MobilettoOrmReferenceError, MobilettoOrmValidationErrors } from "./errors.js";
-import { MobilettoOrmObject } from "./constants.js";
+import { isArrayType, MobilettoOrmObject } from "./constants.js";
 import { ERR_REF_NOT_FOUND, ERR_REF_UNREGISTERED, MobilettoOrmTypeDefRegistry } from "./registry.js";
-import { isArrayType } from "./fields.js";
 
 export type FieldValidator = (val: any, arg: any) => boolean;
 
