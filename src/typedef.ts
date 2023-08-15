@@ -46,7 +46,7 @@ import { hideTypeDefFields, mergeConfigs } from "./extend.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 import { processApiConfig } from "./api.js";
 
-const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/g;
+const ID_PREFIX_REGEX = /^[a-z][a-z~]{0,12}$/gi;
 
 const validShortName = (prefix?: string): boolean =>
     (prefix && prefix.length >= 2 && prefix.match(ID_PREFIX_REGEX) != null) || false;
@@ -146,7 +146,7 @@ export class MobilettoOrmTypeDef {
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
-            `^${this.typeName}_.+?${OBJ_ID_SEP}${VERSION_PREFIX}[a-z]{2,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
+            `^${this.typeName}_.+?${OBJ_ID_SEP}${VERSION_PREFIX}[a-z][a-z~]{0,12}_[\\da-f]{12}_[\\da-f]{12}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}.json$`,
             "gi"
         );
         this.idRegex = idRegex(this.shortName);
