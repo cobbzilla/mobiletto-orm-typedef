@@ -546,7 +546,8 @@ export class MobilettoOrmTypeDef {
     }
 
     generalPath(id: MobilettoOrmIdArg) {
-        const idVal = typeof id === "object" ? this.id(id) : typeof id === "string" && id.length > 0 ? id : null;
+        const idVal =
+            typeof id === "object" ? this.id(id) : typeof id === "string" && id.length > 0 ? fsSafeName(id) : null;
         if (idVal == null) {
             throw new MobilettoOrmError(`typeDef.generalPath: invalid id: ${id}`);
         }
