@@ -71,7 +71,7 @@ export declare class MobilettoOrmTypeDef {
     idFieldName(): string;
     idField(thing: MobilettoOrmObject): string | null;
     normalize(thing: MobilettoOrmObject): Promise<MobilettoOrmObject>;
-    id(thing: MobilettoOrmObject): any;
+    id(thing: MobilettoOrmObject): string;
     _tabIndexes(fields?: MobilettoOrmFieldDefConfigs): string[];
     tabIndexedFields(fields?: MobilettoOrmFieldDefConfigs): {
         name: string;
