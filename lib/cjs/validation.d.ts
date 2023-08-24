@@ -8,7 +8,7 @@ export declare const FIELD_VALIDATORS: FieldValidators;
 export type TypeValidation = {
     field: string;
     valid: (val: any) => Promise<boolean>;
-    error: string | undefined;
+    error?: string;
 };
 export type TypeValidations = Record<string, TypeValidation>;
 export declare const ERR_REQUIRED = "required";
