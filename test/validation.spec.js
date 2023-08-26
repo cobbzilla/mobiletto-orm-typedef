@@ -368,4 +368,13 @@ describe("validation test", async () => {
             locale: "foo",
         });
     });
+    it("successfully validates an object with a boolean field that defaults to true, when the field is set to false", async () => {
+        const validated = await new MobilettoOrmTypeDef({
+            typeName: "defaultBoolean",
+            fields: {
+                bool: { default: true },
+            },
+        }).validate({ bool: false });
+        expect(validated.bool).eq(false);
+    });
 });

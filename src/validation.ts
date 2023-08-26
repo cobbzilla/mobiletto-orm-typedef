@@ -204,7 +204,9 @@ export const validateFields = async (
                 if (
                     isCreate &&
                     typeof field.default !== "undefined" &&
-                    (!fieldValue || (typeof fieldValue.length === "number" && fieldValue.length === 0))
+                    (typeof fieldValue === "undefined" ||
+                        fieldValue == null ||
+                        (typeof fieldValue.length === "number" && fieldValue.length === 0))
                 ) {
                     val = field.default;
                 } else {
