@@ -63,6 +63,16 @@ export type MobilettoOrmValidationOpts = {
 
 export type MobilettoOrmTypeDefScope = "global" | "local" | "any";
 
+export type MobilettoRefSearchConfig = {
+    ref: string;
+    control: "text" | "select" | "disabled";
+};
+
+export type MobilettoOrmSearchConfig = {
+    textSearchFields?: string[];
+    refSearch?: Record<string, MobilettoRefSearchConfig>;
+};
+
 export type MobilettoOrmTypeDefConfig = {
     typeName?: string;
     scope?: MobilettoOrmTypeDefScope;
@@ -76,7 +86,7 @@ export type MobilettoOrmTypeDefConfig = {
     fields: MobilettoOrmFieldDefConfigs;
     apiConfig?: MobilettoApiConfig;
     tableFields?: string[];
-    textSearchFields?: string[];
+    search?: MobilettoOrmSearchConfig;
     maxVersions?: number;
     minWrites?: number;
     validators?: FieldValidators;

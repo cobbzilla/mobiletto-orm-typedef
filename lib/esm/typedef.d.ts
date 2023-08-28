@@ -1,6 +1,6 @@
 import { MobilettoOrmValidationErrors } from "./errors.js";
 import { MobilettoOrmDefaultFieldOpts, MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs, MobilettoOrmFieldIndexableValue, MobilettoOrmFieldScalarValue, MobilettoOrmFieldValue } from "./field.js";
-import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig, MobilettoOrmValidationOpts, MobilettoOrmTypeDefScope } from "./constants.js";
+import { MobilettoApiConfig, MobilettoOrmIdArg, MobilettoOrmLogger, MobilettoOrmNewInstanceOpts, MobilettoOrmObject, MobilettoOrmObjectMetadata, MobilettoOrmTypeDefConfig, MobilettoOrmValidationOpts, MobilettoOrmTypeDefScope, MobilettoOrmSearchConfig } from "./constants.js";
 import { FieldValidators, TypeValidations } from "./validation.js";
 import { MobilettoOrmTypeDefRegistry } from "./registry.js";
 export type MobilettoOrmIndex = {
@@ -33,7 +33,7 @@ export declare class MobilettoOrmTypeDef {
     readonly redaction: string[];
     readonly filenameFields: string[];
     readonly tableFields: string[];
-    readonly textSearchFields: string[];
+    readonly search: MobilettoOrmSearchConfig;
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;

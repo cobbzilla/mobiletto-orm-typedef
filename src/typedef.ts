@@ -39,6 +39,7 @@ import {
     MobilettoOrmValidationOpts,
     MobilettoOrmTypeDefScope,
     VERSION_PREFIX,
+    MobilettoOrmSearchConfig,
 } from "./constants.js";
 import { FIELD_VALIDATORS, FieldValidators, TypeValidations, validateFields } from "./validation.js";
 import { processFields } from "./fields.js";
@@ -87,7 +88,7 @@ export class MobilettoOrmTypeDef {
     readonly redaction: string[];
     readonly filenameFields: string[];
     readonly tableFields: string[];
-    readonly textSearchFields: string[];
+    readonly search: MobilettoOrmSearchConfig;
     readonly maxVersions: number;
     readonly minWrites: number;
     readonly specificPathRegex: RegExp;
@@ -142,7 +143,7 @@ export class MobilettoOrmTypeDef {
             : this.alternateIdFields && this.alternateIdFields.length > 0
             ? [...this.alternateIdFields, "_meta.ctime", "_meta.mtime"]
             : [this.idField(this.newDummyInstance()), "_meta.ctime", "_meta.mtime"];
-        this.textSearchFields = config.textSearchFields ? config.textSearchFields : [];
+        this.search = config.search ? config.search : {};
         this.maxVersions = config.maxVersions || DEFAULT_MAX_VERSIONS;
         this.minWrites = config.minWrites || DEFAULT_MIN_WRITES;
         this.specificPathRegex = new RegExp(
@@ -177,8 +178,10 @@ export class MobilettoOrmTypeDef {
     }
 
     textMatch(obj: MobilettoOrmObject, textSearch: string): boolean {
-        for (const f of this.textSearchFields) {
-            if (`${obj[f] ? JSON.stringify(obj[f]) : ""}`.includes(textSearch)) return true;
+        if (this.search.textSearchFields) {
+            for (const f of this.search.textSearchFields) {
+                if (`${obj[f] ? JSON.stringify(obj[f]) : ""}`.includes(textSearch)) return true;
+            }
         }
         return false;
     }
