@@ -47,10 +47,7 @@ export type MobilettoOrmValidationOpts = {
     checkRefs?: boolean;
 };
 export type MobilettoOrmTypeDefScope = "global" | "local" | "any";
-export type MobilettoRefSearchConfig = {
-    ref: string;
-    control: "text" | "select" | "disabled";
-};
+export type MobilettoRefSearchConfig = "text" | "select" | "disabled";
 export type MobilettoOrmSearchConfig = {
     textSearchFields?: string[];
     refSearch?: Record<string, MobilettoRefSearchConfig>;
