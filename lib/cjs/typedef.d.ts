@@ -12,6 +12,7 @@ export type MobilettoOrmRefType = {
     RefType: string;
     fieldPaths: string[];
     safeFieldPaths: string[];
+    recursive: boolean;
 };
 export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
