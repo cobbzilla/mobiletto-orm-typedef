@@ -180,9 +180,10 @@ export class MobilettoOrmTypeDef {
     }
 
     textMatch(obj: MobilettoOrmObject, textSearch: string): boolean {
-        if (this.search.textSearchFields) {
+        if (this.search.textSearchFields && textSearch) {
+            const find = textSearch.toLowerCase();
             for (const f of this.search.textSearchFields) {
-                if (`${obj[f] ? JSON.stringify(obj[f]) : ""}`.includes(textSearch)) return true;
+                if (`${obj[f] ? JSON.stringify(obj[f]) : ""}`.toLowerCase().includes(find)) return true;
             }
         }
         return false;
