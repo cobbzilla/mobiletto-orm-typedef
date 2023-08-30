@@ -224,11 +224,6 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
                     `${invalidPrefix} primary field ${typeDef.primary} had {when} (not allowed)`
                 );
             }
-            if (field.ref) {
-                throw new MobilettoOrmError(
-                    `${invalidPrefix} primary field ${typeDef.primary} had {ref} (not allowed)`
-                );
-            }
             field.required = true;
             field.unique = true;
             field.updatable = false;
