@@ -30,8 +30,8 @@ export type MobilettoOrmLogger = {
 export type MobilettoApiPermission = { admin: true } | { owner: true } | { session: true } | { public: true };
 
 export type MobilettoApiValidation = (
-    caller: MobilettoOrmObject,
-    target: MobilettoOrmObject | MobilettoOrmIdArg,
+    caller: MobilettoOrmObject | undefined,
+    target: MobilettoOrmObject | MobilettoOrmIdArg | null,
     opts?: Record<string, MobilettoOrmFieldValue>
 ) => Promise<MobilettoOrmValidationErrors | boolean>;
 

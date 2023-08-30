@@ -29,7 +29,7 @@ export type MobilettoApiPermission = {
 } | {
     public: true;
 };
-export type MobilettoApiValidation = (caller: MobilettoOrmObject, target: MobilettoOrmObject | MobilettoOrmIdArg, opts?: Record<string, MobilettoOrmFieldValue>) => Promise<MobilettoOrmValidationErrors | boolean>;
+export type MobilettoApiValidation = (caller: MobilettoOrmObject | undefined, target: MobilettoOrmObject | MobilettoOrmIdArg | null, opts?: Record<string, MobilettoOrmFieldValue>) => Promise<MobilettoOrmValidationErrors | boolean>;
 export type MobilettoApiEndpointConfig = {
     permission: MobilettoApiPermission;
     validate?: MobilettoApiValidation;
