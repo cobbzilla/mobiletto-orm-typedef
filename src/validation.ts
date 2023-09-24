@@ -35,17 +35,28 @@ export type TypeValidations = Record<string, TypeValidation>;
 
 export const ERR_REQUIRED = "required";
 
-export const validateFields = async (
-    rootThing: MobilettoOrmObject,
-    thing: MobilettoOrmObject,
-    fields: MobilettoOrmFieldDefConfigs,
-    current: MobilettoOrmObject | undefined,
-    validated: MobilettoOrmObject,
-    validators: FieldValidators,
-    errors: MobilettoOrmValidationErrors,
-    objPath: string,
-    registry: MobilettoOrmTypeDefRegistry
-) => {
+export type ValidateFieldsArg = {
+    rootThing: MobilettoOrmObject;
+    thing: MobilettoOrmObject;
+    fields: MobilettoOrmFieldDefConfigs;
+    current: MobilettoOrmObject | undefined;
+    validated: MobilettoOrmObject;
+    validators: FieldValidators;
+    errors: MobilettoOrmValidationErrors;
+    objPath: string;
+    registry: MobilettoOrmTypeDefRegistry;
+};
+
+export const validateFields = async (arg: ValidateFieldsArg) => {
+    const rootThing = arg.rootThing;
+    const thing = arg.thing;
+    const fields = arg.fields;
+    const current = arg.current;
+    const validated = arg.validated;
+    const validators = arg.validators;
+    const errors = arg.errors;
+    const objPath = arg.objPath;
+    const registry = arg.registry;
     const isCreate = typeof current === "undefined" || current == null;
     for (const fieldName of Object.keys(fields)) {
         const fieldPath = objPath === "" ? fieldName : `${objPath}.${fieldName}`;
@@ -73,17 +84,14 @@ export const validateFields = async (
                 validated[fieldName] = {};
                 const currentValue =
                     current && typeof current === "object" && current[fieldName] ? current[fieldName] : null;
-                await validateFields(
-                    rootThing,
-                    thing[fieldName],
-                    field.fields,
-                    currentValue,
-                    validated[fieldName],
-                    validators,
-                    errors,
-                    fieldPath,
-                    registry
-                );
+                const subArg = Object.assign({}, arg, {
+                    thing: thing[fieldName],
+                    fields: field.fields,
+                    current: currentValue,
+                    validated: validated[fieldName],
+                    objPath: fieldPath,
+                });
+                await validateFields(subArg);
             }
             continue;
         }
