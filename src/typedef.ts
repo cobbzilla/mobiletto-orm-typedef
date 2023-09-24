@@ -469,14 +469,14 @@ export class MobilettoOrmTypeDef {
             // primary takes precedence
             return fsSafeName(thing[this.primary]);
         }
-        let foundId = null;
-        if (thing._meta && typeof thing._meta.id === "string") {
-            foundId = thing._meta.id;
-            if (this.shortName && !foundId.startsWith(this.shortName)) {
+        if (thing._meta && typeof thing._meta.id === "string" && thing._meta.id.length > 0) {
+            if (this.shortName && !thing._meta.id.startsWith(this.shortName)) {
                 this.log_warn(`id: provided _meta.id (${thing._meta.id}) did not start with ${this.shortName}`);
             }
+            return fsSafeName(thing._meta.id);
         }
-        if (foundId == null && typeof thing.id === "string" && thing.id.length > 0) {
+        let foundId = null;
+        if (typeof thing.id === "string" && thing.id.length > 0) {
             foundId = thing.id;
             if (this.shortName && !foundId.startsWith(this.shortName)) {
                 this.log_warn(
