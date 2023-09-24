@@ -12,4 +12,4 @@ export type TypeValidation = {
 };
 export type TypeValidations = Record<string, TypeValidation>;
 export declare const ERR_REQUIRED = "required";
-export declare const validateFields: (rootThing: MobilettoOrmObject, thing: MobilettoOrmObject, fields: MobilettoOrmFieldDefConfigs, current: MobilettoOrmObject | undefined, validated: MobilettoOrmObject, validators: FieldValidators, errors: MobilettoOrmValidationErrors, objPath: string, registry?: MobilettoOrmTypeDefRegistry) => Promise<void>;
+export declare const validateFields: (rootThing: MobilettoOrmObject, thing: MobilettoOrmObject, fields: MobilettoOrmFieldDefConfigs, current: MobilettoOrmObject | undefined, validated: MobilettoOrmObject, validators: FieldValidators, errors: MobilettoOrmValidationErrors, objPath: string, registry: MobilettoOrmTypeDefRegistry) => Promise<void>;

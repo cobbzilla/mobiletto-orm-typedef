@@ -18,7 +18,7 @@ export declare class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
     readonly scope: MobilettoOrmTypeDefScope;
-    registry?: MobilettoOrmTypeDefRegistry;
+    readonly registry: MobilettoOrmTypeDefRegistry;
     readonly shortName?: string;
     readonly singleton?: string;
     readonly basePath: string;

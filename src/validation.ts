@@ -44,7 +44,7 @@ export const validateFields = async (
     validators: FieldValidators,
     errors: MobilettoOrmValidationErrors,
     objPath: string,
-    registry?: MobilettoOrmTypeDefRegistry
+    registry: MobilettoOrmTypeDefRegistry
 ) => {
     const isCreate = typeof current === "undefined" || current == null;
     for (const fieldName of Object.keys(fields)) {
@@ -141,7 +141,7 @@ export const validateFields = async (
                 }
             }
             if (field.ref) {
-                if (registry && !fieldEmpty) {
+                if (registry && !registry.default && !fieldEmpty) {
                     const refType = field.ref.refType ? field.ref.refType : fieldName;
                     if (!registry.isRegistered(refType)) {
                         addError(errors, fieldPath, ERR_REF_UNREGISTERED);

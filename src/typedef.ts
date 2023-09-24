@@ -69,11 +69,16 @@ export type MobilettoOrmRefType = {
     recursive: boolean;
 };
 
+const DEFAULT_REGISTRY: MobilettoOrmTypeDefRegistry = new MobilettoOrmTypeDefRegistry({
+    name: "default",
+    default: true,
+});
+
 export class MobilettoOrmTypeDef {
     readonly config: MobilettoOrmTypeDefConfig;
     readonly typeName: string;
     readonly scope: MobilettoOrmTypeDefScope;
-    registry?: MobilettoOrmTypeDefRegistry;
+    readonly registry: MobilettoOrmTypeDefRegistry;
     readonly shortName?: string;
     readonly singleton?: string;
     readonly basePath: string;
@@ -109,7 +114,7 @@ export class MobilettoOrmTypeDef {
         }
         this.config = config;
         this.scope = config.scope || "any";
-        this.registry = config.registry;
+        this.registry = config.registry ? config.registry : DEFAULT_REGISTRY;
         this.alternateIdFields = config.alternateIdFields || DEFAULT_ALTERNATE_ID_FIELDS;
         this.typeName = fsSafeName(config.typeName);
         this.singleton = config.singleton || undefined;
@@ -326,17 +331,7 @@ export class MobilettoOrmTypeDef {
                 mtime: thing._meta.mtime,
             },
         };
-        await validateFields(
-            thing,
-            thing,
-            this.fields,
-            current,
-            validated,
-            this.validators,
-            errors,
-            "",
-            checkRefs ? this.registry : undefined
-        );
+        await validateFields(thing, thing, this.fields, current, validated, this.validators, errors, "", this.registry);
         await this.typeDefValidations(validated, errors);
         if (Object.keys(errors).length > 0) {
             throw new MobilettoOrmValidationError(errors);
