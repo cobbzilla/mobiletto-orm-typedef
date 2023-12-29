@@ -1,6 +1,6 @@
-import { MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs } from "./field";
-import { MobilettoOrmTypeDefConfig } from "./constants";
-import { MobilettoOrmTypeDef } from "./typedef";
+import { MobilettoOrmFieldDefConfig, MobilettoOrmFieldDefConfigs } from "./field.js";
+import { MobilettoOrmTypeDefConfig } from "./constants.js";
+import { MobilettoOrmTypeDef } from "./typedef.js";
 
 const mergeFields = (
     baseFields: MobilettoOrmFieldDefConfigs,
