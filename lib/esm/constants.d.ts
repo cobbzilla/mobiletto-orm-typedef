@@ -36,6 +36,7 @@ export type MobilettoApiEndpointConfig = {
     hasValidate?: boolean;
 };
 export type MobilettoApiConfig = {
+    ownerField?: string;
     lookup?: MobilettoApiEndpointConfig;
     search?: MobilettoApiEndpointConfig;
     create?: MobilettoApiEndpointConfig;

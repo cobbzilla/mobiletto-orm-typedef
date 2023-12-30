@@ -42,6 +42,7 @@ export type MobilettoApiEndpointConfig = {
 };
 
 export type MobilettoApiConfig = {
+    ownerField?: string;
     lookup?: MobilettoApiEndpointConfig;
     search?: MobilettoApiEndpointConfig;
     create?: MobilettoApiEndpointConfig;
