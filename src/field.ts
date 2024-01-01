@@ -106,7 +106,6 @@ export type MobilettoOrmFieldDefConfig = {
     tabIndex?: number;
     render?: MobilettoOrmFieldRender;
     fields?: Record<string, MobilettoOrmFieldDefConfig>;
-    tableFields?: string[];
     tabIndexes?: string[];
 };
 
