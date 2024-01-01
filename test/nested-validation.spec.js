@@ -47,6 +47,21 @@ const nestedType2 = new MobilettoOrmTypeDef({
     },
 });
 
+const nestedObjectArray = new MobilettoOrmTypeDef({
+    typeName: `TestType_${rand(10)}`,
+    fields: {
+        primaryField: { primary: true },
+        things: {
+            type: "object[]",
+            fields: {
+                nested1: { required: true, type: "number" },
+                nested2: { required: true, type: "string" },
+                nested3: { required: false, type: "boolean" },
+            },
+        },
+    },
+});
+
 describe("nested validation test with optional nested object with required fields", async () => {
     it("successfully sets tabIndexes for typeDef and all nested objects", async () => {
         expect(nestedType1.tabIndexes.length).eq(3);
@@ -167,6 +182,116 @@ describe("nested validation test with required nested object with required field
                 "required",
                 "expected nestedObject.triplyNestedObject.nested3Required.values error"
             );
+        }
+    });
+});
+
+describe("nested validation test with nested array of objects", async () => {
+    it("successfully validates when the nested object array is omitted", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        const validated = await nestedObjectArray.validate({ primaryField: primaryFieldValue });
+        expect(validated.primaryField).eq(primaryFieldValue);
+    });
+    it("successfully validates when the nested object array is empty", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        const validated = await nestedObjectArray.validate({ primaryField: primaryFieldValue, things: [] });
+        expect(validated.primaryField).eq(primaryFieldValue);
+    });
+    it("successfully validates when the nested object array contains one valid item", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        const validated = await nestedObjectArray.validate({
+            primaryField: primaryFieldValue,
+            things: [
+                {
+                    nested1: 123,
+                    nested2: "foo",
+                    nested3: true,
+                },
+            ],
+        });
+        expect(validated.primaryField).eq(primaryFieldValue);
+        expect(validated.things.length).eq(1);
+        expect(validated.things[0].nested2).eq("foo");
+    });
+    it("successfully validates when the nested object array contains two valid items", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        const validated = await nestedObjectArray.validate({
+            primaryField: primaryFieldValue,
+            things: [
+                {
+                    nested1: 123,
+                    nested2: "foo",
+                    nested3: true,
+                },
+                {
+                    nested1: 456,
+                    nested2: "bar",
+                },
+            ],
+        });
+        expect(validated.primaryField).eq(primaryFieldValue);
+        expect(validated.things.length).eq(2);
+        expect(validated.things[0].nested2).eq("foo");
+        expect(validated.things[1].nested2).eq("bar");
+    });
+    it("fails validation when the nested object array contains an invalid item", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        try {
+            const validated = await nestedObjectArray.validate({
+                primaryField: primaryFieldValue,
+                things: [
+                    {
+                        nested1: 123,
+                        nested2: "foo",
+                        nested3: true,
+                    },
+                    {
+                        nested2: "bar",
+                        nested3: "baz",
+                    },
+                ],
+            });
+            assert.fail(
+                `expected nestedObjectArray.validate to throw MobilettoOrmValidationError, but it returned ${JSON.stringify(
+                    validated
+                )}`
+            );
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
+            expect(Object.keys(e.errors).length).equals(2, "expected two errors");
+            expect(e.errors["things[1].nested1"].length).equals(1, "expected 1 things[1].nested1 error");
+            expect(e.errors["things[1].nested1"][0]).equals("required", "expected things[1].nested1.required error");
+            expect(e.errors["things[1].nested3"].length).equals(1, "expected 1 things[1].nested3 error");
+            expect(e.errors["things[1].nested3"][0]).equals("type", "expected things[1].nested3.type error");
+        }
+    });
+    it("fails validation when the nested object array contains two invalid items", async () => {
+        const primaryFieldValue = `fooPrimary_${Date.now()}`;
+        try {
+            const validated = await nestedObjectArray.validate({
+                primaryField: primaryFieldValue,
+                things: [
+                    {
+                        nested1: 123,
+                        nested3: true,
+                    },
+                    {
+                        nested2: "bar",
+                    },
+                ],
+            });
+            assert.fail(
+                `expected nestedObjectArray.validate to throw MobilettoOrmValidationError, but it returned ${JSON.stringify(
+                    validated
+                )}`
+            );
+        } catch (e) {
+            expect(e).instanceof(MobilettoOrmValidationError, "incorrect exception type");
+            expect(Object.keys(e.errors).length).equals(2, "expected three errors");
+            expect(e.errors["things[0].nested2"].length).equals(1, "expected 1 things[0].nested2 error");
+            expect(e.errors["things[0].nested2"][0]).equals("required", "expected things[0].nested2.required error");
+            expect(e.errors["things[1].nested1"].length).equals(1, "expected 1 things[1].nested1 error");
+            expect(e.errors["things[1].nested1"][0]).equals("required", "expected things[1].nested1.required error");
         }
     });
 });

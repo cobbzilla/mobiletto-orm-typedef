@@ -83,7 +83,9 @@ export const validateFields = async (arg: ValidateFieldsArg) => {
             } else if (field.fields && thingValueType === "object") {
                 validated[fieldName] = {};
                 const currentValue =
-                    current && typeof current === "object" && current[fieldName] ? current[fieldName] : null;
+                    current && typeof current === "object" && typeof current[fieldName] !== "undefined"
+                        ? current[fieldName]
+                        : null;
                 const subArg = Object.assign({}, arg, {
                     thing: thing[fieldName],
                     fields: field.fields,
@@ -121,8 +123,10 @@ export const validateFields = async (arg: ValidateFieldsArg) => {
             }
             if (field.type && typeof thing[fieldName] !== "undefined" && thing[fieldName] != null) {
                 if (fieldValue != null && field.type !== thingValueType) {
-                    addError(errors, fieldPath, "type");
-                    continue;
+                    if (field.type !== "object[]" || !Array.isArray(thing[fieldName])) {
+                        addError(errors, fieldPath, "type");
+                        continue;
+                    }
                 }
                 if (isArrayType(field.type)) {
                     if (!Array.isArray(thing[fieldName])) {
@@ -130,11 +134,31 @@ export const validateFields = async (arg: ValidateFieldsArg) => {
                         continue;
                     }
                     let valueErrors = false;
-                    for (const v of thing[fieldName]) {
+                    for (let index = 0; index < thing[fieldName].length; index++) {
+                        const v = thing[fieldName][index];
                         if (!field.type.startsWith(typeof v)) {
                             addError(errors, fieldPath, "type");
                             valueErrors = true;
                             break;
+                        }
+                        if (field.type === "object[]") {
+                            const indexedFieldPath = `${fieldPath}[${index}]`;
+                            validated[indexedFieldPath] = {};
+                            const currentValue =
+                                current &&
+                                typeof current === "object" &&
+                                typeof current[fieldName] !== "undefined" &&
+                                typeof current[fieldName][index] !== "undefined"
+                                    ? current[fieldName]
+                                    : null;
+                            const subArg = Object.assign({}, arg, {
+                                thing: v,
+                                fields: field.fields,
+                                current: currentValue,
+                                validated: validated[indexedFieldPath],
+                                objPath: indexedFieldPath,
+                            });
+                            await validateFields(subArg);
                         }
                     }
                     if (valueErrors) continue;

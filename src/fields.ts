@@ -143,12 +143,12 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
     }
     const hasFields = field.fields && typeof field.fields === "object";
     if (hasFields) {
-        if (foundType != null && foundType !== "object") {
+        if (foundType != null && foundType !== "object" && foundType !== "object[]") {
             throw new MobilettoOrmError(
                 `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / object`
             );
         }
-        foundType = "object";
+        foundType = foundType || "object";
     }
     if (foundType) {
         if (field.type && foundType !== field.type) {
