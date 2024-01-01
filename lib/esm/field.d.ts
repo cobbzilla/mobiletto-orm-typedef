@@ -57,6 +57,7 @@ export type MobilettoOrmFieldDefConfig = {
     tabIndex?: number;
     render?: MobilettoOrmFieldRender;
     fields?: Record<string, MobilettoOrmFieldDefConfig>;
+    tableFields?: string[];
     tabIndexes?: string[];
 };
 export declare const META_ID_FIELD: MobilettoOrmFieldDefConfig;

@@ -104,6 +104,7 @@ export declare class MobilettoOrmTypeDef {
         tabIndex?: number | undefined;
         render?: import("./field.js").MobilettoOrmFieldRender | undefined;
         fields?: Record<string, MobilettoOrmFieldDefConfig> | undefined;
+        tableFields?: string[] | undefined;
         tabIndexes?: string[] | undefined;
     }[];
     typePath(): string;
