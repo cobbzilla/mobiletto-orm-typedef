@@ -9,8 +9,8 @@ dependencies:
     specifier: ^9.0.0
     version: 9.0.0
   zilla-util:
-    specifier: ^1.0.15
-    version: 1.0.15
+    specifier: ^1.0.16
+    version: 1.0.16
 
 devDependencies:
   '@types/chai':
@@ -433,7 +433,7 @@ packages:
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /cliui@7.0.4:
@@ -718,8 +718,8 @@ packages:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: true
 
-  /fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+  /fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
@@ -1337,6 +1337,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zilla-util@1.0.15:
-    resolution: {integrity: sha512-007ag3Np+qp1gI4CiFqwYoIiJR9xUhGtGn1AjRUg+VgAY7f+U10qkwAXWckZ0S/F8gnzMRgAK1yiC9I6HBoDkQ==}
+  /zilla-util@1.0.16:
+    resolution: {integrity: sha512-xuRdm40x9A0p93Ukmua2yozTSPKkhZPvhlbA3e9ISurnU+t3fjNqxbvJ+Ha/57PEvD97uoHGzTNHiaQVw+a0+w==}
     dev: false
