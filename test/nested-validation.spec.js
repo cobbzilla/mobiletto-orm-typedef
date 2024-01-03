@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect, assert } from "chai";
-import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand } from "../lib/esm/index.js";
+import { MobilettoOrmValidationError, MobilettoOrmTypeDef, rand, nestFields } from "../lib/esm/index.js";
 
 const nestedType1 = new MobilettoOrmTypeDef({
     typeName: `TestType_${rand(10)}`,
@@ -293,5 +293,30 @@ describe("nested validation test with nested array of objects", async () => {
             expect(e.errors["things[1].nested1"].length).equals(1, "expected 1 things[1].nested1 error");
             expect(e.errors["things[1].nested1"][0]).equals("required", "expected things[1].nested1.required error");
         }
+    });
+});
+
+const OTHER_BASE_TYPE_FIELDS = {
+    primaryField: { primary: true },
+    name: { index: true },
+    token: { unique: true },
+};
+
+describe("Reuse field configs from a base type in another type's sub-object", async () => {
+    it("can define a typedef using a nested array of base type objects by filtering fields", async () => {
+        const nestedHasBaseTypeDef = new MobilettoOrmTypeDef({
+            typeName: `BaseTestType_${rand(10)}`,
+            fields: {
+                id: { primary: true },
+                things: {
+                    type: "object[]",
+                    fields: nestFields(OTHER_BASE_TYPE_FIELDS),
+                },
+            },
+        });
+        expect(nestedHasBaseTypeDef).is.not.null;
+        expect(nestedHasBaseTypeDef.fields.things.fields.primaryField.primary).is.undefined;
+        expect(nestedHasBaseTypeDef.fields.things.fields.name.index).is.undefined;
+        expect(nestedHasBaseTypeDef.fields.things.fields.token.unique).is.undefined;
     });
 });

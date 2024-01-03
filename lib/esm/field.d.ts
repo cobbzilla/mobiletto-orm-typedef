@@ -70,3 +70,4 @@ export type MobilettoOrmFieldDefConfigs = Record<string, MobilettoOrmFieldDefCon
 export declare const normalized: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, thing: MobilettoOrmObject) => Promise<MobilettoOrmFieldValue>;
 export declare const normalizedValue: (fields: MobilettoOrmFieldDefConfigs, fieldName: string, val: MobilettoOrmFieldValue) => Promise<MobilettoOrmFieldValue>;
 export declare const compareTabIndexes: (fields: MobilettoOrmFieldDefConfigs, f1: string, f2: string) => number;
+export declare const nestFields: (fields: MobilettoOrmFieldDefConfigs) => MobilettoOrmFieldDefConfigs;

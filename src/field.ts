@@ -192,3 +192,25 @@ export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: strin
         : 0;
     /* eslint-enable @typescript-eslint/ban-ts-comment */
 };
+
+const FILTER_NESTED_ATTRS = ["primary", "unique", "index", "indexLevels"];
+
+const filterNested = (field: MobilettoOrmFieldDefConfig): MobilettoOrmFieldDefConfig => {
+    return JSON.parse(
+        JSON.stringify(field, (key, value) => {
+            if (FILTER_NESTED_ATTRS.includes(key)) {
+                return undefined; // Omit some keys
+            } else {
+                return value;
+            }
+        })
+    );
+};
+
+export const nestFields = (fields: MobilettoOrmFieldDefConfigs): MobilettoOrmFieldDefConfigs => {
+    const nested = {} as MobilettoOrmFieldDefConfigs;
+    for (const fieldName in fields) {
+        nested[fieldName] = filterNested(fields[fieldName]);
+    }
+    return nested;
+};
