@@ -185,7 +185,11 @@ export const processFields = (fields: MobilettoOrmFieldDefConfigs, objPath: stri
         field.type = determineFieldType(fieldName, field);
         field.control = determineFieldControl(fieldName, field, field.type);
         const fieldPath = objPath === "" ? fieldName : objPath + "." + fieldName;
-        if (field.type === "object" && field.fields && typeof field.fields === "object") {
+        if (
+            (field.type === "object" || field.type === "object[]") &&
+            field.fields &&
+            typeof field.fields === "object"
+        ) {
             field.tabIndexes = typeDef._tabIndexes(field.fields);
             processFields(field.fields, fieldPath, typeDef);
         }
