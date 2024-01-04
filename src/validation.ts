@@ -27,7 +27,7 @@ export const FIELD_VALIDATORS: FieldValidators = {
 
 export type TypeValidation = {
     field: string;
-    valid: (val: any) => Promise<boolean>;
+    valid: (val: any) => boolean | Promise<boolean>;
     error?: string;
 };
 
