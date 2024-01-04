@@ -66,7 +66,6 @@ export type MobilettoOrmRefType = {
     RefType: string;
     fieldPaths: string[];
     safeFieldPaths: string[];
-    jsonFieldPaths: string[];
     recursive: boolean;
 };
 
@@ -178,13 +177,11 @@ export class MobilettoOrmTypeDef {
                 RefType: refType.substring(0, 1).toUpperCase() + (refType.length > 1 ? refType.substring(1) : ""),
                 fieldPaths: [fieldPath],
                 safeFieldPaths: [safePath],
-                jsonFieldPaths: [jsonPath],
                 recursive: refType === this.typeName,
             });
         } else {
             foundType.fieldPaths.push(fieldPath);
             foundType.safeFieldPaths.push(safePath);
-            foundType.jsonFieldPaths.push(jsonPath);
         }
     }
 

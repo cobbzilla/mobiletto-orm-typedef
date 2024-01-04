@@ -12,7 +12,6 @@ export type MobilettoOrmRefType = {
     RefType: string;
     fieldPaths: string[];
     safeFieldPaths: string[];
-    jsonFieldPaths: string[];
     recursive: boolean;
 };
 export declare class MobilettoOrmTypeDef {
