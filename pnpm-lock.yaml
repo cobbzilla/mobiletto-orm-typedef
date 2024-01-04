@@ -9,8 +9,8 @@ dependencies:
     specifier: ^9.0.0
     version: 9.0.0
   zilla-util:
-    specifier: ^1.0.16
-    version: 1.0.16
+    specifier: ^1.0.18
+    version: 1.0.18
 
 devDependencies:
   '@types/chai':
@@ -1337,6 +1337,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zilla-util@1.0.16:
-    resolution: {integrity: sha512-xuRdm40x9A0p93Ukmua2yozTSPKkhZPvhlbA3e9ISurnU+t3fjNqxbvJ+Ha/57PEvD97uoHGzTNHiaQVw+a0+w==}
+  /zilla-util@1.0.18:
+    resolution: {integrity: sha512-S7CVrevUmusKqiv5VikRBBoA/JXfe3gCj2K/aAJD5HQ7ZDSV951THgwLxonLNpronUXLA+eMSPKeJU8TwkqtsA==}
     dev: false
