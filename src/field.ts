@@ -196,7 +196,7 @@ export const compareTabIndexes = (fields: MobilettoOrmFieldDefConfigs, f1: strin
 const FILTER_NESTED_ATTRS = ["primary", "unique", "index", "indexLevels"];
 
 const filterNested = (field: MobilettoOrmFieldDefConfig): MobilettoOrmFieldDefConfig => {
-    return JSON.parse(
+    const copy = JSON.parse(
         JSON.stringify(field, (key, value) => {
             if (FILTER_NESTED_ATTRS.includes(key)) {
                 return undefined; // Omit some keys
@@ -205,6 +205,8 @@ const filterNested = (field: MobilettoOrmFieldDefConfig): MobilettoOrmFieldDefCo
             }
         })
     );
+    if (field.regex) copy.regex = field.regex;
+    return copy;
 };
 
 export const nestFields = (fields: MobilettoOrmFieldDefConfigs): MobilettoOrmFieldDefConfigs => {

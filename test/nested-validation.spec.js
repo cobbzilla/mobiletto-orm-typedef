@@ -296,10 +296,12 @@ describe("nested validation test with nested array of objects", async () => {
     });
 });
 
+const BASE_TOKEN_REGEX = /WORD_\w+/i;
+
 const OTHER_BASE_TYPE_FIELDS = {
     primaryField: { primary: true },
     name: { index: true },
-    token: { unique: true },
+    token: { unique: true, regex: BASE_TOKEN_REGEX },
 };
 
 describe("Reuse field configs from a base type in another type's sub-object", async () => {
@@ -314,9 +316,12 @@ describe("Reuse field configs from a base type in another type's sub-object", as
                 },
             },
         });
+        const passesRegex = `WORD_${rand(10)}`;
+        expect(passesRegex.match(BASE_TOKEN_REGEX)).is.not.null;
         expect(nestedHasBaseTypeDef).is.not.null;
         expect(nestedHasBaseTypeDef.fields.things.fields.primaryField.primary).is.undefined;
         expect(nestedHasBaseTypeDef.fields.things.fields.name.index).is.undefined;
         expect(nestedHasBaseTypeDef.fields.things.fields.token.unique).is.undefined;
+        expect(nestedHasBaseTypeDef.fields.things.fields.token.regex).eq(BASE_TOKEN_REGEX);
     });
 });
