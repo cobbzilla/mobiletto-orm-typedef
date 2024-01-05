@@ -52,7 +52,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
     ) {
         if (foundType != null && foundType !== "string" && foundType !== "string[]") {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / string`
+                `invalid(1) TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / string`
             );
         }
 
@@ -65,7 +65,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
     ) {
         if (foundType != null && foundType !== "number" && foundType !== "number[]") {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / number`
+                `invalid(2) TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / number`
             );
         }
         foundType = isArray || isMulti ? "number[]" : "number";
@@ -77,7 +77,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
         if (field.type && isArrayType(field.type)) {
             if (!Array.isArray(field.default)) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: field ${fieldName} had type 'array' or control 'multi' but default value type is ${defaultType} (expected array)`
+                    `invalid(3) TypeDefConfig: field ${fieldName} had type 'array' or control 'multi' but default value type is ${defaultType} (expected array)`
                 );
             }
             defaultType = field.type;
@@ -91,7 +91,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
         if (defaultType) {
             if (foundType != null && foundType !== defaultType) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`
+                    `invalid(4) TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${defaultType}`
                 );
             }
             foundType = defaultType;
@@ -104,7 +104,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
         /* eslint-enable @typescript-eslint/no-non-null-assertion */
         if (hasValues && hasItems && values.length !== items.length) {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs items (${items.length})`
+                `invalid(5) TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs items (${items.length})`
             );
         }
         if (hasLabels) {
@@ -113,12 +113,12 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
             /* eslint-enable @typescript-eslint/no-non-null-assertion */
             if (hasValues && values.length !== labels.length) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs labels (${labels.length})`
+                    `invalid(6) TypeDefConfig: field ${fieldName} had different lengths for values (${values.length}) vs labels (${labels.length})`
                 );
             }
             if (hasItems && items.length !== labels.length) {
                 throw new MobilettoOrmError(
-                    `invalid TypeDefConfig: field ${fieldName} had different lengths for items (${values.length}) vs labels (${labels.length})`
+                    `invalid(7) TypeDefConfig: field ${fieldName} had different lengths for items (${values.length}) vs labels (${labels.length})`
                 );
             }
         }
@@ -132,7 +132,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
             if (vType) {
                 if (foundType != null && foundType !== vType) {
                     throw new MobilettoOrmError(
-                        `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${vType}`
+                        `invalid(8) TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / ${vType}`
                     );
                 }
                 foundType = vType as MobilettoOrmFieldType;
@@ -145,7 +145,7 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
     if (hasFields) {
         if (foundType != null && foundType !== "object" && foundType !== "object[]") {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / object`
+                `invalid(9) TypeDefConfig: field ${fieldName} had incompatible types: ${foundType} / object`
             );
         }
         foundType = foundType || "object";
@@ -153,11 +153,11 @@ export const determineFieldType = (fieldName: string, field: MobilettoOrmFieldDe
     if (foundType) {
         if (field.type && foundType !== field.type) {
             throw new MobilettoOrmError(
-                `invalid TypeDefConfig: field ${fieldName} had type: ${field.type} but discovered type was ${foundType}`
+                `invalid(10) TypeDefConfig: field ${fieldName} had type: ${field.type} but discovered type was ${foundType}`
             );
         }
         if (!VALID_FIELD_TYPES.includes(foundType)) {
-            throw new MobilettoOrmError(`invalid TypeDefConfig: field ${fieldName} had invalid type: ${foundType}`);
+            throw new MobilettoOrmError(`invalid(11) TypeDefConfig: field ${fieldName} had invalid type: ${foundType}`);
         }
         if (isMulti && foundType && !isArrayType(foundType)) {
             return (foundType + "[]") as MobilettoOrmFieldType;
